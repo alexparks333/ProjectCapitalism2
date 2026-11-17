@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 // A harder world (NPCs.md > Mob levels): every hostile mob spawns at a level, rolled once and saved with it.
-//  - Level I (most): 20% more max health (hostileMobHealthMultiplier), normal hits.
+//  - Level I (most): 10% more max health (hostileMobHealthMultiplier), normal hits.
 //  - Level II (level2MobChance, 30%): 30% more health, hits 1.25x as hard, 1.4x the XP.
 //  - Boss (bossMobChance, 10%): twice the health, hits 1.75x as hard, double loot and XP; and by kind: a skeleton shoots
 //    1.5x as fast, a zombie walks 1.5x as fast, a spider poisons (a creeper is just tougher).

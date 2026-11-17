@@ -21,6 +21,22 @@ public record HowToMake(ItemStack @Nullable [] grid, List<ItemStack> steps, Stri
         return new HowToMake(nine, List.of(), "", false, false, List.of(), List.of());
     }
 
+    // A 3x3 grid where slots cycle through a few items (e.g. charcoal, then prismarine shards); one list per slot
+    @SafeVarargs
+    public static HowToMake crafting(List<ItemStack>... nine) {
+        ItemStack[] first = new ItemStack[9];
+        for (int i = 0; i < 9; i++) first[i] = nine[i].isEmpty() ? ItemStack.EMPTY : nine[i].getFirst();
+        return new HowToMake(first, List.of(), "", false, false, List.of(nine), List.of());
+    }
+
+    // What grid slot i shows right now
+    public ItemStack gridAt(int i, long cycle) {
+        if (this.grid == null) return ItemStack.EMPTY;
+        if (this.options.size() != 9 || this.options.get(i).isEmpty()) return this.grid[i];
+        List<ItemStack> choices = this.options.get(i);
+        return choices.get((int) (cycle % choices.size()));
+    }
+
     public static HowToMake steps(String note, ItemStack... icons) {
         return new HowToMake(null, List.of(icons), note, false, false, List.of(), List.of());
     }

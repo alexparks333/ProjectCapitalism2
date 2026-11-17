@@ -47,6 +47,9 @@ A **ripe** crop broken (or a bush picked) by:
 - Covered: wheat, beetroot, carrots, potatoes, rice, nether wart, cocoa, sweet berries, melons, pumpkins.
 - **Unripe** crops are untouched (they give their seed back as usual).
 
+## Animal meat (`FarmerEvents.onMeatDrops`)
+An animal killed by a **Farmer** drops its full vanilla meat. Killed by **anyone else** (or by lava, fire, a fall...): **1 piece of meat**. Other drops (leather, feathers, wool...) are untouched. Butchery Basics (`LibrarianBooks.md`) can still add one more.
+
 ## Fertilizer (`FertilizerItem`, `FertilizedSoil`)
 Three kinds (item ids `fertilizer`, `super_fertilizer`, `fast_fertilizer`; `FertilizerItem.Kind`):
 - **Only Farmers** can use them (others: "Only a Farmer can use Fertilizer.").
@@ -115,7 +118,7 @@ across the boxes. It also writes `MeatSlabShapes.java` (each slab's outline box)
 the table's knife slot (top left of the board) and **stays there** between uses (`ButchersTableBlockEntity`; breaking
 the table drops it); every slab cut up uses **one cut** of its sharpness (`KNIFE_CUTS`
 component): **Iron 4, Diamond 10**. It's sharpness, not durability: the bar under it shows what's left, and a
-**Pickaxe Whetstone** (the Toolsmith's, `WhetstoneBlock` kind PICKAXE) sharpens it back to full. Use the last cut
+**Tool Whetstone** (the Toolsmith's, `WhetstoneBlock` kind PICKAXE) sharpens it back to full. Use the last cut
 and the knife is spent: it breaks on that slab. Farmers and Toolsmiths can both make them.
 
 **The Butcher's Table** (only Farmers): put a slab in, and a Butcher Knife with sharpness left, and press **Cut

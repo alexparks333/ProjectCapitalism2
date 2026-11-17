@@ -100,7 +100,7 @@ public class WeaponsmithsGuideScreen extends JobGuideScreen {
         list.add(new Entry(USING, hammer, "Salvaging", HowToMake.table(atTable, new ItemStack(Items.GOLDEN_SWORD), hammer), List.of(), List.of(
             "Gear back into 1 of its material.")));
         list.add(new Entry(USING, socket, "Molten Sockets", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_SWORD), socket), List.of(), List.of(
-            "Adds a gem socket. Try different gems.")));
+            "Adds a gem socket to a sword, mace or", "trident. Try different gems.")));
 
         // ── Recipes: Crafting ──
         addSwordAndAxe(list, iron, "Iron", "Iron Ingots", Items.IRON_SWORD, Items.IRON_AXE, stick);
@@ -108,6 +108,12 @@ public class WeaponsmithsGuideScreen extends JobGuideScreen {
         list.add(new Entry(CRAFTING, new ItemStack(Items.CROSSBOW), "Crossbow",
             HowToMake.crafting(stick, iron, stick, new ItemStack(Items.STRING), new ItemStack(Items.TRIPWIRE_HOOK), new ItemStack(Items.STRING), e, stick, e),
             List.of(), List.of("Weaponsmiths only.")));
+        list.add(new Entry(CRAFTING, new ItemStack(Items.BOW), "Bow",
+            HowToMake.crafting(e, stick, new ItemStack(Items.STRING), stick, e, new ItemStack(Items.STRING), e, stick, new ItemStack(Items.STRING)),
+            List.of(), List.of("Weaponsmiths only.")));
+        list.add(new Entry(CRAFTING, new ItemStack(Items.SHIELD), "Shield",
+            HowToMake.crafting(planks, iron, planks, planks, planks, planks, e, planks, e),
+            List.of(), List.of("Others need Compacted Iron.")));
         list.add(new Entry(CRAFTING, new ItemStack(Items.ARROW, 4), "Arrows",
             HowToMake.crafting(e, new ItemStack(Items.FLINT), e, e, stick, e, e, new ItemStack(Items.FEATHER), e),
             List.of(), List.of("You: 4. Others: 2.")));
@@ -126,13 +132,13 @@ public class WeaponsmithsGuideScreen extends JobGuideScreen {
         // ── Information: Perks ──
         list.add(new Entry(PERKS, new ItemStack(Items.CROSSBOW), "Weaponsmith Only", null,
             List.of(new ItemStack(Items.CROSSBOW), new ItemStack(Items.NETHERITE_SWORD), whetstone), List.of(
-            "Only you can make Crossbows, Netherite Swords", "and Sword Whetstones.")));
+            "Only you can make Bows, Crossbows,", "Netherite Swords and Sword Whetstones.")));
         list.add(new Entry(PERKS, new ItemStack(Items.DIAMOND_SWORD), "Better Swords", null, List.of(new ItemStack(Items.DIAMOND_SWORD)), List.of(
             "Swords you make hit harder and stay sharp longer.")));
         list.add(new Entry(PERKS, diamond, "Cheaper Weapons", null, List.of(iron, diamond), List.of(
             "You make weapons with plain ingots and diamonds.", "Others need twice as much.")));
         list.add(new Entry(PERKS, table, "Repairs", null, List.of(table), List.of(
-            "Only you can repair weapons, at your Weaponsmith Table.")));
+            "Only you (and Armorsmiths, for shields) repair", "weapons and shields at your table. Bows, crossbows", "and tridents mend with another of the same.")));
         list.add(new Entry(PERKS, new ItemStack(Items.ARROW), "More Arrows", null, List.of(new ItemStack(Items.ARROW, 4)), List.of(
             "You get twice the arrows from each craft.")));
 
@@ -144,7 +150,7 @@ public class WeaponsmithsGuideScreen extends JobGuideScreen {
         list.add(Entry.info(DEBUFFS, new ItemStack(Items.IRON_SWORD), "No Repairs", List.of(),
             "Others can't repair weapons."));
         list.add(Entry.info(DEBUFFS, new ItemStack(Items.CROSSBOW), "No Crossbows", List.of(),
-            "Others can't make Crossbows or Netherite Swords."));
+            "Others can't make Bows, Crossbows", "or Netherite Swords."));
         list.add(Entry.info(DEBUFFS, new ItemStack(Items.ARROW), "Fewer Arrows", List.of(),
             "Others get half the arrows from each craft."));
         list.add(Entry.info(DEBUFFS, table, "Table Locked", List.of(),

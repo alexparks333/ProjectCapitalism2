@@ -71,7 +71,8 @@ The Weaponsmith's Guide uses it too (`WeaponsmithsGuideScreen`). Every job guide
 
 ### Weaponsmith
 **Everything about the Weaponsmith is in `Weaponsmith.md`.**
-- **Pro:** the only job that can make Crossbows and Netherite Swords (Smithing Table); Netherite Axes too (shared with the Toolsmith).
+- **Pro:** the only job that can make Bows, Crossbows and Netherite Swords (Smithing Table); Netherite Axes too (shared with the Toolsmith).
+- **Pro:** makes Shields from a plain Iron Ingot (others need Compacted Iron); the only one who repairs weapons and shields (bows, crossbows and tridents mend with another of the same).
 - **Pro:** makes Iron and Diamond Swords and Axes from plain materials; everyone else needs Compacted Iron / Diamonds (double the material).
 - **Pro:** 4 arrows per craft (everyone else gets 2).
 - **Pro:** forges better swords: Sharpness 78-120 and Edge 200-300 (rare Grail rolls: 135 / 350), against 60-110 and 150-225 for everyone else (and every sword found or traded).
@@ -137,6 +138,7 @@ For Sale / For Lease signs, and sell or lease lots to players (`/properties`); t
 - **Pro:** the only job that can make and use the **Decomposter** (Yield, Super Yield and Fast Fertilizer, no fuel).
 - **Pro:** the only job that can use **Fertilizer** (Yield: 50% to 90% more crops; Fast: crops grow 1.75x as fast; one at a time).
 - **Pro:** the only job that can make **Scythes** (cut ripe crops 5 wide and 3 deep; the Diamond Scythe lasts longer; anyone can use one).
+- **Pro:** the only job that gets the **full meat drops** from animals. Everyone else (and lava, fire, falls) gets 1 piece of meat per animal (Butchery Basics can still add one).
 - **Pro:** animals killed with a diamond or netherite sword or axe may drop a **Meat Slab** (15%, 30% with a Bone in the
   sword's socket), cut up at the **Butcher's Table** into fine cuts that rot (Fridges and Freezers keep them). See `Farmer.md`.
 - **Con:** *(none yet)*
@@ -146,50 +148,50 @@ Any crafting recipe can be made job-only (or give a job more) with the recipe ty
 
 ## Server-wide passive debuffs
 
-### Non-Gourmet food fills only 2/3
+### Non-Gourmet food fills only 1/2
 **Except Cook-made food:** the same vanilla food made by a Cook (cooked in a furnace / smoker, or crafted) keeps its full values and counts as Gourmet (`Cook.md`).
 
-Always on. Every vanilla food fills 2/3 of its normal hunger, **rounded up to the nearest hunger point (half a drumstick)**. Saturation (the hidden "fullness" that drains before the drumsticks and speeds up healing) shrinks by the same amount, on purpose: normal food shouldn't keep you full for long. Gourmet food (made by a Cook) has its own full-strength values and isn't affected. Done by changing the foods' default components at startup (`FoodNerf`), so tooltips, eating and the diet all see the new numbers. To change a food, edit its line in `FoodNerf.table()`.
+Always on. Every vanilla food fills 1/2 of its normal hunger, **rounded up to the nearest hunger point (half a drumstick)**. Saturation (the hidden "fullness" that drains before the drumsticks and speeds up healing) shrinks by the same amount, on purpose: normal food shouldn't keep you full for long. Gourmet food (made by a Cook) has its own full-strength values and isn't affected. Done by changing the foods' default components at startup (`FoodNerf`), so tooltips, eating and the diet all see the new numbers. To change a food, edit its line in `FoodNerf.table()`.
 
 1 hunger point = half a drumstick.
 
 | Food | Vanilla | Now |
 |---|---|---|
-| Cooked Beef (Steak) | 8 (4 drumsticks) | 6 (3) |
-| Cooked Porkchop | 8 (4) | 6 (3) |
-| Pumpkin Pie | 8 (4) | 6 (3) |
-| Rabbit Stew | 10 (5) | 7 (3.5) |
-| Cooked Chicken | 6 (3) | 4 (2) |
-| Cooked Mutton | 6 (3) | 4 (2) |
-| Cooked Salmon | 6 (3) | 4 (2) |
-| Golden Carrot | 6 (3) | 4 (2) |
-| Beetroot Soup | 6 (3) | 4 (2) |
-| Mushroom Stew | 6 (3) | 4 (2) |
-| Suspicious Stew | 6 (3) | 4 (2) |
-| Honey Bottle | 6 (3) | 4 (2) |
-| Bread | 5 (2.5) | 4 (2) |
-| Baked Potato | 5 (2.5) | 4 (2) |
-| Cooked Cod | 5 (2.5) | 4 (2) |
-| Cooked Rabbit | 5 (2.5) | 4 (2) |
-| Apple | 4 (2) | 3 (1.5) |
-| Golden Apple | 4 (2) | 3 (1.5) |
-| Enchanted Golden Apple | 4 (2) | 3 (1.5) |
-| Chorus Fruit | 4 (2) | 3 (1.5) |
-| Rotten Flesh | 4 (2) | 3 (1.5) |
+| Cooked Beef (Steak) | 8 (4 drumsticks) | 4 (2) |
+| Cooked Porkchop | 8 (4) | 4 (2) |
+| Pumpkin Pie | 8 (4) | 4 (2) |
+| Rabbit Stew | 10 (5) | 5 (2.5) |
+| Cooked Chicken | 6 (3) | 3 (1.5) |
+| Cooked Mutton | 6 (3) | 3 (1.5) |
+| Cooked Salmon | 6 (3) | 3 (1.5) |
+| Golden Carrot | 6 (3) | 3 (1.5) |
+| Beetroot Soup | 6 (3) | 3 (1.5) |
+| Mushroom Stew | 6 (3) | 3 (1.5) |
+| Suspicious Stew | 6 (3) | 3 (1.5) |
+| Honey Bottle | 6 (3) | 3 (1.5) |
+| Bread | 5 (2.5) | 3 (1.5) |
+| Baked Potato | 5 (2.5) | 3 (1.5) |
+| Cooked Cod | 5 (2.5) | 3 (1.5) |
+| Cooked Rabbit | 5 (2.5) | 3 (1.5) |
+| Apple | 4 (2) | 2 (1) |
+| Golden Apple | 4 (2) | 2 (1) |
+| Enchanted Golden Apple | 4 (2) | 2 (1) |
+| Chorus Fruit | 4 (2) | 2 (1) |
+| Rotten Flesh | 4 (2) | 2 (1) |
 | Carrot | 3 (1.5) | 2 (1) |
 | Raw Beef | 3 (1.5) | 2 (1) |
 | Raw Porkchop | 3 (1.5) | 2 (1) |
 | Raw Rabbit | 3 (1.5) | 2 (1) |
-| Melon Slice | 2 (1) | 2 (1) |
-| Sweet Berries | 2 (1) | 2 (1) |
-| Glow Berries | 2 (1) | 2 (1) |
-| Cookie | 2 (1) | 2 (1) |
-| Raw Chicken | 2 (1) | 2 (1) |
-| Raw Mutton | 2 (1) | 2 (1) |
-| Raw Cod | 2 (1) | 2 (1) |
-| Raw Salmon | 2 (1) | 2 (1) |
-| Spider Eye | 2 (1) | 2 (1) |
-| Poisonous Potato | 2 (1) | 2 (1) |
+| Melon Slice | 2 (1) | 1 (0.5) |
+| Sweet Berries | 2 (1) | 1 (0.5) |
+| Glow Berries | 2 (1) | 1 (0.5) |
+| Cookie | 2 (1) | 1 (0.5) |
+| Raw Chicken | 2 (1) | 1 (0.5) |
+| Raw Mutton | 2 (1) | 1 (0.5) |
+| Raw Cod | 2 (1) | 1 (0.5) |
+| Raw Salmon | 2 (1) | 1 (0.5) |
+| Spider Eye | 2 (1) | 1 (0.5) |
+| Poisonous Potato | 2 (1) | 1 (0.5) |
 | Beetroot | 1 (0.5) | 1 (0.5) |
 | Potato | 1 (0.5) | 1 (0.5) |
 | Dried Kelp | 1 (0.5) | 1 (0.5) |

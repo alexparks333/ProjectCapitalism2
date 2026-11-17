@@ -26,18 +26,18 @@ import org.jspecify.annotations.Nullable;
 @EventBusSubscriber(modid = Capitalism.MODID)
 public final class SwordForging {
 
-    // Everyone else (and every sword that wasn't crafted): sharpness 60-110, edge 150-225
+    // Everyone else (and every sword that wasn't crafted): sharpness 60-110, edge 113-169
     public static final int OTHERS_SHARPNESS_MIN = 60;
     public static final int OTHERS_SHARPNESS_MAX = 110;
-    public static final int OTHERS_EDGE_MIN = 150;
-    public static final int OTHERS_EDGE_MAX = 225;
-    // Weaponsmith: sharpness 78-120 (or 135 on a grail roll), edge 200-300 (or 350 on a grail roll)
+    public static final int OTHERS_EDGE_MIN = 113;
+    public static final int OTHERS_EDGE_MAX = 169;
+    // Weaponsmith: sharpness 78-120 (or 135 on a grail roll), edge 150-225 (or 263 on a grail roll)
     public static final int SMITH_SHARPNESS_MIN = 78;
     public static final int SMITH_SHARPNESS_MAX = 120;
-    public static final int SMITH_EDGE_MIN = 200;
-    public static final int SMITH_EDGE_MAX = 300;
+    public static final int SMITH_EDGE_MIN = 150;
+    public static final int SMITH_EDGE_MAX = 225;
     public static final int GRAIL_SHARPNESS = 135;
-    public static final int GRAIL_EDGE = 350;
+    public static final int GRAIL_EDGE = 263;
     // 1 in 150 crafts, rolled separately for each stat
     public static final int GRAIL_ODDS = 150;
 

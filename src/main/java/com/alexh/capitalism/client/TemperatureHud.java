@@ -60,6 +60,8 @@ public final class TemperatureHud {
         if ((mask & BodyTemperature.R_POWDER_SNOW) != 0) out.add("You're stuck in powder snow!");
         if ((mask & BodyTemperature.R_COLD_WATER) != 0) out.add("The water is ice cold.");
         if ((mask & BodyTemperature.R_SNOWY) != 0) out.add("It's bitter cold out here.");
+        if ((mask & BodyTemperature.R_ON_ICE) != 0) out.add("The ice under your feet is freezing.");
+        if ((mask & BodyTemperature.R_CLOSE_HEAT) != 0) out.add("The flames right next to you are hot!");
         if ((mask & BodyTemperature.R_RAIN) != 0) out.add("The rain is soaking you.");
         if ((mask & BodyTemperature.R_NETHER) != 0) out.add("The Nether is scorching.");
         if ((mask & BodyTemperature.R_SUN) != 0) out.add("The sun is beating down.");

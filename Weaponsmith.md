@@ -5,8 +5,10 @@ The Weaponsmith makes and looks after weapons. They forge better swords than any
 ## Perks (all of them in one place)
 | | Weaponsmith | Everyone else |
 |---|---|---|
-| **Sword stats** (rolled when crafted) | Sharpness **78-120**, Edge **200-300**; 1 in 150: Sharpness **135** / Edge **350** (Grail) | Sharpness **60-110**, Edge **150-225** |
+| **Sword stats** (rolled when crafted) | Sharpness **78-120**, Edge **150-225**; 1 in 150: Sharpness **135** / Edge **263** (Grail) | Sharpness **60-110**, Edge **113-169** |
 | **Crossbow** | crafts it normally | **can't** craft it (no result) |
+| **Bow** | crafts it normally | **can't** craft it (no result) |
+| **Shield** | 6 planks + 1 Iron Ingot (vanilla; an Armorsmith can too) | 6 planks + 1 **Compacted Iron** |
 | **Netherite Sword** | Smithing Table as normal (with the template) | **can't** (the Smithing Table gives nothing: "Only Weaponsmiths can make Netherite Swords.") |
 | **Netherite Axe** | Smithing Table as normal (a Toolsmith can too) | **can't** |
 | **Iron / Diamond Sword** | 2 Iron Ingots / Diamonds + Stick (vanilla) | 2 **Compacted Iron / Diamonds** + Stick (double the material) |
@@ -16,7 +18,7 @@ The Weaponsmith makes and looks after weapons. They forge better swords than any
 | **Tipped Arrows** (8 Arrows around a Lingering Potion) | **16** per craft | **8** per craft (`capitalism:job_imbue`) |
 | **Whetstone** | the only one who can make it (Weaponsmith Table: Grindstone + Compacted Iron) | can buy one, place it and sharpen on it |
 | **Weaponsmith Table** | uses it | can craft it, can't use it ("Only Weaponsmiths can use the Weaponsmith Table.") |
-| **Repairing weapons** (Weaponsmith Table only; the anvil, grindstone and crafting grid don't repair for anyone) | yes | **no**: bring it to a Weaponsmith (or, while none is online, pay their NPC: 30% per repair, see `NPCs.md`) |
+| **Repairing weapons and shields** (Weaponsmith Table only; the anvil, grindstone and crafting grid don't repair for anyone; bows, crossbows and tridents mend with another of the same, giving what was left of it + 12%) | yes | **no**: bring it to a Weaponsmith (or, while none is online, pay their NPC: 30% per repair, see `NPCs.md`) |
 
 Creative mode ignores all of these, except sword stats: those follow your real job (a non-Weaponsmith in Creative still rolls the everyone-else ranges). A **Crafter** block counts as "everyone else" (2 arrows, no Crossbows, no plain-material swords/axes, the lower sword stats).
 
@@ -34,14 +36,14 @@ Every sword in the world gets two stats, rolled once and saved on the sword:
 
 | Who crafted it | Sharpness | Edge |
 |---|---|---|
-| **Weaponsmith** | 78-120, or **135** on a 1 in 150 roll | 200-300, or **350** on a 1 in 150 roll |
-| **Everyone else**, a Crafter block, and every sword that wasn't crafted | 60-110 | 150-225 |
+| **Weaponsmith** | 78-120, or **135** on a 1 in 150 roll | 150-225, or **263** on a 1 in 150 roll |
+| **Everyone else**, a Crafter block, and every sword that wasn't crafted | 60-110 | 113-169 |
 
-- The two rare "Grail" rolls are separate (1 in 150 each), and there's nothing in between: a Weaponsmith's edge is 200-300 or exactly 350, never 301-349. Same for 121-134 sharpness.
+- The two rare "Grail" rolls are separate (1 in 150 each), and there's nothing in between: a Weaponsmith's edge is 150-225 or exactly 263, never 226-262. Same for 121-134 sharpness.
 - **When it's rolled:** crafted swords as they leave the result slot; swords in generated loot (chests, barrels, mob drops, fishing) as the loot is generated (`SwordLootModifier`); anything else (villager trades, the creative menu) within a second of landing in a player's inventory. Any sword counts, wood to netherite.
 - Crafted swords: the numbers are rolled on the real item as it leaves the result slot (click, shift-click or drop), so rearranging the grid can't re-roll them.
 - A Diamond Sword upgraded to Netherite at the Smithing Table **keeps its stats**.
-- **Before it's rolled** (e.g. in the crafting result slot) the tooltip shows "Sharpness: ?/110" and "Edge: ?/225 hits": the best **you** can roll (a Weaponsmith sees ?/120 and ?/300; Creative mode doesn't count). The Grail values are never shown there.
+- **Before it's rolled** (e.g. in the crafting result slot) the tooltip shows "Sharpness: ?/110" and "Edge: ?/169 hits": the best **you** can roll (a Weaponsmith sees ?/120 and ?/225; Creative mode doesn't count). The Grail values are never shown there.
 - **Tooltip:** "Sharpness: 87 (87% damage)" (green 100+, yellow 80+, orange below) and "Edge: 187/213 hits". A Grail stat shows in light purple with "★ Grail".
 
 ## Sharp and dull swords

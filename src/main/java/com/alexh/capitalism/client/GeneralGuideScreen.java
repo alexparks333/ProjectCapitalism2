@@ -17,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 // The General Guide (everyone can read it, Economy.md > In-game: the General Guide), three areas:
 //  - Rules: the server's rules, from config/capitalism-rules.txt (core/ServerRules, sent at login: ClientRules), numbered.
@@ -58,7 +59,7 @@ public class GeneralGuideScreen extends Screen {
     private static final int GOLD = 0xFFFFD24A;
 
     private enum Section {
-        RULES("Rules"), WIKI("Wiki"), CRAFTING("Crafting");
+        START("Getting Started"), RULES("Rules"), WIKI("Wiki"), CRAFTING("Crafting");
 
         final String title;
 
@@ -104,7 +105,7 @@ public class GeneralGuideScreen extends Screen {
 
     private final List<Entry> entries = buildEntries();
     private final @Nullable Screen parent;
-    private Section section = Section.RULES;
+    private Section section = Section.START;
     private Tab craftingTab = Tab.BLOCKS;
     private Tab wikiTab = Tab.GOLD;
     // how far the entry (or the rules) is scrolled, if it's longer than its panel
@@ -235,7 +236,7 @@ public class GeneralGuideScreen extends Screen {
         list.add(new Entry(Tab.GOLD, skull, "Death Tax", null, List.of(skull), List.of(
             "When you die you owe Death a share of all your gold (25% uninsured).",
             "Until it's paid you're In Purgatory: no mining, no fighting. Pay with /pay death.",
-            "With 10 gold or less to your name, Death takes pity: no tax.",
+            "With 10 gold or less to your name, Death takes pity: no tax.", "One death never costs more than 75 gold.",
             "Getting killed by a player doesn't trigger the death tax (unless in The Purge).",
             "Lower your death tax with insurance: see the Insurance tab.")));
 
@@ -350,7 +351,7 @@ public class GeneralGuideScreen extends Screen {
 
     private @Nullable Tab tab() {
         return switch (this.section) {
-            case RULES -> null;
+            case START, RULES -> null;
             case WIKI -> this.wikiTab;
             case CRAFTING -> this.craftingTab;
         };
@@ -397,9 +398,215 @@ public class GeneralGuideScreen extends Screen {
 
     // ── Drawing ────────────────────────────────────────────────────────────
 
+    // Getting Started and Rules are plain text pages (no tabs, no entry grid)
+    private boolean textPage() {
+        return this.section == Section.START || this.section == Section.RULES;
+    }
+
+    // The section buttons along the top: Getting Started is wider (its name is long), the rest share what's left
+    private static final int START_W = 112, SECTION_GAP = 4;
+
+    private int sectionW(int i) {
+        if (i == 0) return START_W;
+        int rest = Section.values().length - 1;
+        return (W - 16 - START_W - SECTION_GAP * rest) / rest;
+    }
+
+    private int sectionX(int i) {
+        int x = this.left + 8;
+        for (int j = 0; j < i; j++) x += sectionW(j) + SECTION_GAP;
+        return x;
+    }
+
+    // ── Getting Started (Please Read): the first thing anyone sees, a few pages stepped through with Back / Next.
+    // The admin's own words. A line starting "- " is a bullet, "-> " a smaller bullet under the one before, "1) " a
+    // numbered point; icons (if any) are shown under the title with their names.
+    private record StartPage(String title, List<String> lines, List<Supplier<ItemStack>> icons, List<Supplier<StartRecipe>> recipes) {
+        StartPage(String title, List<String> lines, List<Supplier<ItemStack>> icons) {
+            this(title, lines, icons, List.of());
+        }
+    }
+
+    // a crafting recipe shown on a Getting Started page: its name above, the 3x3 grid, an arrow and what it makes
+    private record StartRecipe(String name, ItemStack[] grid, ItemStack result) {
+    }
+
+    private static StartRecipe compacted(net.minecraft.world.item.Item material, ItemStack result) {
+        ItemStack m = new ItemStack(material), e = ItemStack.EMPTY;
+        return new StartRecipe(result.getHoverName().getString(), new ItemStack[] {m, m, e, e, e, e, e, e, e}, result);
+    }
+
+    private static StartRecipe purificationTable() {
+        ItemStack i = new ItemStack(net.minecraft.world.item.Items.IRON_INGOT), c = new ItemStack(net.minecraft.world.item.Items.COAL),
+            u = new ItemStack(net.minecraft.world.item.Items.CAULDRON), s = new ItemStack(net.minecraft.world.item.Items.STONE);
+        ItemStack table = new ItemStack(ModItems.PURIFICATION_TABLE.get());
+        return new StartRecipe(table.getHoverName().getString(), new ItemStack[] {i, c, i, i, u, i, s, s, s}, table);
+    }
+
+    // 8 glass bottles around a Purified Water Bucket = 8 Purified Water
+    private static StartRecipe purifiedWater() {
+        ItemStack b = new ItemStack(net.minecraft.world.item.Items.GLASS_BOTTLE), bucket = new ItemStack(ModItems.PURIFIED_WATER_BUCKET.get());
+        ItemStack water = new ItemStack(ModItems.PURIFIED_WATER.get(), 8);
+        return new StartRecipe(water.getHoverName().getString(), new ItemStack[] {b, b, b, b, bucket, b, b, b, b}, water);
+    }
+
+    private static final int RECIPE_W = 54 + 18 + 18, RECIPE_H = 10 + 54;
+
+    private void drawStartRecipe(GuiGraphicsExtractor graphics, StartRecipe recipe, int x, int y, int mouseX, int mouseY) {
+        graphics.text(this.font, recipe.name(), x, y, TEXT, false);
+        int gy = y + 10;
+        for (int i = 0; i < 9; i++) itemSlot(graphics, recipe.grid()[i], x + (i % 3) * 18, gy + (i / 3) * 18, mouseX, mouseY);
+        graphics.text(this.font, "->", x + 57, gy + 23, TEXT, false);
+        itemSlot(graphics, recipe.result(), x + 72, gy + 18, mouseX, mouseY);
+    }
+
+    private static final List<StartPage> GETTING_STARTED = List.of(
+        new StartPage("Welcome To Project Capitalism 2", List.of(
+            "- THIS MOD is not made for the faint of heart. IT IS HARD. I tried to make Minecraft more difficult and teamwork oriented. Do not bitch and whine about dying or the rules.",
+            "- Use gold as currency. Please use it and don't hoard it. It will significantly help your adventure.",
+            "- PvP is allowed... but allies are recommended.",
+            "- The Main Town is a safe place."), List.of()),
+        new StartPage("Take It Slow", List.of(
+            "- Take it super slow. Focus on getting food, a house and Purified Water first.",
+            "- Then go for tools and armor.",
+            "- MOBS are way harder in this mode.",
+            "- Then go for a big cave adventure. (Trust me, stock up for an adventure.)"), List.of()),
+        new StartPage("Need To Know Items!", List.of(
+            "- Compacted Diamond and Compacted Iron are how you make tools, weapons and armor.",
+            "- Regular vanilla crafts don't work for pickaxes, swords and other tools. (Unless your job says otherwise.)"),
+            List.of(), List.of(() -> compacted(net.minecraft.world.item.Items.DIAMOND, new ItemStack(ModItems.COMPACTED_DIAMOND.get())),
+                () -> compacted(net.minecraft.world.item.Items.IRON_INGOT, new ItemStack(ModItems.COMPACTED_IRON.get())))),
+        new StartPage("Water", List.of(
+            "- Water is like food. When it gets low you can't run, and you get hurt.",
+            "- You can drink from your hand in streams, rivers and ponds (source water blocks).",
+            "- Purify water: put a Bucket of Water and coal in a Purification Table, then craft the Purified Water Bucket into 8 bottles."),
+            List.of(), List.of(GeneralGuideScreen::purificationTable, GeneralGuideScreen::purifiedWater)),
+        new StartPage("Temperature", List.of(
+            "- The bottom right of your screen is your Body Temperature.",
+            "-> Try to stay around Normal (70 degrees, green).",
+            "-> Cold or hot biomes, being in water, and rain or snow affect it.",
+            "- Be near a fire to warm up... or jump in water to cool down."), List.of()),
+        new StartPage("Player Debuffs", List.of(
+            "- All players (except some jobs) have these debuffs:",
+            "1) It takes more resources to make tools and armor.",
+            "2) Harvesting crops gives you at most 1 grown crop and 1 seed.",
+            "3) Killing animals gives you 1 meat.",
+            "4) Food not cooked by a Cook is weaker."), List.of()),
+        new StartPage("Use People's Abilities", List.of(
+            "- Each job has strengths... Use their shops as a source to survive easier! If you do not use other people's services, it WILL BE TOUGH."), List.of()),
+        new StartPage("Character Tab", List.of(
+            "- In your inventory, click the apple tab on the left side. This is your character's statistics and wellbeing."),
+            List.of(() -> new ItemStack(net.minecraft.world.item.Items.APPLE))));
+
+    private int startPage;
+
+    // the Back / Next buttons and the page count along the bottom of the panel
+    private static final int START_BUTTON_W = 50, START_BUTTON_H = 14;
+
+    private int startButtonY() {
+        return panelBottom() - START_BUTTON_H - 4;
+    }
+
+    private int startBackX() {
+        return this.left + 16;
+    }
+
+    private int startNextX() {
+        return this.left + W - 16 - START_BUTTON_W;
+    }
+
+    private void drawStart(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        int l = this.left, x0 = l + 8, top = panelTop(), bottom = panelBottom();
+        graphics.fill(x0, top, l + W - 8, bottom, PANEL_DARK);
+        StartPage page = GETTING_STARTED.get(this.startPage);
+        int x = x0 + 8, wrap = W - 36;
+        graphics.text(this.font, page.title(), x, top + 6, GOLD, false);
+        int y = top + 20;
+        // the icons, with their names
+        if (!page.icons().isEmpty()) {
+            int ix = x;
+            for (Supplier<ItemStack> icon : page.icons()) {
+                ItemStack stack = icon.get();
+                itemSlot(graphics, stack, ix, y, mouseX, mouseY);
+                String name = stack.getHoverName().getString();
+                graphics.text(this.font, name, ix + 21, y + 5, TEXT, false);
+                ix += 21 + this.font.width(name) + 12;
+            }
+            y += 24;
+        }
+        // the recipes, side by side
+        if (!page.recipes().isEmpty()) {
+            int rx = x;
+            for (Supplier<StartRecipe> recipe : page.recipes()) {
+                drawStartRecipe(graphics, recipe.get(), rx, y, mouseX, mouseY);
+                rx += RECIPE_W + 30;
+            }
+            y += RECIPE_H + 8;
+        }
+        List<Line> lines = new ArrayList<>();
+        for (String raw : page.lines()) {
+            int base;
+            String marker;
+            String text;
+            if (raw.startsWith("-> ")) {
+                base = 12;
+                marker = "- ";
+                text = raw.substring(3);
+            } else if (raw.startsWith("- ")) {
+                base = 0;
+                marker = "• ";
+                text = raw.substring(2);
+            } else if (raw.length() > 2 && Character.isDigit(raw.charAt(0)) && raw.charAt(1) == ')') {
+                base = 12;
+                marker = raw.substring(0, 3);
+                text = raw.substring(3);
+            } else {
+                base = 0;
+                marker = "";
+                text = raw;
+            }
+            int indent = base + this.font.width(marker);
+            List<FormattedCharSequence> wrapped = this.font.split(Component.literal(text), wrap - indent);
+            for (int j = 0; j < wrapped.size(); j++) {
+                if (j == 0 && !marker.isEmpty()) lines.add(new Line(FormattedCharSequence.forward(marker, net.minecraft.network.chat.Style.EMPTY), -1 - base, GOLD, 0));
+                lines.add(new Line(wrapped.get(j), indent, TEXT, j == wrapped.size() - 1 ? 13 : 10));
+            }
+        }
+        drawLines(graphics, lines, x, y, startButtonY() - 4);
+        // Back / page n of N / Next
+        int by = startButtonY();
+        boolean canBack = this.startPage > 0, canNext = this.startPage < GETTING_STARTED.size() - 1;
+        startButton(graphics, startBackX(), by, "< Back", canBack, mouseX, mouseY);
+        startButton(graphics, startNextX(), by, "Next >", canNext, mouseX, mouseY);
+        graphics.centeredText(this.font, "Page " + (this.startPage + 1) + " of " + GETTING_STARTED.size(), l + W / 2, by + 3, TEXT_DIM);
+    }
+
+    private void startButton(GuiGraphicsExtractor graphics, int x, int y, String label, boolean enabled, int mouseX, int mouseY) {
+        boolean over = enabled && inside(mouseX, mouseY, x, y, START_BUTTON_W, START_BUTTON_H);
+        graphics.fill(x, y, x + START_BUTTON_W, y + START_BUTTON_H, over ? SELECTED : SLOT_EDGE);
+        graphics.fill(x + 1, y + 1, x + START_BUTTON_W - 1, y + START_BUTTON_H - 1, SLOT);
+        graphics.centeredText(this.font, label, x + START_BUTTON_W / 2, y + 3, !enabled ? 0xFF5A5A5A : over ? GOLD : TEXT);
+    }
+
+    // a click on Back / Next
+    private boolean clickStart(int mx, int my) {
+        int by = startButtonY();
+        if (this.startPage > 0 && inside(mx, my, startBackX(), by, START_BUTTON_W, START_BUTTON_H)) {
+            this.startPage--;
+        } else if (this.startPage < GETTING_STARTED.size() - 1 && inside(mx, my, startNextX(), by, START_BUTTON_W, START_BUTTON_H)) {
+            this.startPage++;
+        } else {
+            return false;
+        }
+        this.scroll = 0;
+        net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
+            net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN, 1.0F));
+        return true;
+    }
+
     // the panel the entry (or the rules) is drawn in: its top and bottom on screen
     private int panelTop() {
-        return this.top + (this.section == Section.RULES ? TAB_Y : DETAIL_Y);
+        return this.top + (textPage() ? TAB_Y : DETAIL_Y);
     }
 
     private int panelBottom() {
@@ -420,13 +627,17 @@ public class GeneralGuideScreen extends Screen {
 
         Section[] sections = Section.values();
         for (int i = 0; i < sections.length; i++) {
-            int x = l + 8 + i * 76;
+            int x = sectionX(i), sw = sectionW(i);
             boolean active = sections[i] == this.section;
-            graphics.fill(x, t + SECTION_Y, x + 72, t + SECTION_Y + 14, active ? SELECTED : SLOT_EDGE);
-            graphics.fill(x + 1, t + SECTION_Y + 1, x + 71, t + SECTION_Y + 13, active ? PANEL_DARK : SLOT);
-            graphics.centeredText(this.font, sections[i].title, x + 36, t + SECTION_Y + 3, active ? GOLD : TEXT_DIM);
+            graphics.fill(x, t + SECTION_Y, x + sw, t + SECTION_Y + 14, active ? SELECTED : SLOT_EDGE);
+            graphics.fill(x + 1, t + SECTION_Y + 1, x + sw - 1, t + SECTION_Y + 13, active ? PANEL_DARK : SLOT);
+            graphics.centeredText(this.font, sections[i].title, x + sw / 2, t + SECTION_Y + 3, active ? GOLD : TEXT_DIM);
         }
 
+        if (this.section == Section.START) {
+            drawStart(graphics, mouseX, mouseY);
+            return;
+        }
         if (this.section == Section.RULES) {
             drawRules(graphics);
             return;
@@ -559,7 +770,9 @@ public class GeneralGuideScreen extends Screen {
         this.scroll = Mth.clamp(this.scroll, 0, Math.max(0, total - room));
         int ly = y - this.scroll;
         for (Line line : lines) {
-            if (ly >= y && ly + 9 <= bottom) graphics.text(this.font, line.text, x + Math.max(0, line.indent), ly, line.color, false);
+            // (indent -1 - n: a marker drawn n pixels in, with the next line)
+            int indent = line.indent < 0 ? -1 - line.indent : line.indent;
+            if (ly >= y && ly + 9 <= bottom) graphics.text(this.font, line.text, x + indent, ly, line.color, false);
             ly += line.after;
         }
         if (total > room) {
@@ -579,7 +792,7 @@ public class GeneralGuideScreen extends Screen {
             graphics.text(this.font, "How to make:", x, ty, TEXT_DIM, false);
             ty += 11;
             if (how.grid() != null) {
-                for (int i = 0; i < 9; i++) itemSlot(graphics, how.grid()[i], x + (i % 3) * 18, ty + (i / 3) * 18, mouseX, mouseY);
+                for (int i = 0; i < 9; i++) itemSlot(graphics, how.gridAt(i, net.minecraft.util.Util.getMillis() / 1000L), x + (i % 3) * 18, ty + (i / 3) * 18, mouseX, mouseY);
                 graphics.text(this.font, "->", x + 59, ty + 23, TEXT, false);
                 itemSlot(graphics, entry.icon(), x + 74, ty + 18, mouseX, mouseY);
                 ty += 60;
@@ -629,6 +842,7 @@ public class GeneralGuideScreen extends Screen {
     // (dev: client/PhotoShoot) show this area and tab (null: the area's first), and this entry of it
     public void show(String section, @Nullable String tab, int entry) {
         this.section = Section.valueOf(section);
+        if (this.section == Section.START) this.startPage = Math.min(entry, GETTING_STARTED.size() - 1);
         if (tab != null) {
             if (this.section == Section.WIKI) this.wikiTab = Tab.valueOf(tab);
             else if (this.section == Section.CRAFTING) this.craftingTab = Tab.valueOf(tab);
@@ -674,7 +888,7 @@ public class GeneralGuideScreen extends Screen {
 
         Section[] sections = Section.values();
         for (int i = 0; i < sections.length; i++) {
-            if (inside(mx, my, l + 8 + i * 76, t + SECTION_Y, 72, 14)) {
+            if (inside(mx, my, sectionX(i), t + SECTION_Y, sectionW(i), 14)) {
                 this.section = sections[i];
                 this.page = 0;
                 this.scroll = 0;
@@ -682,7 +896,8 @@ public class GeneralGuideScreen extends Screen {
                 return true;
             }
         }
-        if (this.section == Section.RULES) return super.mouseClicked(event, doubleClick);
+        if (this.section == Section.START && clickStart(mx, my)) return true;
+        if (textPage()) return super.mouseClicked(event, doubleClick);
 
         List<Tab> tabs = Tab.in(this.section);
         boolean wiki = this.section == Section.WIKI;

@@ -301,13 +301,19 @@ public class BartendersGuideScreen extends Screen {
             HowToMake.crafting(iron, glass, iron, glass, new ItemStack(Items.CAULDRON), glass, iron, new ItemStack(Items.BUCKET), iron),
             List.of("A filter, then a Purified Water bucket:", "Spring Water. Bartenders only.")));
         list.add(new BlockEntry(new ItemStack(ModItems.OSMOSIS_FILTER.get()),
-            HowToMake.crafting(charcoal, charcoal, charcoal, paper, paper, paper, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY),
-            List.of("Lasts 2 buckets.", "Prismarine Shards work instead of charcoal.")));
+            filterGrid(List.of(charcoal, new ItemStack(Items.PRISMARINE_SHARD)), paper),
+            List.of("Lasts 2 buckets.")));
         ItemStack crystals = new ItemStack(Items.PRISMARINE_CRYSTALS);
         list.add(new BlockEntry(new ItemStack(ModItems.ADVANCED_OSMOSIS_FILTER.get()),
             HowToMake.crafting(crystals, crystals, crystals, paper, paper, paper, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY),
             List.of("Lasts 4 buckets.")));
         return list;
+    }
+
+    // top row cycles through the filter materials, paper below
+    private static HowToMake filterGrid(List<ItemStack> top, ItemStack paper) {
+        List<ItemStack> p = List.of(paper);
+        return HowToMake.crafting(top, top, top, p, p, p, List.of(), List.of(), List.of());
     }
 
     // ── Information ────────────────────────────────────────────────────────
@@ -482,7 +488,7 @@ public class BartendersGuideScreen extends Screen {
         graphics.text(this.font, "How to make:", x, y + 12, TEXT_DIM, false);
         int gy = y + 23;
         for (int i = 0; i < 9; i++) {
-            itemSlot(graphics, this.selectedBlock.how().grid()[i], x + (i % 3) * 18, gy + (i / 3) * 18, mouseX, mouseY);
+            itemSlot(graphics, this.selectedBlock.how().gridAt(i, net.minecraft.util.Util.getMillis() / 1000L), x + (i % 3) * 18, gy + (i / 3) * 18, mouseX, mouseY);
         }
         graphics.text(this.font, "->", x + 59, gy + 23, TEXT, false);
         lockedSlot(graphics, stack, x + 74, gy + 18, false, mouseX, mouseY);

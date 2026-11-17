@@ -30,9 +30,9 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import java.util.List;
 
 // Wear, like a sword's edge (Sharpness), for pickaxes and armor:
-//  - Pickaxes: every block mined with one (when it's the right tool) counts (PICKAXE_WEAR); obsidian counts 100. After
+//  - Pickaxes, shovels and axes: every block mined with one (when it's the right tool) counts (PICKAXE_WEAR); obsidian counts 100. After
 //    pickaxeMax (pickaxeBlocksBeforeDull for iron, 600; more for diamond / netherite, less for stone / wood) it's DULL: half its own mining speed (ToolForging.onBreakSpeed; the Efficiency enchantment still adds in
-//    full) until it's sharpened at a Pickaxe Whetstone (Toolsmiths make them).
+//    full) until it's sharpened at a Tool Whetstone (Toolsmiths make them).
 //  - Armor: every hit the wearer takes that armor would block counts, on every armor piece worn (ARMOR_DENTS). After
 //    armorMax (armorHitsBeforeDented for iron, 120; more for diamond / netherite, less for leather / gold) the piece is DENTED: half its armor and toughness until it's fixed at an Armor
 //    Whetstone (Armorsmiths make them).
@@ -57,12 +57,12 @@ public final class Wear {
         try {
             return CapitalismConfig.PICKAXE_BLOCKS_BEFORE_DULL.get();
         } catch (IllegalStateException notLoaded) {
-            return 600;
+            return 450;
         }
     }
 
-    // Blocks this pickaxe mines before it goes dull: wood 150, gold 210, stone 300, copper 360, iron 600, diamond 900,
-    // netherite 1200 (with the default config)
+    // Blocks this tool mines before it goes dull: wood 113, gold 158, stone 225, copper 270, iron 450, diamond 675,
+    // netherite 900 (with the default config)
     public static int pickaxeMax(ItemStack stack) {
         return Math.max(1, Math.round(ironPickaxeMax() * tier(stack)));
     }
@@ -75,8 +75,13 @@ public final class Wear {
         return Math.max(0, pickaxeMax(stack) - pickaxeUsed(stack));
     }
 
-    public static boolean isDullPickaxe(ItemStack stack) {
-        return isPickaxe(stack) && pickaxeLeft(stack) <= 0;
+    // Pickaxes, shovels and axes all wear down the same way (the "pickaxe" counter and limits are shared)
+    public static boolean wears(ItemStack stack) {
+        return ToolForging.isTool(stack);
+    }
+
+    public static boolean isDullTool(ItemStack stack) {
+        return wears(stack) && pickaxeLeft(stack) <= 0;
     }
 
     // ── Armor ──
@@ -90,12 +95,12 @@ public final class Wear {
         try {
             return CapitalismConfig.ARMOR_HITS_BEFORE_DENTED.get();
         } catch (IllegalStateException notLoaded) {
-            return 120;
+            return 90;
         }
     }
 
-    // Hits this piece takes before it's dented: leather 60, gold 72, chainmail / copper 90, iron 120, diamond 180,
-    // netherite 240 (with the default config)
+    // Hits this piece takes before it's dented: leather 45, gold 54, chainmail / copper 68, iron 90, diamond 135,
+    // netherite 180 (with the default config)
     public static int armorMax(ItemStack stack) {
         return Math.max(1, Math.round(ironArmorMax() * tier(stack)));
     }
@@ -131,23 +136,23 @@ public final class Wear {
         return isArmor(stack) && armorLeft(stack) <= 0;
     }
 
-    // A Pickaxe / Armor Whetstone: like new again
+    // A Tool / Armor Whetstone: like new again
     public static void restore(ItemStack stack) {
         stack.remove(ModComponents.PICKAXE_WEAR.get());
         stack.remove(ModComponents.ARMOR_DENTS.get());
     }
 
-    // A block mined with the right pickaxe: one closer to dull
+    // A block mined with the right tool (pickaxe, shovel or axe): one closer to dull
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBreak(BreakBlockEvent event) {
         if (event.isCanceled() || !(event.getPlayer() instanceof ServerPlayer player) || player.isCreative()) return;
         ItemStack pickaxe = player.getMainHandItem();
-        if (!isPickaxe(pickaxe) || isDullPickaxe(pickaxe) || pickaxe.getDestroySpeed(event.getState()) <= 1.0F) return;
+        if (!wears(pickaxe) || isDullTool(pickaxe) || pickaxe.getDestroySpeed(event.getState()) <= 1.0F) return;
         int used = Math.min(pickaxeMax(pickaxe), pickaxeUsed(pickaxe) + wearFor(event.getState()));
         pickaxe.set(ModComponents.PICKAXE_WEAR.get(), used);
         if (used >= pickaxeMax(pickaxe)) {
             player.sendSystemMessage(Component.literal("Your ").append(pickaxe.getHoverName())
-                .append(" has gone dull! It mines at half speed until it's sharpened at a Pickaxe Whetstone.")
+                .append(" has gone dull! It mines at half speed until it's sharpened at a Tool Whetstone.")
                 .withStyle(ChatFormatting.RED));
             player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.5F, 0.6F);
         }

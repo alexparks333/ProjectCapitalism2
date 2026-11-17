@@ -40,7 +40,18 @@ public final class DentForging {
 
     public static boolean isRepair(SmithTable kind, ItemStack weapon, ItemStack material) {
         return kind.repairs(weapon) && weapon.isDamaged()
-            && !material.isEmpty() && weapon.isValidRepairItem(plainMaterial(material));
+            && !material.isEmpty() && repairsWith(weapon, plainMaterial(material));
+    }
+
+    // Bows, crossbows and tridents are mended the vanilla way, with another one of the same (in the small slot); here at
+    // the Weaponsmith Table only. Everything else: whatever an anvil would take.
+    public static boolean repairsWith(ItemStack weapon, ItemStack material) {
+        if (combines(weapon)) return material.is(weapon.getItem());
+        return weapon.isValidRepairItem(material);
+    }
+
+    public static boolean combines(ItemStack weapon) {
+        return weapon.is(Items.BOW) || weapon.is(Items.CROSSBOW) || weapon.is(Items.TRIDENT);
     }
 
     public static State state(SmithTable kind, ItemStack weapon, ItemStack material, int lava, Player player) {
@@ -91,7 +102,10 @@ public final class DentForging {
 
     // Repairs the weapon for this many dents hit, with this material; returns the durability given back
     public static int repair(ItemStack weapon, int hits, ItemStack material) {
-        int full = Math.max(1, Math.round(weapon.getMaxDamage() * FULL_REPAIR_SHARE * strength(material)));
+        // another bow / crossbow / trident: what's left of it plus 12% (like vanilla combining); else 25% per material
+        int full = combines(weapon) && material.is(weapon.getItem())
+            ? Math.max(1, material.getMaxDamage() - material.getDamageValue() + Math.round(weapon.getMaxDamage() * 0.12F))
+            : Math.max(1, Math.round(weapon.getMaxDamage() * FULL_REPAIR_SHARE * strength(material)));
         int dents = dents(weapon);
         int fixed = Math.min(weapon.getDamageValue(), Math.round((float) full * Math.clamp(hits, 0, dents) / dents));
         weapon.setDamageValue(weapon.getDamageValue() - fixed);

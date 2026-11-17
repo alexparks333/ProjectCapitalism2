@@ -22,6 +22,9 @@ public class ModLootModifiers {
     public static final Supplier<MapCodec<com.alexh.capitalism.farmer.FarmHarvestModifier>> FARM_HARVEST =
         SERIALIZERS.register("farm_harvest", () -> com.alexh.capitalism.farmer.FarmHarvestModifier.CODEC);
 
+    // "type": "capitalism:no_bundles": bundles are taken out of all loot (core/NoBundles)
+    public static final Supplier<MapCodec<NoBundles>> NO_BUNDLES = SERIALIZERS.register("no_bundles", () -> NoBundles.CODEC);
+
     // "type": "capitalism:rare_catch": the rare fishing catches (fishing/RareCatchModifier, Fishing.md)
     public static final Supplier<MapCodec<com.alexh.capitalism.fishing.RareCatchModifier>> RARE_CATCH =
         SERIALIZERS.register("rare_catch", () -> com.alexh.capitalism.fishing.RareCatchModifier.CODEC);

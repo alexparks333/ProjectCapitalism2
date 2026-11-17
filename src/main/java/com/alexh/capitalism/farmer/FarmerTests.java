@@ -341,6 +341,16 @@ public final class FarmerTests {
         c.near(got[0] / (double) tries, MeatCut.SLAB_CHANCE, 0.025, "a Farmer's diamond sword: share of cows dropping a slab");
         c.near(got[1] / (double) got[0], 0.10, 0.03, "a tenth of beef slabs are Beef Ribs");
         c.check(slabs(c, other, cow, 400, MeatCut.BEEF_RIB)[0] == 0, "no slabs for anyone else");
+        // anyone but a Farmer: one piece of meat per animal (other drops untouched)
+        java.util.List<net.minecraft.world.entity.item.ItemEntity> drops = new java.util.ArrayList<>();
+        for (ItemStack s : java.util.List.of(new ItemStack(Items.BEEF, 3), new ItemStack(Items.LEATHER, 2)))
+            drops.add(new net.minecraft.world.entity.item.ItemEntity(c.level(), 0, 0, 0, s));
+        FarmerEvents.onMeatDrops(new net.neoforged.neoforge.event.entity.living.LivingDropsEvent(cow, c.level().damageSources().playerAttack(other), drops, true));
+        c.check(drops.size() == 2 && drops.get(0).getItem().getCount() == 1 && drops.get(1).getItem().getCount() == 2, "anyone else: one beef from a cow, leather untouched");
+        drops.get(0).getItem().setCount(3);
+        FarmerEvents.onMeatDrops(new net.neoforged.neoforge.event.entity.living.LivingDropsEvent(cow, c.level().damageSources().playerAttack(farmer), drops, true));
+        c.check(drops.get(0).getItem().getCount() == 3, "a Farmer keeps all the beef");
+        c.check(Items.COOKED_BEEF.components().get(net.minecraft.core.component.DataComponents.FOOD).nutrition() == 4, "ordinary steak fills half (4 of 8)");
         // a Bone in the sword's Molten Socket: +15% (30% in all)
         ItemStack boneSword = new ItemStack(Items.DIAMOND_SWORD);
         boneSword.set(com.alexh.capitalism.core.ModComponents.SOCKET.get(), com.alexh.capitalism.weaponsmith.Socketing.Gem.BONE.id);

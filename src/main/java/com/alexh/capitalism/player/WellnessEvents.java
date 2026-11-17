@@ -118,6 +118,15 @@ public class WellnessEvents {
         BodyTemperature.reset(player.getData(ModAttachments.WELLBEING.get()));
     }
 
+    // Dying is no way out of bad water: Water Purity carries over (the water bar itself comes back full, like food and
+    // health; the diet and the wellbeing meter, lost or bonus heart included, carry over through copyOnDeath).
+    @SubscribeEvent
+    public static void onClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) return;
+        float purity = event.getOriginal().getData(ModAttachments.THIRST.get()).getPurity();
+        if (purity >= 0f) event.getEntity().getData(ModAttachments.THIRST.get()).setPurity(purity);
+    }
+
     // Dying (or coming back from the End) resets your body heat to just right.
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {

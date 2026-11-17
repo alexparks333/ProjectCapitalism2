@@ -27,7 +27,7 @@ repairs, rerolls, sockets, salvage, wear). This page is the overview; the detail
 | | Everyone else / loot / trades | Weaponsmith / Toolsmith | Grail (1 in 150, smith only) |
 |---|---|---|---|
 | **Sword Sharpness** (damage %) | 60-110 | 78-120 | 135 |
-| **Sword Edge** (hits before dull) | 150-225 | 200-300 | 350 |
+| **Sword Edge** (hits before dull) | 113-169 | 150-225 | 263 |
 | **Tool Efficiency** (pickaxe, shovel, axe mining speed %) | 75-105 | 85-110 | 125 |
 
 - Rolled once: as the item leaves the crafting result slot, when loot is generated, or within a second of landing in an inventory. The result slot shows "?/max" (the best **you** can roll, Grails hidden).
@@ -38,8 +38,8 @@ repairs, rerolls, sockets, salvage, wear). This page is the overview; the detail
 | | Wears by | Lasts | Worn out | Fixed at |
 |---|---|---|---|---|
 | Sword | each hit | its rolled Edge | half its damage | **Sword Whetstone** (Weaponsmith) |
-| Pickaxe | each block (Obsidian = 100) | wood 150, gold 210, stone 300, copper 360, iron 600, diamond 900, netherite 1200 | half its mining speed | **Pickaxe Whetstone** (Toolsmith) |
-| Armor (each piece) | each hit you take that armor blocks | leather 60, gold 72, chain/copper 90, iron 120, diamond 180, netherite 240 | half its armor & toughness | **Armor Whetstone** (Armorsmith) |
+| Pickaxe, Shovel, Axe | each block (Obsidian = 100) | wood 113, gold 158, stone 225, copper 270, iron 450, diamond 675, netherite 900 | half its mining speed | **Tool Whetstone** (Toolsmith) |
+| Armor (each piece) | each hit you take that armor blocks | leather 45, gold 54, chain/copper 68, iron 90, diamond 135, netherite 180 | half its armor & toughness | **Armor Whetstone** (Armorsmith) |
 
 - Signs: red chat message, "Dull" / "Dented" in front of the name, red tooltip lines, the hairline bar under the durability bar turns grey.
 - Whetstones: Grindstone + Compacted Iron at that smith's table. **Only that smith can make one; anyone can place and use it** (right-click with the item and a Water Bucket in your inventory). **One use:** the Whetstone breaks (no drop) after it sharpens / un-dents something, so you need a new one each time (creative keeps it).
@@ -53,7 +53,7 @@ Weaponsmith Table (walnut), Toolsmith Table (oak), Armorsmith Table (crimson). S
 
 | Big + small | Weaponsmith | Toolsmith | Armorsmith | Cost |
 |---|---|---|---|---|
-| Grindstone + Compacted Iron | Sword Whetstone | Pickaxe Whetstone | Armor Whetstone | 250 lava |
+| Grindstone + Compacted Iron | Sword Whetstone | Tool Whetstone | Armor Whetstone | 250 lava |
 | Name Tag + Iron / Diamond / Netherite | Reroll Token | Reroll Token | Reroll Token | 100 lava |
 | Item + its Reroll Token | swords | pickaxes, shovels, axes | | 100 lava |
 | Item + Molten Socket | swords | pickaxes and axes | armor | 30 XP levels |

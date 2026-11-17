@@ -42,7 +42,7 @@ public final class Sharpness {
         try {
             return CapitalismConfig.SWORD_HITS_BEFORE_DULL.get();
         } catch (IllegalStateException notLoaded) {
-            return 200;
+            return 150;
         }
     }
 

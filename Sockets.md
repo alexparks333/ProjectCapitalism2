@@ -8,7 +8,7 @@ A rare, secret upgrade for **swords, pickaxes, axes and armor**. Code: `weaponsm
 - **Purple (epic) name**, survives lava. Its tooltip only says: *"Mysterious Item: Take it to a Smith of Your Choice to figure out what it does."*
 
 ## Setting it (smiths)
-- At the smith table for the item: **sword** at the Weaponsmith Table, **pickaxe or axe** at the Toolsmith Table, **armor piece** at the Armorsmith Table.
+- At the smith table for the item: **sword, mace or trident** (they take the sword gems) at the Weaponsmith Table, **pickaxe or axe** at the Toolsmith Table, **armor piece** at the Armorsmith Table.
 - Item in the **big slot**, Molten Socket in the **small slot**: the result is the **exact same item** (enchantments, name, stats, durability, wear all kept) with **one empty socket**.
 - Costs **30 XP levels** (`SOCKET_XP`), shown under the result box (green, red if you can't afford it; the result can't be taken without the levels). No lava. Creative is free.
 - **One socket per item.** A full set of armor = 4 sockets.

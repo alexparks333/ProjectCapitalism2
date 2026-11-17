@@ -28,15 +28,17 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 //  - Hot: you sweat (the water bar drips) and thirst drains x3 to x5, the hotter the faster.
 //
 // What pulls it (the target it slides toward):
-//  - Cold: rain falling on you (25%), water at night (20%), water in a snowy place (-5), a snowy place at night or while it
-//    snows (-5), powder snow (0%, fast). Water in a snowy place chills you twice as fast. Never in the Nether.
+//  - Cold: rain falling on you (25%), water at night (20%), water in a snowy place (-5 at night, 10 in the day), a snowy
+//    place at night or while it snows (-5) and in the daytime (40), standing on ice with no boots (-5), powder snow (0%, fast). Water in
+//    a snowy place and ice chill you twice as fast. Never in the Nether.
 //  - Wet: wearing any leather into water soaks it. Wet counts as still being in that water (cold at night / in snowy
 //    places, cooling somewhere hot) until you dry off: 5 seconds by a fire / fireplace (or in the Nether).
 //  - Warmth against the cold: a fire, lit campfire, lit furnace / smoker / blast furnace, lava or magma within 4 blocks,
 //    or a lit Blood Crystal Fireplace within 10 (it warms a whole base): back to 70%. A fire never makes you hot on
 //    its own. Leather: each piece keeps a quarter of the cold off (all 4: none gets through), but not when it's wet;
 //    in powder snow each piece softens it by 5%.
-//  - Heat: the Nether (95%), a desert or badlands in the daytime with no rain (88%). Water (or being
+//  - Heat: the Nether (95%), a desert or badlands in the daytime with no rain (88%), lava or open fire within 2 blocks
+//    (90%, anywhere). Water (or being
 //    wet) cools you there (65%). A fire nearby when you're already somewhere hot: burning (100%). Leather there: each
 //    piece adds a quarter of the way to 100% (all 4: burning).
 //  - Molten Sockets (weaponsmith/Socketing, any armor piece): Ice = you can't get hot, but the cold bites 10% harder;
@@ -70,7 +72,12 @@ public final class BodyTemperature {
     public static final float ICE_EXTRA_COLD = 10f;
     // water in a snowy place chills you this many times faster
     public static final float SNOWY_WATER_CHILL = 2f;
+    // a snowy place in the daytime, snowy water in the daytime, standing on ice (and how many times faster ice chills)
+    public static final float SNOWY_DAY_TARGET = 40f, SNOWY_WATER_DAY_TARGET = 10f, ICE_TARGET = -5f, ICE_CHILL = 2f;
     public static final int HEAT_RANGE = 4;
+    // right next to lava or open fire: you heat up (even somewhere cold)
+    public static final int CLOSE_HEAT_RANGE = 2;
+    public static final float CLOSE_HEAT_TARGET = 90f;
     public static final int FIREPLACE_RANGE = 10;
     // wet leather dries after this many seconds by a fire
     public static final int DRY_SECONDS = 5;
@@ -81,7 +88,7 @@ public final class BodyTemperature {
     // Why: what's acting on you right now (a bitmask, sent for the hover)
     public static final int R_RAIN = 1, R_COLD_WATER = 2, R_SNOWY = 4, R_POWDER_SNOW = 8, R_FIRE = 16, R_FIREPLACE = 32,
         R_LEATHER = 64, R_NETHER = 128, R_SUN = 256, R_WATER_COOLING = 512, R_WINTER_SURVIVAL = 1024, R_WET = 2048,
-        R_ICE = 4096, R_BLAZE = 8192, R_NO_HEAT = 16384, R_HOT_PEPPER = 32768, R_LEATHER_HOT = 65536, R_WARMED_UP = 131072, R_COOLED_OFF = 262144, R_HAND_WARMER = 524288;
+        R_ICE = 4096, R_BLAZE = 8192, R_NO_HEAT = 16384, R_HOT_PEPPER = 32768, R_LEATHER_HOT = 65536, R_WARMED_UP = 131072, R_COOLED_OFF = 262144, R_HAND_WARMER = 524288, R_ON_ICE = 1048576, R_CLOSE_HEAT = 2097152;
 
     // Freezing: never below this much health
     public static final float MIN_HEALTH = 2f;
@@ -158,13 +165,22 @@ public final class BodyTemperature {
                 reasons |= R_POWDER_SNOW;
             }
             if (wet && (level.isDarkOutside() || snowyPlace)) {
-                cold = Math.min(cold, snowyPlace ? SNOWY_WATER_TARGET : COLD_WATER_TARGET);
+                // snowy water: -5 at night, 10 in the day, both twice as fast
+                cold = Math.min(cold, !snowyPlace ? COLD_WATER_TARGET : level.isDarkOutside() ? SNOWY_WATER_TARGET : SNOWY_WATER_DAY_TARGET);
                 if (snowyPlace) chill = SNOWY_WATER_CHILL;
                 reasons |= R_COLD_WATER;
             }
-            if (snowyPlace && (level.isDarkOutside() || level.isRaining())) {
-                cold = Math.min(cold, SNOWY_TARGET);
+            if (snowyPlace) {
+                // a snowy place: -5 at night or while it snows, 40 in the daytime
+                cold = Math.min(cold, level.isDarkOutside() || level.isRaining() ? SNOWY_TARGET : SNOWY_DAY_TARGET);
                 reasons |= R_SNOWY;
+            }
+            if (player.onGround() && player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).isEmpty()
+                && player.getBlockStateOn().is(net.minecraft.tags.BlockTags.ICE)) {
+                // standing on ice (any kind) with no boots on: toward freezing, twice as fast
+                cold = Math.min(cold, ICE_TARGET);
+                chill = Math.max(chill, ICE_CHILL);
+                reasons |= R_ON_ICE;
             }
             if (level.isRainingAt(BlockPos.containing(player.getEyePosition()))) {
                 cold = Math.min(cold, RAIN_TARGET);
@@ -180,6 +196,11 @@ public final class BodyTemperature {
         } else if (!level.isRaining() && !level.isDarkOutside() && hotBiome(level, pos)) {
             hot = DESERT_SUN_TARGET;
             reasons |= R_SUN;
+        }
+        // right next to lava or open fire (within 2 blocks): that heats you up anywhere
+        if (!nether && closeToFlames(player)) {
+            hot = Math.max(hot, CLOSE_HEAT_TARGET);
+            reasons |= R_CLOSE_HEAT;
         }
 
         boolean isCold = cold < NORMAL;
@@ -231,7 +252,7 @@ public final class BodyTemperature {
             } else if (!nether && wet) {
                 hot = WATER_COOLED_TARGET;
                 reasons |= R_WATER_COOLING;
-            } else if (blaze || heated) {
+            } else if (blaze || (heated && (reasons & (R_SUN | R_NETHER)) != 0)) {   // (flames alone: 90, not burning)
                 hot = BURNING_TARGET;
                 if (blaze) reasons |= R_BLAZE;
             } else if (leather > 0) {
@@ -277,6 +298,18 @@ public final class BodyTemperature {
 
     // R_FIRE: a fire, lit campfire, lit furnace / smoker / blast furnace, lava or magma within HEAT_RANGE (2 up / down);
     // R_FIREPLACE: a lit Blood Crystal Fireplace within FIREPLACE_RANGE. 0 = neither.
+    // Lava or a fire block (flint and steel, a burning forest...) within CLOSE_HEAT_RANGE blocks
+    public static boolean closeToFlames(ServerPlayer player) {
+        Level level = player.level();
+        BlockPos pos = player.blockPosition();
+        int r = CLOSE_HEAT_RANGE;
+        for (BlockPos p : BlockPos.betweenClosed(pos.offset(-r, -1, -r), pos.offset(r, 2, r))) {
+            BlockState state = level.getBlockState(p);
+            if (state.is(BlockTags.FIRE) || state.is(Blocks.LAVA)) return true;
+        }
+        return false;
+    }
+
     public static int heatSource(ServerPlayer player) {
         Level level = player.level();
         BlockPos pos = player.blockPosition();

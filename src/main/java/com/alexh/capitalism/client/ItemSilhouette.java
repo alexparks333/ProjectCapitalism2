@@ -34,6 +34,14 @@ final class ItemSilhouette {
     private static List<int[]> read(Item item) {
         Identifier id = BuiltInRegistries.ITEM.getKey(item);
         List<int[]> solid = new ArrayList<>();
+        if (item == net.minecraft.world.item.Items.SHIELD) {
+            // a shield has no flat icon (it's a 3D model): a heater shield, wide at the top, coming to a point
+            for (int y = 2; y <= 14; y++) {
+                int inset = y < 10 ? 0 : (y - 9);
+                for (int x = 3 + inset; x <= 12 - inset; x++) solid.add(new int[] {x, y});
+            }
+            return solid;
+        }
         for (String suffix : new String[] {"", "_standby"}) {
             Identifier texture = id.withPath("textures/item/" + id.getPath() + suffix + ".png");
             Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(texture);

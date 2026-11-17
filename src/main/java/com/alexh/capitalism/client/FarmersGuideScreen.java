@@ -105,7 +105,7 @@ public class FarmersGuideScreen extends JobGuideScreen {
 
         // ── Information: Harvests ──
         list.add(info(HARVESTS, new ItemStack(Items.WHEAT), "Full Harvests", List.of(new ItemStack(Items.WHEAT), new ItemStack(Items.CARROT), new ItemStack(Items.POTATO)),
-            "Only you get the full harvest", "from ripe crops."));
+            "Only you get the full harvest", "from ripe crops, and the full", "meat from animals."));
         list.add(info(HARVESTS, new ItemStack(Items.WHEAT_SEEDS), "Everyone Else", List.of(new ItemStack(Items.WHEAT_SEEDS)),
             "Others get one crop and one seed back.", "Water, pistons and villagers too."));
         list.add(info(HARVESTS, scythe, "The Scythes", List.of(scythe, diamondScythe),
@@ -135,7 +135,7 @@ public class FarmersGuideScreen extends JobGuideScreen {
         list.add(info(BUTCHERING, knife, "Butcher Knives", List.of(knife, diamondKnifeIcon),
             "Every slab needs a knife on the table.", "Each slab dulls it, and it breaks", "when it's spent. The knife stays", "in the table between uses."));
         list.add(info(BUTCHERING, new ItemStack(ModItems.PICKAXE_WHETSTONE.get()), "Sharpening", List.of(knife, diamondKnifeIcon),
-            "A Pickaxe Whetstone sharpens", "a Butcher Knife like new.", "Toolsmiths make them."));
+            "A Tool Whetstone sharpens", "a Butcher Knife like new.", "Toolsmiths make them."));
         list.add(info(BUTCHERING, table, "Cutting a Slab", List.of(ribSlab, rib),
             "Put a slab and a knife on the table", "and press Cut Slab. Three steps:", "trim, scan, cut."));
         list.add(info(BUTCHERING, new ItemStack(Items.SHEARS), "1: Trim the Fat", List.of(),
@@ -177,6 +177,8 @@ public class FarmersGuideScreen extends JobGuideScreen {
         // ── Information: Player Debuffs (what everyone without the job can't do) ──
         list.add(info(DEBUFFS, new ItemStack(Items.WHEAT_SEEDS), "Small Harvests", List.of(),
             "Others only get one crop", "and one seed back from a ripe crop."));
+        list.add(info(DEBUFFS, new ItemStack(Items.BEEF), "Less Meat", List.of(),
+            "Others only get one piece", "of meat from an animal."));
         list.add(info(DEBUFFS, decomposter, "No Decomposter", List.of(),
             "Others can't make or use the Decomposter."));
         list.add(info(DEBUFFS, fertilizer, "No Fertilizer", List.of(),

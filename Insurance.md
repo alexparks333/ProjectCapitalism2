@@ -14,6 +14,7 @@ replaces it.
 
 ## The death tax
 - **Pity:** with **10 gold or less** to your name (everything the tax counts) there's no death tax at all (`DeathTax.PITY_NUGGETS`): "Death takes pity on you". Applies in The Purge too.
+- **Cap:** one death never costs more than **75 gold** (`DeathTax.MAX_TAX_NUGGETS`), whatever the rate and however much gold you have. Applies in The Purge too.
 - **A Phoenix Feather** (only from the Traveling Merchant, `Town.md`) in your offhand when you die: no death tax that time (even in The Purge), and it burns away (`DeathTax.died`).
 
 - **Plain PvP never brings the tax:** killed by another player (their hit, arrow or pet, or the last player to hurt you) outside The Purge, there's no death tax and no Purgatory (`DeathTax.byOtherPlayer`). In The Purge a player's kill is taxed and the tax goes to the killer (below). The killer gets only the tax, never the gold you drop: dropped gold is locked to its owner (`Economy.md` > Gold belongs to its owner).

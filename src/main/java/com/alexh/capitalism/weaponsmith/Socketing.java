@@ -173,7 +173,7 @@ public final class Socketing {
 
     // What kind of socketable item this is (SWORD, PICKAXE, AXE or the armor slot), 0 = none
     public static int kind(ItemStack item) {
-        if (Sharpness.isSword(item)) return SWORD;
+        if (isMeleeWeapon(item)) return SWORD;
         if (Wear.isPickaxe(item)) return PICKAXE;
         if (isAxe(item)) return AXE;
         if (!Wear.isArmor(item)) return 0;
@@ -193,6 +193,11 @@ public final class Socketing {
         return String.join(", ", names);
     }
 
+    // Swords, Maces and Tridents: socketed at the Weaponsmith Table, and they take the sword gems
+    public static boolean isMeleeWeapon(ItemStack item) {
+        return Sharpness.isSword(item) || item.is(Items.MACE) || item.is(Items.TRIDENT);
+    }
+
     public static boolean isAxe(ItemStack item) {
         return item.is(ItemTags.AXES);
     }
@@ -205,7 +210,7 @@ public final class Socketing {
     // Armorsmith Table
     public static boolean socketable(SmithTable kind, ItemStack item) {
         return switch (kind) {
-            case WEAPONSMITH -> Sharpness.isSword(item);
+            case WEAPONSMITH -> isMeleeWeapon(item);
             case TOOLSMITH -> Wear.isPickaxe(item) || isAxe(item);
             case ARMORSMITH -> Wear.isArmor(item);
         };
@@ -322,7 +327,7 @@ public final class Socketing {
         ItemStack item = event.getItemStack();
         Gem gem = gem(item);
         if (gem == Gem.REDSTONE) {
-            if (Sharpness.isSword(item)) {
+            if (isMeleeWeapon(item)) {
                 // 75% less time to recharge each swing = 4x attack speed (attack speed is hits per second)
                 event.addModifier(Attributes.ATTACK_SPEED, new AttributeModifier(id("socket_redstone"), SWORD_ATTACK_SPEED_BONUS,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL), EquipmentSlotGroup.MAINHAND);
@@ -371,7 +376,7 @@ public final class Socketing {
     public static void onCrit(CriticalHitEvent event) {
         if (!event.isCriticalHit()) return;
         ItemStack sword = event.getEntity().getMainHandItem();
-        if (!Sharpness.isSword(sword) || gem(sword) != Gem.QUARTZ) return;
+        if (!isMeleeWeapon(sword) || gem(sword) != Gem.QUARTZ) return;
         // vanilla crits are 1.5x: make it 2x (on top of anything else that changed it)
         event.setDamageMultiplier(event.getDamageMultiplier() * QUARTZ_CRIT_MULTIPLIER / 1.5F);
     }
@@ -385,7 +390,7 @@ public final class Socketing {
         if (player == null || event.getDroppedExperience() <= 0) return;
         double bonus = LAPIS_ARMOR_XP_BONUS * armorWith(player, Gem.LAPIS);
         ItemStack hand = player.getMainHandItem();
-        if (Sharpness.isSword(hand) && gem(hand) == Gem.LAPIS) bonus += LAPIS_XP_BONUS;
+        if (isMeleeWeapon(hand) && gem(hand) == Gem.LAPIS) bonus += LAPIS_XP_BONUS;
         if (bonus > 0) event.setDroppedExperience(scale(event.getDroppedExperience(), 1 + bonus, player.getRandom()));
     }
 
@@ -427,7 +432,7 @@ public final class Socketing {
         if (!BOSSES.contains(mob.getType())) {
             if (!DROPPED_BY.contains(mob.getType()) || !(event.getSource().getEntity() instanceof Player killer)) return;
             ItemStack weapon = killer.getMainHandItem();
-            float chance = Sharpness.isSword(weapon) && gem(weapon) == Gem.EMERALD ? EMERALD_DROP_CHANCE : DROP_CHANCE;
+            float chance = isMeleeWeapon(weapon) && gem(weapon) == Gem.EMERALD ? EMERALD_DROP_CHANCE : DROP_CHANCE;
             if (mob.getRandom().nextFloat() >= chance) return;
         }
         event.getDrops().add(new ItemEntity(mob.level(), mob.getX(), mob.getY(), mob.getZ(), new ItemStack(ModItems.MOLTEN_SOCKET.get())));

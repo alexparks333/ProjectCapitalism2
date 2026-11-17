@@ -31,6 +31,30 @@ public final class FarmerEvents {
             && FertilizerItem.sprout(level, event.getPos(), level.getRandom())) event.setResult(CropGrowEvent.Pre.Result.GROW);
     }
 
+    // An animal killed by anyone who isn't a Farmer (or by nobody: lava, fire, falling) drops just 1 piece of meat, like
+    // crops give everyone else 1 crop + 1 seed. Runs before Butchery Basics (SkillEffects), which can still add one.
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH)
+    public static void onMeatDrops(LivingDropsEvent event) {
+        if (!(event.getEntity() instanceof net.minecraft.world.entity.animal.Animal)) return;
+        if (event.getSource().getEntity() instanceof Player player
+            && (player.isCreative() || com.alexh.capitalism.occupation.JobEvents.has(player, com.alexh.capitalism.occupation.Job.FARMER))) return;
+        capMeat(event.getDrops());
+    }
+
+    // Leave exactly one piece of meat in the drops (the first meat stack shrinks to 1, any other meat goes)
+    public static void capMeat(java.util.Collection<ItemEntity> drops) {
+        boolean kept = false;
+        for (java.util.Iterator<ItemEntity> it = drops.iterator(); it.hasNext(); ) {
+            ItemStack stack = it.next().getItem();
+            if (!stack.is(net.minecraft.tags.ItemTags.MEAT)) continue;
+            if (kept) it.remove();
+            else {
+                stack.setCount(1);
+                kept = true;
+            }
+        }
+    }
+
     // A Farmer's kill with a butchering blade may drop a Meat Slab too (MeatCut)
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {

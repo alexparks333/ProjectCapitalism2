@@ -61,7 +61,7 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
         list.add(made(BLOCKS, table, "Toolsmith Table",
             HowToMake.crafting(iron, new ItemStack(Items.IRON_PICKAXE), iron, planks, new ItemStack(Items.SMITHING_TABLE), planks, planks, e, planks),
             "Toolsmiths only. Runs on Lava Buckets."));
-        list.add(made(BLOCKS, whetstone, "Pickaxe Whetstone", whetstoneRecipe,
+        list.add(made(BLOCKS, whetstone, "Tool Whetstone", whetstoneRecipe,
             "Sharpens a pickaxe. Needs a Water Bucket.", "Breaks after one use."));
 
         // ── Forge: Items ──
@@ -109,11 +109,11 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
         list.add(info(TOOLS, new ItemStack(Items.IRON_PICKAXE), "Efficiency", List.of(new ItemStack(Items.IRON_PICKAXE)),
             "Efficiency is how fast a tool mines.", "Tools you make come out faster."));
         list.add(info(TOOLS, new ItemStack(Items.STONE_PICKAXE), "Dull Pickaxes", List.of(new ItemStack(Items.IRON_PICKAXE), whetstone),
-            "Mining wears a pickaxe down. A dull one mines at half speed.", "Sharpen it at a Pickaxe Whetstone."));
+            "Mining wears pickaxes, shovels and axes", "down. Dull ones mine at half speed.", "Sharpen them at a Tool Whetstone."));
 
         // ── Information: Perks ──
         list.add(info(PERKS, new ItemStack(Items.NETHERITE_PICKAXE), "Toolsmith Only", List.of(new ItemStack(Items.NETHERITE_PICKAXE), whetstone),
-            "Only you can make Netherite tools and Pickaxe Whetstones."));
+            "Only you can make Netherite tools and Tool Whetstones."));
         list.add(info(PERKS, diamond, "Cheaper Tools", List.of(iron, diamond),
             "You make tools with plain ingots and diamonds.", "Others need twice as much."));
         list.add(info(PERKS, table, "Repairs", List.of(table),
@@ -129,7 +129,7 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
         list.add(info(DEBUFFS, new ItemStack(Items.NETHERITE_PICKAXE), "No Netherite", List.of(),
             "Others can't make Netherite Pickaxes, Shovels or Hoes."));
         list.add(info(DEBUFFS, table, "Table Locked", List.of(),
-            "Others can't use the Toolsmith Table", "or make Pickaxe Whetstones."));
+            "Others can't use the Toolsmith Table", "or make Tool Whetstones."));
         return list;
     }
 }

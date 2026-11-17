@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 // The Whetstones: a sharpening stone on a wooden stand, one per kind (Kind): the Sword Whetstone (Weaponsmiths make it),
-// the Pickaxe Whetstone (Toolsmiths) and the Armor Whetstone (Armorsmiths). Anyone can place and use them, so smiths
+// the Tool Whetstone (Toolsmiths) and the Armor Whetstone (Armorsmiths). Anyone can place and use them, so smiths
 // can sell them. Right-click one holding its kind of item, with a Water Bucket in your off hand or inventory: the bucket
 // is poured out (you keep the empty bucket), the item is like new again (Sharpness / Wear) and the Whetstone is worn
 // out: it breaks (no drop), so every sharpening takes a new one. Creative keeps it.
@@ -40,7 +40,7 @@ public class WhetstoneBlock extends Block {
 
     public enum Kind {
         SWORD("sword", "This sword is already razor sharp.", "Right-click with a sword to sharpen it. One use."),
-        PICKAXE("pickaxe", "This is already sharp.", "Right-click with a pickaxe or a Butcher Knife to sharpen it. One use."),
+        PICKAXE("tool", "This is already sharp.", "Right-click with a pickaxe, shovel, axe or Butcher Knife to sharpen it. One use."),
         ARMOR("piece of armor", "This armor has no dents.", "Right-click with a piece of armor to hammer out its dents. One use.");
 
         final String what;
@@ -56,7 +56,7 @@ public class WhetstoneBlock extends Block {
         boolean accepts(ItemStack stack) {
             return switch (this) {
                 case SWORD -> Sharpness.isSword(stack);
-                case PICKAXE -> Wear.isPickaxe(stack) || com.alexh.capitalism.farmer.ButcherKnifeItem.isKnife(stack);
+                case PICKAXE -> Wear.wears(stack) || com.alexh.capitalism.farmer.ButcherKnifeItem.isKnife(stack);
                 case ARMOR -> Wear.isArmor(stack);
             };
         }

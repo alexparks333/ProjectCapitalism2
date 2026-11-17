@@ -105,6 +105,9 @@ public final class DeathTax {
     // with this much gold or less (10 gold) to your name, no death tax at all
     public static final long PITY_NUGGETS = 10L * com.alexh.capitalism.economy.GoldMoney.INGOT;
 
+    // the most one death can cost: 75 gold
+    public static final long MAX_TAX_NUGGETS = 75L * com.alexh.capitalism.economy.GoldMoney.INGOT;
+
     public static long tax(long gold, int percent) {
         if (gold <= 0 || percent <= 0) return 0;
         return BigInteger.valueOf(gold).multiply(BigInteger.valueOf(percent)).divide(BigInteger.valueOf(100)).longValueExact();
@@ -124,6 +127,9 @@ public final class DeathTax {
         Insurance.Rate rate = Insurance.rateFor(player);
         long gold = taxableGold(player);
         long tax = tax(gold, rate.percent());
+        // never more than 75 gold in one death
+        boolean capped = tax > MAX_TAX_NUGGETS;
+        if (capped) tax = MAX_TAX_NUGGETS;
         ServerPlayer killer = Purge.killerFor(player, source);
         if (killer != null) countKill(server, killer);
         // killed by another player outside The Purge: plain PvP never brings the death tax or Purgatory
@@ -148,7 +154,8 @@ public final class DeathTax {
         if (tax > 0) {
             d.add(killer == null ? null : killer.getUUID(), killer == null ? "Death" : killer.getGameProfile().name(), tax);
             MutableComponent text = skull().append(Component.literal("Death takes its tax: " + rate.percent() + "% of all your gold (" + GoldMoney.format(gold)
-                + ": on you, in your Ender Chest and your containers; " + rate.why() + ") = " + GoldMoney.format(tax)).withStyle(ChatFormatting.WHITE));
+                + ": on you, in your Ender Chest and your containers; " + rate.why() + ") = " + GoldMoney.format(tax)
+                + (capped ? " (the most Death ever takes)" : "")).withStyle(ChatFormatting.WHITE));
             if (killer != null) text.append(Component.literal(", owed to " + killer.getGameProfile().name() + " (The Purge)").withStyle(ChatFormatting.RED));
             text.append(Component.literal(". You owe " + GoldMoney.format(d.owed()) + " in all: /pay death").withStyle(ChatFormatting.GRAY));
             player.sendSystemMessage(text);

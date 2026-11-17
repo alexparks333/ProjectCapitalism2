@@ -9,6 +9,8 @@ The Armorsmith makes armor. They make iron and diamond armor cheaper than anyone
 | **Iron / Diamond Chestplate** | 8 of the material (vanilla) | 8 **Compacted** of it (= 16) |
 | **Iron / Diamond Leggings** | 7 of the material (vanilla) | 7 **Compacted** of it (= 14) |
 | **Iron / Diamond Boots** | 4 of the material (vanilla) | 4 **Compacted** of it (= 8) |
+| **Shield** | 6 planks + 1 Iron Ingot (vanilla; a Weaponsmith can too) | 6 planks + 1 **Compacted Iron** |
+| **Repairing shields** | at the Armorsmith Table (planks), like a Weaponsmith at theirs | **no** |
 
 Creative mode ignores this. A **Crafter** block counts as "everyone else". An Armorsmith can still use Compacted metals too (it just costs them double).
 
@@ -34,7 +36,7 @@ Compacted Iron / Diamond: 2 of the material side by side in any crafting grid (s
 Like every smith table, this one salvages gear with a **Salvage Hammer** (gear + hammer -> Salvage button -> 1 of its material, 100 lava, 1 of 35 hammer uses). See `Weaponsmith.md` > Weaponsmith Table.
 
 ## Dented armor (wear)
-- Every hit you take that armor would block (not starving, falling into the void...) dents **every armor piece you wear** by one. How many hits a piece takes depends on its material: **leather 60, gold 72, chainmail / copper 90, iron 120, diamond 180, netherite 240** (`armorHitsBeforeDented` is the iron number; the rest scale from it, `Wear.tier`). Then the piece is **Dented**: half its armor and toughness, "Dented Iron Chestplate" in the tooltip, a red chat message.
-- Tooltip "Condition: 90/120 hits"; once hit, a thin bar along the bottom of the icon (under the durability bar).
+- Every hit you take that armor would block (not starving, falling into the void...) dents **every armor piece you wear** by one. How many hits a piece takes depends on its material: **leather 45, gold 54, chainmail / copper 68, iron 90, diamond 135, netherite 180** (`armorHitsBeforeDented` is the iron number; the rest scale from it, `Wear.tier`). Then the piece is **Dented**: half its armor and toughness, "Dented Iron Chestplate" in the tooltip, a red chat message.
+- Tooltip "Condition: 60/90 hits"; once hit, a half-pixel line in the black strip under the durability bar.
 - **Armor Whetstone** (dark basalt): made **only at the Armorsmith Table** (Grindstone + Compacted Iron, 250 lava). Anyone can place and use one: right-click it holding the armor piece, with a Water Bucket in your inventory, and its dents are hammered out. **One use:** it breaks after (no drop). Others have to buy them from an Armorsmith.
 - Code: `weaponsmith/Wear` (counting in `LivingIncomingDamageEvent`, half armor in `ItemAttributeModifierEvent`), `WhetstoneBlock` (kind ARMOR).

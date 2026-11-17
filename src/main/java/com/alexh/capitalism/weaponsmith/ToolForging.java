@@ -66,14 +66,14 @@ public final class ToolForging {
     }
 
     // Vanilla mining speed = (tool speed + Efficiency enchantment) x Haste, fatigue, water, jumping...
-    // Scale only the tool speed part, by its Efficiency and by half if it's a dull pickaxe (Wear):
+    // Scale only the tool speed part, by its Efficiency and by half if it's dull (Wear: pickaxes, shovels, axes):
     // new = original x (tool x factor + enchant) / (tool + enchant).
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
         ItemStack tool = player.getMainHandItem();
         if (!isTool(tool)) return;
-        float factor = efficiency(tool) / 100.0F * (Wear.isDullPickaxe(tool) ? 0.5F : 1.0F);
+        float factor = efficiency(tool) / 100.0F * (Wear.isDullTool(tool) ? 0.5F : 1.0F);
         if (factor == 1.0F) return;
         float toolSpeed = tool.getDestroySpeed(event.getState());
         if (toolSpeed <= 1.0F) return; // wrong tool for this block: no bonus either way

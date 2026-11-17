@@ -87,7 +87,7 @@ public final class SocketEffects {
         var source = event.getSource();
         // a melee hit with a socketed sword
         if (source.getEntity() instanceof LivingEntity attacker && source.getDirectEntity() == attacker
-            && Sharpness.isSword(attacker.getMainHandItem())) {
+            && Socketing.isMeleeWeapon(attacker.getMainHandItem())) {
             Gem gem = held(attacker);
             if (gem == Gem.PRISMARINE && attacker.isEyeInFluid(FluidTags.WATER)) event.setAmount(event.getAmount() * Socketing.PRISMARINE_UNDERWATER_HIT);
             if (gem == Gem.GHAST_TEAR && NETHER_MOBS.contains(victim.getType())) event.setAmount(event.getAmount() * Socketing.GHAST_TEAR_NETHER_DAMAGE);
@@ -129,7 +129,7 @@ public final class SocketEffects {
     public static void onKill(LivingDeathEvent event) {
         if (!(event.getSource().getEntity() instanceof Player killer) || killer == event.getEntity()) return;
         ItemStack weapon = killer.getMainHandItem();
-        if (Sharpness.isSword(weapon) && Socketing.gem(weapon) == Gem.AMETHYST) killer.heal(Socketing.AMETHYST_KILL_HEAL);
+        if (Socketing.isMeleeWeapon(weapon) && Socketing.gem(weapon) == Gem.AMETHYST) killer.heal(Socketing.AMETHYST_KILL_HEAL);
     }
 
     // Slime Ball boots: no fall damage

@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-// Server-wide passive debuff: ordinary (non-Gourmet) food only fills 2/3 as much, rounded up to the nearest
+// Server-wide passive debuff: ordinary (non-Gourmet) food only fills 1/2 as much, rounded up to the nearest
 // hunger point (half a drumstick). Saturation shrinks by the same amount. Gourmet food made by a Cook will carry its
 // own full-strength food values, so it isn't affected; so does vanilla food a Cook makes (CookMadeFood, fullFood()).
 //
@@ -25,45 +25,45 @@ public class FoodNerf {
     // vanilla food -> {vanilla hunger points, new hunger points}
     private static Map<Item, int[]> table() {
         Map<Item, int[]> t = new LinkedHashMap<>();
-        t.put(Items.APPLE, new int[]{4, 3});
-        t.put(Items.BAKED_POTATO, new int[]{5, 4});
+        t.put(Items.APPLE, new int[]{4, 2});
+        t.put(Items.BAKED_POTATO, new int[]{5, 3});
         t.put(Items.BEEF, new int[]{3, 2});
         t.put(Items.BEETROOT, new int[]{1, 1});
-        t.put(Items.BEETROOT_SOUP, new int[]{6, 4});
-        t.put(Items.BREAD, new int[]{5, 4});
+        t.put(Items.BEETROOT_SOUP, new int[]{6, 3});
+        t.put(Items.BREAD, new int[]{5, 3});
         t.put(Items.CARROT, new int[]{3, 2});
-        t.put(Items.CHICKEN, new int[]{2, 2});
-        t.put(Items.CHORUS_FRUIT, new int[]{4, 3});
-        t.put(Items.COD, new int[]{2, 2});
-        t.put(Items.COOKED_BEEF, new int[]{8, 6});
-        t.put(Items.COOKED_CHICKEN, new int[]{6, 4});
-        t.put(Items.COOKED_COD, new int[]{5, 4});
-        t.put(Items.COOKED_MUTTON, new int[]{6, 4});
-        t.put(Items.COOKED_PORKCHOP, new int[]{8, 6});
-        t.put(Items.COOKED_RABBIT, new int[]{5, 4});
-        t.put(Items.COOKED_SALMON, new int[]{6, 4});
-        t.put(Items.COOKIE, new int[]{2, 2});
+        t.put(Items.CHICKEN, new int[]{2, 1});
+        t.put(Items.CHORUS_FRUIT, new int[]{4, 2});
+        t.put(Items.COD, new int[]{2, 1});
+        t.put(Items.COOKED_BEEF, new int[]{8, 4});
+        t.put(Items.COOKED_CHICKEN, new int[]{6, 3});
+        t.put(Items.COOKED_COD, new int[]{5, 3});
+        t.put(Items.COOKED_MUTTON, new int[]{6, 3});
+        t.put(Items.COOKED_PORKCHOP, new int[]{8, 4});
+        t.put(Items.COOKED_RABBIT, new int[]{5, 3});
+        t.put(Items.COOKED_SALMON, new int[]{6, 3});
+        t.put(Items.COOKIE, new int[]{2, 1});
         t.put(Items.DRIED_KELP, new int[]{1, 1});
-        t.put(Items.ENCHANTED_GOLDEN_APPLE, new int[]{4, 3});
-        t.put(Items.GLOW_BERRIES, new int[]{2, 2});
-        t.put(Items.GOLDEN_APPLE, new int[]{4, 3});
-        t.put(Items.GOLDEN_CARROT, new int[]{6, 4});
-        t.put(Items.HONEY_BOTTLE, new int[]{6, 4});
-        t.put(Items.MELON_SLICE, new int[]{2, 2});
-        t.put(Items.MUSHROOM_STEW, new int[]{6, 4});
-        t.put(Items.MUTTON, new int[]{2, 2});
-        t.put(Items.POISONOUS_POTATO, new int[]{2, 2});
+        t.put(Items.ENCHANTED_GOLDEN_APPLE, new int[]{4, 2});
+        t.put(Items.GLOW_BERRIES, new int[]{2, 1});
+        t.put(Items.GOLDEN_APPLE, new int[]{4, 2});
+        t.put(Items.GOLDEN_CARROT, new int[]{6, 3});
+        t.put(Items.HONEY_BOTTLE, new int[]{6, 3});
+        t.put(Items.MELON_SLICE, new int[]{2, 1});
+        t.put(Items.MUSHROOM_STEW, new int[]{6, 3});
+        t.put(Items.MUTTON, new int[]{2, 1});
+        t.put(Items.POISONOUS_POTATO, new int[]{2, 1});
         t.put(Items.PORKCHOP, new int[]{3, 2});
         t.put(Items.POTATO, new int[]{1, 1});
         t.put(Items.PUFFERFISH, new int[]{1, 1});
-        t.put(Items.PUMPKIN_PIE, new int[]{8, 6});
+        t.put(Items.PUMPKIN_PIE, new int[]{8, 4});
         t.put(Items.RABBIT, new int[]{3, 2});
-        t.put(Items.RABBIT_STEW, new int[]{10, 7});
-        t.put(Items.ROTTEN_FLESH, new int[]{4, 3});
-        t.put(Items.SALMON, new int[]{2, 2});
-        t.put(Items.SPIDER_EYE, new int[]{2, 2});
-        t.put(Items.SUSPICIOUS_STEW, new int[]{6, 4});
-        t.put(Items.SWEET_BERRIES, new int[]{2, 2});
+        t.put(Items.RABBIT_STEW, new int[]{10, 5});
+        t.put(Items.ROTTEN_FLESH, new int[]{4, 2});
+        t.put(Items.SALMON, new int[]{2, 1});
+        t.put(Items.SPIDER_EYE, new int[]{2, 1});
+        t.put(Items.SUSPICIOUS_STEW, new int[]{6, 3});
+        t.put(Items.SWEET_BERRIES, new int[]{2, 1});
         t.put(Items.TROPICAL_FISH, new int[]{1, 1});
         return t;
     }

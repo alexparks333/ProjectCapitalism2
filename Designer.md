@@ -136,7 +136,7 @@ the item tag `capitalism:back_items` or it can't go in the Back slot (`designer_
   inventory (`client/BagPanel`: the bag's name on a brass plate, faint pictures of what goes in the empty slots, a
   tooltip saying what it holds). Potion effects move right to make room. The creative inventory doesn't show them.
 - The inventory always has `Bag.MAX_SLOTS` (16) bag slots after the Back slot (indexes 47-62); a bag uses its first ones.
-- Only what the bag holds fits; never another bag, a shulker box or a bundle.
+- Only what the bag holds fits; never another bag, a shulker box or a bundle. (Bundles are off on this server anyway: none in loot, and one that is crafted or reaches a player falls apart into Leather + String, `core/NoBundles`.)
 - Shift-clicking from the inventory puts what the bag holds into it first.
 - **A bag only holds things while it's worn.** The items live in the worn bag (`minecraft:container`), but when the bag
   comes off your back (picked out of the Back slot, swapped for something, shift-clicked off, thrown) everything in it

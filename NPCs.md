@@ -154,7 +154,7 @@ Every hostile mob spawns at a level, rolled once and saved with it: A mob that g
 
 | Level | Chance (config) | Health | Hits | Loot | XP | Mark |
 |---|---|---|---|---|---|---|
-| **I** | the rest | +20% (`hostileMobHealthMultiplier`) | normal | normal | normal | grey **I** |
+| **I** | the rest | +10% (`hostileMobHealthMultiplier`) | normal | normal | normal | grey **I** |
 | **II** | 30% (`level2MobChance`) | +30% | ×1.25 | normal | ×1.4 | gold **II** |
 | **Boss** | 10% (`bossMobChance`) | ×2 | ×1.75 | **double** | **double** | white **☠** (bigger) |
 

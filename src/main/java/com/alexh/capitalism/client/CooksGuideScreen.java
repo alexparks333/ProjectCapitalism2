@@ -460,7 +460,7 @@ public class CooksGuideScreen extends Screen {
         y += 11;
         if (how.grid() != null) {
             for (int i = 0; i < 9; i++) {
-                itemSlot(graphics, how.grid()[i], x + (i % 3) * 18, y + (i / 3) * 18, mouseX, mouseY);
+                itemSlot(graphics, how.gridAt(i, net.minecraft.util.Util.getMillis() / 1000L), x + (i % 3) * 18, y + (i / 3) * 18, mouseX, mouseY);
             }
             graphics.text(this.font, "->", x + 59, y + 23, TEXT, false);
             lockedSlot(graphics, result, x + 74, y + 18, false, mouseX, mouseY);

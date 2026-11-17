@@ -360,7 +360,7 @@ public class ClientModEvents {
             event.getToolTip().add(Component.literal("Sharpness: " + left + " / " + com.alexh.capitalism.farmer.ButcherKnifeItem.maxCuts(knife) + " slabs")
                 .withStyle(left <= 2 ? ChatFormatting.RED : ChatFormatting.AQUA));
             event.getToolTip().add(Component.literal("Spent (it breaks) on its last cut.").withStyle(ChatFormatting.GRAY));
-            event.getToolTip().add(Component.literal("Sharpen it at a Pickaxe Whetstone.").withStyle(ChatFormatting.DARK_GRAY));
+            event.getToolTip().add(Component.literal("Sharpen it at a Tool Whetstone.").withStyle(ChatFormatting.DARK_GRAY));
         }
         // Swords: their forged sharpness (weaponsmith/SwordForging) and how much edge is left (weaponsmith/Sharpness)
         if (Sharpness.isSword(event.getItemStack()) && !SwordForging.isForged(event.getItemStack())) {
@@ -413,10 +413,10 @@ public class ClientModEvents {
                 event.getToolTip().add(Component.literal("Efficiency: " + efficiency + " (" + efficiency + "% mining speed)").withStyle(tier));
             }
         }
-        // Pickaxes: blocks until dull; armor: hits until dented (weaponsmith/Wear)
+        // Pickaxes, shovels, axes: blocks until dull; armor: hits until dented (weaponsmith/Wear)
         ItemStack worn = event.getItemStack();
-        if (Wear.isPickaxe(worn) || Wear.isArmor(worn)) {
-            boolean pickaxe = Wear.isPickaxe(worn);
+        if (Wear.wears(worn) || Wear.isArmor(worn)) {
+            boolean pickaxe = Wear.wears(worn);
             int max = pickaxe ? Wear.pickaxeMax(worn) : Wear.armorMax(worn);
             int left = pickaxe ? Wear.pickaxeLeft(worn) : Wear.armorLeft(worn);
             if (left <= 0) {
@@ -425,7 +425,7 @@ public class ClientModEvents {
                         .append(event.getToolTip().get(0)));
                 }
                 event.getToolTip().add(Component.literal(pickaxe ? "Dull: half mining speed" : "Dented: half protection").withStyle(ChatFormatting.RED));
-                event.getToolTip().add(Component.literal(pickaxe ? "Sharpen it at a Pickaxe Whetstone" : "Fix it at an Armor Whetstone")
+                event.getToolTip().add(Component.literal(pickaxe ? "Sharpen it at a Tool Whetstone" : "Fix it at an Armor Whetstone")
                     .withStyle(ChatFormatting.DARK_GRAY));
             } else {
                 ChatFormatting color = left > max / 2 ? ChatFormatting.GREEN : left > max / 5 ? ChatFormatting.YELLOW : ChatFormatting.GOLD;
@@ -734,7 +734,7 @@ public class ClientModEvents {
     }
 
     // Also pickaxes (blocks until dull) and armor (hits until dented).
-    // A thin bar along the bottom of a sword's icon, under the durability bar: how sharp it still is (only once it's been used). Grey = dull.
+    // A thin line on a sword's icon, in the strip under the durability bar: how sharp it still is (only once it's been used). Grey = dull.
     @SubscribeEvent
     public static void onRegisterItemDecorations(RegisterItemDecorationsEvent event) {
         IItemDecorator edge = (graphics, font, stack, x, y) -> {
@@ -745,7 +745,7 @@ public class ClientModEvents {
                 if (Sharpness.hits(stack) == 0) return false;
                 max = Sharpness.maxHits(stack);
                 left = Sharpness.hitsLeft(stack);
-            } else if (Wear.isPickaxe(stack)) {
+            } else if (Wear.wears(stack)) {
                 if (Wear.pickaxeUsed(stack) == 0) return false;
                 max = Wear.pickaxeMax(stack);
                 left = Wear.pickaxeLeft(stack);
@@ -757,16 +757,16 @@ public class ClientModEvents {
                 return false;
             }
             int width = Math.round(13.0F * left / max);
-            // a hairline (half a GUI pixel tall) along the very bottom of the icon, under the durability bar (which uses
-            // the two rows above)
+            // a half-pixel line in row 14: the black strip under the durability bar's colour (row 13), so it covers none
+            // of the item and sits clear of the slot's frame
+            graphics.fill(x + 2, y + 14, x + 15, y + 15, 0xFF000000);
             graphics.pose().pushMatrix();
-            graphics.pose().translate(x, y + 15.5F);
+            graphics.pose().translate(x, y + 14.25F);
             graphics.pose().scale(1.0F, 0.5F);
             if (left <= 0) {
-                graphics.fill(2, 0, 15, 1, 0xFF6A6A6A);
+                graphics.fill(2, 0, 15, 1, 0xFF8A8A8A);
             } else {
-                int color = 0xFF000000 | net.minecraft.util.Mth.hsvToRgb(0.5F * left / max, 0.55F, 1.0F);
-                graphics.fill(2, 0, 15, 1, 0xFF000000);
+                int color = 0xFF000000 | net.minecraft.util.Mth.hsvToRgb(0.5F * left / max, 0.8F, 1.0F);
                 graphics.fill(2, 0, 2 + width, 1, color);
             }
             graphics.pose().popMatrix();

@@ -1061,7 +1061,7 @@ public final class PhotoShoot {
 
     // the General Guide (-Pphoto=guide): the Rules, each Wiki tab (its longest entry), Crafting; logs any entry too long
     static {
-        String[][] views = {{"RULES", null, "0"}, {"WIKI", "GOLD", "9"}, {"WIKI", "GOLD", "3"}, {"WIKI", "INSURANCE", "4"}, {"WIKI", "INSURANCE", "2"}, {"WIKI", "TOWN", "4"}, {"WIKI", "EVENTS", "0"},
+        String[][] views = {{"START", null, "0"}, {"START", null, "2"}, {"START", null, "3"}, {"START", null, "5"}, {"RULES", null, "0"}, {"WIKI", "GOLD", "9"}, {"WIKI", "GOLD", "3"}, {"WIKI", "INSURANCE", "4"}, {"WIKI", "INSURANCE", "2"}, {"WIKI", "TOWN", "4"}, {"WIKI", "EVENTS", "0"},
             {"WIKI", "JOBS", "0"}, {"WIKI", "JOBS", "3"}, {"WIKI", "WELLNESS", "4"}, {"WIKI", "WELLNESS", "5"}, {"CRAFTING", "BLOCKS", "0"}, {"CRAFTING", "ITEMS", "2"}};
         for (String[] v : views) {
             SHOTS.add(new Shot("guide_" + v[0].toLowerCase() + (v[1] == null ? "" : "_" + v[1].toLowerCase()) + "_" + v[2], c -> c.mc.execute(() -> {

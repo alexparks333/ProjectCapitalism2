@@ -42,6 +42,24 @@ public final class SocketTests {
         ItemStack sword = new ItemStack(Items.DIAMOND_SWORD), pick = new ItemStack(Items.DIAMOND_PICKAXE), axe = new ItemStack(Items.DIAMOND_AXE);
         ItemStack helmet = new ItemStack(Items.IRON_HELMET), boots = new ItemStack(Items.IRON_BOOTS), chest = new ItemStack(Items.IRON_CHESTPLATE);
         c.check(Socketing.socketable(SmithTable.TOOLSMITH, axe) && Socketing.socketable(SmithTable.TOOLSMITH, pick), "the Toolsmith Table sockets axes and pickaxes");
+        // maces and tridents: Weaponsmith Table, sword gems; Weaponsmith repairs: shields, bow + bow
+        ItemStack mace = new ItemStack(net.minecraft.world.item.Items.MACE);
+        ItemStack trident = new ItemStack(net.minecraft.world.item.Items.TRIDENT);
+        c.check(Socketing.socketable(SmithTable.WEAPONSMITH, mace) && Socketing.socketable(SmithTable.WEAPONSMITH, trident)
+            && Gem.QUARTZ.fits(mace) && Gem.QUARTZ.fits(trident), "maces and tridents take sword gems at the Weaponsmith Table");
+        ItemStack bow = new ItemStack(net.minecraft.world.item.Items.BOW);
+        bow.setDamageValue(200);
+        ItemStack shield = new ItemStack(net.minecraft.world.item.Items.SHIELD);
+        shield.setDamageValue(100);
+        c.check(DentForging.isRepair(SmithTable.WEAPONSMITH, bow, new ItemStack(net.minecraft.world.item.Items.BOW))
+            && !DentForging.isRepair(SmithTable.WEAPONSMITH, bow, new ItemStack(net.minecraft.world.item.Items.STRING)), "a bow mends with another bow");
+        c.check(DentForging.isRepair(SmithTable.WEAPONSMITH, shield, new ItemStack(net.minecraft.world.item.Items.OAK_PLANKS))
+            && DentForging.isRepair(SmithTable.ARMORSMITH, shield, new ItemStack(net.minecraft.world.item.Items.OAK_PLANKS))
+            && !SmithTable.TOOLSMITH.repairs(shield), "shields: Weaponsmith or Armorsmith Table, with planks");
+        // shovels and axes go dull too
+        ItemStack shovel = new ItemStack(net.minecraft.world.item.Items.IRON_SHOVEL);
+        shovel.set(com.alexh.capitalism.core.ModComponents.PICKAXE_WEAR.get(), Wear.pickaxeMax(shovel));
+        c.check(Wear.isDullTool(shovel) && Wear.pickaxeMax(shovel) == Wear.pickaxeMax(new ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE)), "an iron shovel goes dull like an iron pickaxe");
         c.check(Gem.DIAMOND.fits(axe) && !Gem.DIAMOND.fits(sword) && Gem.FLINT.fits(axe) && !Gem.FLINT.fits(pick), "Diamond and Flint: axes only");
         c.check(Gem.BLAZE.fits(axe) && Gem.BLAZE.fits(sword) && Gem.BLAZE.fits(pick) && Gem.BLAZE.fits(chest), "Blaze Powder: everything");
         c.check(Gem.PRISMARINE.fits(sword) && Gem.PRISMARINE.fits(pick) && Gem.PRISMARINE.fits(boots) && !Gem.PRISMARINE.fits(axe), "Prismarine: sword, pickaxe, armor");

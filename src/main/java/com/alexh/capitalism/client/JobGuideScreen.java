@@ -255,7 +255,7 @@ public class JobGuideScreen extends Screen {
             graphics.text(this.font, "How to make:", x, ty, c.textDim(), false);
             ty += 11;
             if (how.grid() != null) {
-                for (int i = 0; i < 9; i++) itemSlot(graphics, how.grid()[i], x + (i % 3) * 18, ty + (i / 3) * 18, mouseX, mouseY);
+                for (int i = 0; i < 9; i++) itemSlot(graphics, how.gridAt(i, net.minecraft.util.Util.getMillis() / 1000L), x + (i % 3) * 18, ty + (i / 3) * 18, mouseX, mouseY);
                 graphics.text(this.font, "->", x + 59, ty + 23, c.text(), false);
                 if (locked) {
                     slot(graphics, x + 74, ty + 18, false);

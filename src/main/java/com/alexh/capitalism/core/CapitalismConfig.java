@@ -174,10 +174,10 @@ public class CapitalismConfig {
         PURITY_LOW_WATER_LOSS = builder.comment("Max thirst lost while Water Purity is Low (2 = 1 drop)").defineInRange("purityLowWaterLoss", 2, 0, 18);
         PURITY_EXCELLENT_WATER_BONUS = builder.comment("Extra thirst bar room while Water Purity is Excellent (2 = 1 drop)").defineInRange("purityExcellentWaterBonus", 2, 0, 2);
         WELLBEING_HEALTH = builder.comment("Max health gained for keeping a Balanced diet and Good water a while (2 = 1 heart)").defineInRange("wellbeingHealth", 2.0, 0.0, 20.0);
-        WELLBEING_BUFF_MINUTES = builder.comment("Real minutes of a Balanced diet and Good water (starting from neutral) to earn the bonus heart").defineInRange("wellbeingBuffMinutes", 10, 1, 1440);
-        WELLBEING_DEBUFF_MINUTES = builder.comment("Real minutes of neglect (a food group at 0%, Low water, or body heat under 10 / over 95) starting from neutral before you lose a heart").defineInRange("wellbeingDebuffMinutes", 5, 1, 1440);
+        WELLBEING_BUFF_MINUTES = builder.comment("Real minutes of a Balanced diet and Good water (starting from neutral) to earn the bonus heart").defineInRange("wellbeingBuffMinutes", 5, 1, 1440);
+        WELLBEING_DEBUFF_MINUTES = builder.comment("Real minutes of neglect (a food group at 0%, Low water, or body heat under 10 / over 95) starting from neutral before you lose a heart").defineInRange("wellbeingDebuffMinutes", 3, 1, 1440);
         WELLBEING_GRACE_MINUTES = builder.comment("Real minutes a fully topped-up player keeps the bonus heart after the diet or water slips").defineInRange("wellbeingGraceMinutes", 5, 0, 1440);
-        WELLNESS_GRACE_SECONDS = builder.comment("Grace period: diet (food), purity (water) and wellbeing (hearts) bonuses/penalties only switch on or off after the new state has held this many seconds in a row").defineInRange("wellnessGraceSeconds", 180, 0, 3600);
+        WELLNESS_GRACE_SECONDS = builder.comment("Grace period: diet (food), purity (water) and wellbeing (hearts) bonuses/penalties only switch on or off after the new state has held this many seconds in a row").defineInRange("wellnessGraceSeconds", 60, 0, 3600);
         WELLNESS_FADE_SECONDS = builder.comment("Seconds a removed bonus heart / drumstick / water drop takes to fade away").defineInRange("wellnessFadeSeconds", 4, 1, 600);
         PURIFICATION_TICKS = builder.comment("Ticks for the Purification Table to purify one water bucket (20 ticks = 1 second)").defineInRange("purificationTicks", 400, 1, 72000);
         PURIFICATION_USES_PER_FUEL = builder.comment("Water buckets purified per piece of coal or charcoal").defineInRange("purificationUsesPerFuel", 2, 1, 64);
@@ -187,14 +187,14 @@ public class CapitalismConfig {
         builder.pop();
 
         builder.comment("Weaponsmith settings").push("weaponsmith");
-        SWORD_HITS_BEFORE_DULL = builder.comment("Edge (hits before dull) of a sword that somehow has no rolled stats yet. Crafted, looted and traded swords roll their own edge (weaponsmith/SwordForging); anyone sharpens them at a Sword Whetstone").defineInRange("swordHitsBeforeDull", 200, 1, 100000);
+        SWORD_HITS_BEFORE_DULL = builder.comment("Edge (hits before dull) of a sword that somehow has no rolled stats yet. Crafted, looted and traded swords roll their own edge (weaponsmith/SwordForging); anyone sharpens them at a Sword Whetstone").defineInRange("swordHitsBeforeDull", 150, 1, 100000);
         DULL_DAMAGE_MULTIPLIER = builder.comment("Damage a dull sword does, as a share of normal (0.5 = half)").defineInRange("dullDamageMultiplier", 0.5, 0.0, 1.0);
-        PICKAXE_BLOCKS_BEFORE_DULL = builder.comment("Blocks an IRON pickaxe mines before it goes dull (half mining speed until a Pickaxe Whetstone sharpens it). Other materials scale from this: wood x0.25, gold x0.35, stone x0.5, copper x0.6, diamond x1.5, netherite x2. Obsidian counts as 100 blocks").defineInRange("pickaxeBlocksBeforeDull", 600, 1, 1000000);
-        ARMOR_HITS_BEFORE_DENTED = builder.comment("Hits an IRON armor piece takes before it's dented (half protection until an Armor Whetstone fixes it). Other materials scale from this: leather x0.5, gold x0.6, chainmail and copper x0.75, diamond x1.5, netherite x2").defineInRange("armorHitsBeforeDented", 120, 1, 1000000);
+        PICKAXE_BLOCKS_BEFORE_DULL = builder.comment("Blocks an IRON pickaxe, shovel or axe mines before it goes dull (half mining speed until a Tool Whetstone sharpens it). Other materials scale from this: wood x0.25, gold x0.35, stone x0.5, copper x0.6, diamond x1.5, netherite x2. Obsidian counts as 100 blocks").defineInRange("pickaxeBlocksBeforeDull", 450, 1, 1000000);
+        ARMOR_HITS_BEFORE_DENTED = builder.comment("Hits an IRON armor piece takes before it's dented (half protection until an Armor Whetstone fixes it). Other materials scale from this: leather x0.5, gold x0.6, chainmail and copper x0.75, diamond x1.5, netherite x2").defineInRange("armorHitsBeforeDented", 90, 1, 1000000);
         builder.pop();
 
         builder.comment("Difficulty settings").push("difficulty");
-        HOSTILE_MOB_HEALTH_MULTIPLIER = builder.comment("Max health of Level I hostile mobs (most of them) and the real bosses (Wither, Ender Dragon, Warden, Elder Guardian), as a share of normal (1.2 = 20% more; 1.0 = vanilla). Mobs keep the value they spawned with").defineInRange("hostileMobHealthMultiplier", 1.2, 0.1, 100.0);
+        HOSTILE_MOB_HEALTH_MULTIPLIER = builder.comment("Max health of Level I hostile mobs (most of them) and the real bosses (Wither, Ender Dragon, Warden, Elder Guardian), as a share of normal (1.1 = 10% more; 1.0 = vanilla). Mobs keep the value they spawned with").defineInRange("hostileMobHealthMultiplier", 1.1, 0.1, 100.0);
         LEVEL2_MOB_CHANCE = builder.comment("Chance a hostile mob spawns as Level II: 30% more health, hits 1.25x as hard, 1.4x the XP (0.3 = 30%)").defineInRange("level2MobChance", 0.30, 0.0, 1.0);
         BOSS_MOB_CHANCE = builder.comment("Chance a hostile mob spawns as a Boss: twice the health, hits 1.75x as hard, double loot and XP; a Boss skeleton shoots 1.5x as fast, a zombie walks 1.5x as fast, a spider poisons (0.1 = 10%)").defineInRange("bossMobChance", 0.10, 0.0, 1.0);
         builder.pop();

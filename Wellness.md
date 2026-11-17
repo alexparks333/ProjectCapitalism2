@@ -14,6 +14,9 @@ Opened from the apple tab on the left of the survival inventory. Esc goes back t
 removed on purpose, with `/ail`, the badges, the lost-heart penalty and the skill books The Socialite and A Fresh
 Start). Don't bring them back. The cold and the heat are the body heat system below.
 
+**Dying resets nothing that matters:** Water Purity, the diet and the wellbeing meter (lost or bonus heart) carry over death
+(`WellnessEvents.onClone`, copyOnDeath). You come back with full health, food and water, and body heat at 70.
+
 ## Diet (Eco-style)
 - Four food groups: Vegetables, Fruit, Protein, Carbs. Eating adds the food's hunger points to its group(s) (`player/DietValues.java`). Unlisted foods don't count.
 - **Diet window:** the diet only remembers your last `dietWindowPoints` (130) diet points (1 hunger point eaten = 1 diet point, about 16 steaks). Past that, everything shrinks to make room. So one snack can only nudge the chart: a 2-point melon slice is about 1.5%. (Was 160; the user found that a little too slow.) (It used to fade 3% a minute, which left tiny totals where one melon slice swung 81% -> 54%.) `dietKeepPerMinute` is now 1.0 (no fading).
@@ -51,8 +54,8 @@ a second on the server (`player/BodyTemperature.java`, called from `WellnessEven
 reset to 70% on respawn. Creative/spectator: always 70%, no effects.
 - **Zones:** Freezing below 32%, Cold 32-50%, Normal 50-80% (70% is just right), Hot (burning) above 80%.
 - **What pulls it** (the target it slides toward; the coldest cold wins):
-  - Rain falling on you: 25 (a roof keeps you dry). Water at night: 20. Water in a snowy place: **-5** (x2 speed). A snowy
-    place at night or while it snows: **-5**. Powder snow: 0, fast. Never cold in the Nether. Body heat goes from -5 to 100.
+  - Rain falling on you: 25 (a roof keeps you dry). Water at night: 20. Water in a snowy place: **-5** at night, **10** in the day (x2 speed). A snowy
+    place at night or while it snows: **-5**, in the daytime: **40**. Standing on any ice with no boots on: **-5** (x2 speed). Powder snow: 0, fast. Lava or open fire within 2 blocks: **90** (anywhere; on top of a desert or the Nether: burning). Never cold in the Nether. Body heat goes from -5 to 100.
   - **Warmth against the cold:** a fire, lit campfire, lit furnace / smoker / blast furnace, lava or magma within 4
     blocks (2 up/down), or a lit **Blood Crystal Fireplace within 10 blocks** (it warms a 21x21x21 base): back to
     70%. **A fire never makes you hot on its own.** A whole night slept in the **Four-Poster Crimson Bed** (Blood
@@ -102,14 +105,14 @@ reset to 70% on respawn. Creative/spectator: always 70%, no effects.
   - **+2 hearts:** **Balanced** diet (86%+) + **Excellent** water purity (90%+).
 - **Wellbeing** (`player/WellbeingData.java`, saved, kept through death) is a timer in seconds, from -(debuff + grace) up to +(buff + grace) minutes:
   - Thriving (+1 or +2 level): +1 a second. Otherwise it drifts back toward 0 by 1 a second.
-  - Once it reaches `wellbeingBuffMinutes` (10 min of thriving) you get the bonus for your current level: +1 heart, or +2 with Excellent water. Dropping from Excellent to Good water later takes you down to +1 (after the grace period).
+  - Once it reaches `wellbeingBuffMinutes` (5 min of thriving) you get the bonus for your current level: +1 heart, or +2 with Excellent water. Dropping from Excellent to Good water later takes you down to +1 (after the grace period).
   - It can keep going `wellbeingGraceMinutes` (5 min) past that line, so a topped-up player keeps the bonus a while after something slips.
   - `wellbeingHealth` (2 = 1 heart) is the size of one heart; the big bonus is double.
   - On top of that, the 3-minute grace period (below) applies when crossing any line.
 - **Lost heart (neglect, `WellnessEvents.neglect`):** the meter can go below 0. Each second it drops by 1 for **a food
   group at 0%** (once the diet counts) **or Low water** (below Medium), and by 1 more for **body heat under 10 or over
   95** (freezing / burning). Neglect beats thriving: while anything drags it, it only goes down. At
-  `-wellbeingDebuffMinutes` (5 min of one kind, 2.5 min of both) you lose **1 heart**; it bottoms out `wellbeingGraceMinutes`
+  `-wellbeingDebuffMinutes` (3 min of one kind, 1.5 min of both) you lose **1 heart**; it bottoms out `wellbeingGraceMinutes`
   below that. Fix the cause and it drifts back up toward 0 (the heart comes back once it's above the line, after the
   grace period). The screen's bar has a red zone and just says "-1 heart" while it's gone: it **never says why** (on
   purpose: players have to watch their own diet, water and temperature; the guide only says neglect can cost a heart).
@@ -117,7 +120,7 @@ reset to 70% on respawn. Creative/spectator: always 70%, no effects.
 - The old diet heart (`capitalism:diet_health`) is removed automatically from anyone who still has it.
 
 ## Grace period & fading (all three)
-- **Grace period** (`wellnessGraceSeconds`, 180 = 3 minutes): the diet (food), purity (water) and wellbeing (hearts) bonuses/penalties only switch **on or off** after the new state has held for 3 minutes in a row. If it flips back before then, nothing changes (e.g. your diet drops to Okay, you eat a steak and it's Balanced again 2 minutes later: you keep the drumstick). Same when *becoming* Balanced/Excellent: you have to hold it 3 minutes before the bonus appears.
+- **Grace period** (`wellnessGraceSeconds`, 60 = 1 minute): the diet (food), purity (water) and wellbeing (hearts) bonuses/penalties only switch **on or off** after the new state has held for 1 minute in a row. If it flips back before then, nothing changes (e.g. your diet drops to Okay, you eat a steak and it's Balanced again 30 seconds later: you keep the drumstick). Same when *becoming* Balanced/Excellent: you have to hold it 1 minute before the bonus appears.
 - **The grace period is hidden:** no countdowns anywhere. While a heart change is waiting, the Wellbeing line just says what's coming ("+1 heart coming!", "Losing +1 heart...", "Recovering...", "-1 heart coming..."). The purity card and diet badge show only what's in effect.
 - **Fading** (`wellnessFadeSeconds`, 4): when a bonus is taken away (or a penalty starts), the extra heart / drumstick / drop drains away over ~4 seconds instead of vanishing. Gaining happens straight away once the grace period is over.
 - **No "hit by air":** Minecraft plays the got-hit camera shake whenever your health goes down, even from a lower max health. When a heart fades, the server tells the client the new health first (`QuietHealthPacket`), so vanilla's health update isn't a "drop" and there's no shake or flash.

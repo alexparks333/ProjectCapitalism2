@@ -42,12 +42,13 @@ public enum SmithTable {
         };
     }
 
-    // What the Forge button (the dent game) repairs here. Axes are both weapons and tools: either table.
+    // What the Forge button (the dent game) repairs here. Axes are both weapons and tools: either table. Shields: the
+    // Weaponsmith or the Armorsmith.
     public boolean repairs(ItemStack stack) {
         return switch (this) {
-            case WEAPONSMITH -> WeaponsmithTableRecipes.isWeapon(stack);
+            case WEAPONSMITH -> WeaponsmithTableRecipes.isWeapon(stack) || stack.is(net.minecraft.world.item.Items.SHIELD);
             case TOOLSMITH -> stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.SHOVELS) || stack.is(ItemTags.HOES) || stack.is(ItemTags.AXES);
-            case ARMORSMITH -> stack.is(ItemTags.HEAD_ARMOR) || stack.is(ItemTags.CHEST_ARMOR) || stack.is(ItemTags.LEG_ARMOR)
+            case ARMORSMITH -> stack.is(net.minecraft.world.item.Items.SHIELD) || stack.is(ItemTags.HEAD_ARMOR) || stack.is(ItemTags.CHEST_ARMOR) || stack.is(ItemTags.LEG_ARMOR)
                 || stack.is(ItemTags.FOOT_ARMOR);
         };
     }

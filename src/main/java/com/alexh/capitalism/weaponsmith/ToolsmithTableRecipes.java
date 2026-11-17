@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // What the Toolsmith Table makes: big slot + small slot, each recipe burns some lava (see WeaponsmithTableRecipes.Recipe).
-//  - Pickaxe Whetstone: Grindstone + Compacted Iron, 250 lava (sharpens dull pickaxes, see Wear).
+//  - Tool Whetstone: Grindstone + Compacted Iron, 250 lava (sharpens dull pickaxes, see Wear).
 //  - Reroll Tokens (rerollTokens(): every smith table makes them, see SmithTable.recipes).
 public final class ToolsmithTableRecipes {
 

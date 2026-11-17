@@ -90,6 +90,8 @@ public class ArmorsmithsGuideScreen extends JobGuideScreen {
         // ── Recipes: Crafting ──
         addArmor(list, iron, "Iron", Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS);
         addArmor(list, diamond, "Diamond", Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS);
+        list.add(made(CRAFTING, new ItemStack(Items.SHIELD), "Shield", HowToMake.crafting(planks, iron, planks, planks, planks, planks, e, planks, e),
+            "Others need Compacted Iron."));
         list.add(made(CRAFTING, hammer, "Salvage Hammer", HowToMake.crafting(iron, iron, iron, e, iron, e, e, iron, e),
             "Smiths only. Wears out."));
 
@@ -106,7 +108,7 @@ public class ArmorsmithsGuideScreen extends JobGuideScreen {
         list.add(info(PERKS, diamond, "Cheaper Armor", List.of(iron, diamond),
             "You make armor with plain ingots and diamonds.", "Others need twice as much."));
         list.add(info(PERKS, table, "Repairs", List.of(table),
-            "Only you can repair armor, at your Armorsmith Table."));
+            "Only you can repair armor and shields,", "at your Armorsmith Table."));
 
         // ── Information: Player Debuffs (what everyone without the job can't do) ──
         list.add(info(DEBUFFS, compactedIron, "Double Cost", List.of(),
