@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:composite",
+    "models": [
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_base" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_water_clean" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_bar_1" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_bar_2" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_bar_3" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_bar_4" },
+      { "type": "minecraft:model", "model": "capitalism:block/purification_table_bar_5" }
+    ]
+  }
+}

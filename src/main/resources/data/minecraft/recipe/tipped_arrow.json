@@ -1,0 +1,10 @@
+{
+  "type": "capitalism:job_imbue",
+  "job": "weaponsmith",
+  "material": "minecraft:arrow",
+  "result": {
+    "count": 8,
+    "id": "minecraft:tipped_arrow"
+  },
+  "source": "minecraft:lingering_potion"
+}

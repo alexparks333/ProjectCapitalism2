@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "#minecraft:coals",
+    "U": "minecraft:cauldron",
+    "S": "minecraft:stone"
+  },
+  "pattern": [
+    "ICI",
+    "IUI",
+    "SSS"
+  ],
+  "result": {
+    "id": "capitalism:purification_table"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.alexh.capitalism.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractFurnaceBlockEntityMixin",
+    "AbstractFurnaceMenuMixin",
+    "AbstractSkeletonMixin",
+    "BlazeAttackMixin",
+    "GhastAttackMixin",
+    "CraftingMenuMixin",
+    "EnchantmentMenuMixin",
+    "FishingRodItemMixin",
+    "FoodDataMixin",
+    "ItemMixin",
+    "InventoryMenuMixin",
+    "ItemCombinerMenuAccessor",
+    "LivingEntityMixin",
+    "PlayerMixin",
+    "PowderSnowBlockMixin",
+    "SmithingMenuMixin",
+    "MobPickUpMixin",
+    "HopperItemsMixin"
+  ],
+  "client": [
+    "SkyRendererMixin",
+    "AbstractContainerScreenAccessor",
+    "EffectsInInventoryMixin",
+    "CreativeBackSlotMixin",
+    "CreativeModeInventoryScreenMixin",
+    "InventoryScreenMixin",
+    "BiomeWinterMixin",
+    "EnchantmentScreenMixin",
+    "MinecraftMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

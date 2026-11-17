@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "XX"
+  ],
+  "result": {
+    "id": "capitalism:compacted_iron"
+  }
+}

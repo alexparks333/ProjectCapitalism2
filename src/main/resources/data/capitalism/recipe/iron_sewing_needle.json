@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "designer",
+  "category": "equipment",
+  "key": {
+    "D": "minecraft:iron_ingot",
+    "N": "minecraft:stick",
+    "S": "minecraft:string"
+  },
+  "pattern": [
+    "  D",
+    " N ",
+    "S  "
+  ],
+  "result": {
+    "id": "capitalism:iron_sewing_needle",
+    "count": 6
+  }
+}

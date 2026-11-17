@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "capitalism:compacted_diamond"
+  ],
+  "result": {
+    "count": 2,
+    "id": "minecraft:diamond"
+  }
+}

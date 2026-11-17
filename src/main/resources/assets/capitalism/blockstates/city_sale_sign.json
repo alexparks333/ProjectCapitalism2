@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "capitalism:block/city_sale_sign"
+    },
+    "facing=east": {
+      "model": "capitalism:block/city_sale_sign",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "capitalism:block/city_sale_sign",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "capitalism:block/city_sale_sign",
+      "y": 270
+    }
+  }
+}

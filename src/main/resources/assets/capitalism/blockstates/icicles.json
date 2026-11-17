@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "up=false": { "model": "capitalism:block/decor_empty" },
+    "up=true": [ { "model": "capitalism:block/icicles_a" }, { "model": "capitalism:block/icicles_a", "y": 90 }, { "model": "capitalism:block/icicles_a", "y": 180 }, { "model": "capitalism:block/icicles_a", "y": 270 }, { "model": "capitalism:block/icicles_b" }, { "model": "capitalism:block/icicles_b", "y": 90 }, { "model": "capitalism:block/icicles_b", "y": 180 }, { "model": "capitalism:block/icicles_b", "y": 270 } ]
+  }
+}

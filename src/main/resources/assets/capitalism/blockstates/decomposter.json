@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "full=false,working=false": { "model": "capitalism:block/decomposter_empty" },
+    "full=true,working=false": { "model": "capitalism:block/decomposter" },
+    "full=false,working=true": { "model": "capitalism:block/decomposter_working" },
+    "full=true,working=true": { "model": "capitalism:block/decomposter_working" }
+  }
+}

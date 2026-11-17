@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "capitalism:block/juicer_gears_spinning",
+    "gears": "capitalism:block/juicer_gears_spinning"
+  },
+  "elements": [
+    { "from": [3, 7, 3], "to": [13, 14, 3], "faces": { "north": { "uv": [3, 2, 13, 9], "texture": "#gears" } } }
+  ]
+}

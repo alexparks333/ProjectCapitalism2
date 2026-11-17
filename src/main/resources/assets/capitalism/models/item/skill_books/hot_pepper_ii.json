@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "capitalism:item/skill_books/hot_pepper",
+    "layer1": "capitalism:item/skill_books/numeral_ii"
+  }
+}

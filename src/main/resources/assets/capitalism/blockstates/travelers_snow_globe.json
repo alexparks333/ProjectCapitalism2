@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "capitalism:block/travelers_snow_globe" },
+    "facing=east": { "model": "capitalism:block/travelers_snow_globe", "y": 90 },
+    "facing=south": { "model": "capitalism:block/travelers_snow_globe", "y": 180 },
+    "facing=west": { "model": "capitalism:block/travelers_snow_globe", "y": 270 }
+  }
+}

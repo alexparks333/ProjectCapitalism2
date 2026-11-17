@@ -1,0 +1,773 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "running_club",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/running_club_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/running_club_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/running_club"
+          }
+        }
+      },
+      {
+        "when": "mining_monthly",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/mining_monthly_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/mining_monthly_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/mining_monthly"
+          }
+        }
+      },
+      {
+        "when": "swimming_lessons",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/swimming_lessons_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/swimming_lessons_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/swimming_lessons"
+          }
+        }
+      },
+      {
+        "when": "soft_landings",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/soft_landings_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/soft_landings_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/soft_landings"
+          }
+        }
+      },
+      {
+        "when": "holding_your_breath",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/holding_your_breath_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/holding_your_breath_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/holding_your_breath"
+          }
+        }
+      },
+      {
+        "when": "anglers_almanac",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/anglers_almanac_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/anglers_almanac_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/anglers_almanac"
+          }
+        }
+      },
+      {
+        "when": "water_rationing",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/water_rationing_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/water_rationing_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/water_rationing"
+          }
+        }
+      },
+      {
+        "when": "butchery_basics",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/butchery_basics_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/butchery_basics_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/butchery_basics"
+          }
+        }
+      },
+      {
+        "when": "lumberjacks_log",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/lumberjacks_log_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/lumberjacks_log_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/lumberjacks_log"
+          }
+        }
+      },
+      {
+        "when": "archery_drills",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/archery_drills_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/archery_drills_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/archery_drills"
+          }
+        }
+      },
+      {
+        "when": "horse_whispering",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/horse_whispering_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/horse_whispering_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/horse_whispering"
+          }
+        }
+      },
+      {
+        "when": "quiet_steps",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/quiet_steps_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/quiet_steps_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/quiet_steps"
+          }
+        }
+      },
+      {
+        "when": "fishermans_patience",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/fishermans_patience_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/fishermans_patience_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/fishermans_patience"
+          }
+        }
+      },
+      {
+        "when": "stonemasons_guide",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/stonemasons_guide_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/stonemasons_guide_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/stonemasons_guide"
+          }
+        }
+      },
+      {
+        "when": "first_aid_basics",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/first_aid_basics_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/first_aid_basics_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/first_aid_basics"
+          }
+        }
+      },
+      {
+        "when": "trail_rations",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/trail_rations_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/trail_rations_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/trail_rations"
+          }
+        }
+      },
+      {
+        "when": "beekeepers_notes",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/beekeepers_notes_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/beekeepers_notes_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/beekeepers_notes"
+          }
+        }
+      },
+      {
+        "when": "lucky_librarian",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/lucky_librarian_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/lucky_librarian_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/lucky_librarian"
+          }
+        }
+      },
+      {
+        "when": "merchants_ledger",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/merchants_ledger_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/merchants_ledger_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/merchants_ledger"
+          }
+        }
+      },
+      {
+        "when": "brawlers_handbook",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/brawlers_handbook_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/brawlers_handbook_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/brawlers_handbook"
+          }
+        }
+      },
+      {
+        "when": "reaching_further",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/reaching_further_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/reaching_further_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/reaching_further"
+          }
+        }
+      },
+      {
+        "when": "ice_in_the_pants",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/ice_in_the_pants_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/ice_in_the_pants_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/ice_in_the_pants"
+          }
+        }
+      },
+      {
+        "when": "hot_pepper",
+        "model": {
+          "type": "minecraft:select",
+          "property": "minecraft:custom_model_data",
+          "index": 1,
+          "cases": [
+            {
+              "when": "i",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/hot_pepper_i"
+              }
+            },
+            {
+              "when": "ii",
+              "model": {
+                "type": "minecraft:model",
+                "model": "capitalism:item/skill_books/hot_pepper_ii"
+              }
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "capitalism:item/skill_books/hot_pepper"
+          }
+        }
+      },
+      {
+        "when": "fresh_start",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/fresh_start"
+        }
+      },
+      {
+        "when": "iron_stomach",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/iron_stomach"
+        }
+      },
+      {
+        "when": "nimble",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/nimble"
+        }
+      },
+      {
+        "when": "night_owl",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/night_owl"
+        }
+      },
+      {
+        "when": "bookworm",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/bookworm"
+        }
+      },
+      {
+        "when": "steady_aim",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/steady_aim"
+        }
+      },
+      {
+        "when": "sure_footed",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/sure_footed"
+        }
+      },
+      {
+        "when": "light_footed",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/light_footed"
+        }
+      },
+      {
+        "when": "deep_lungs",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/deep_lungs"
+        }
+      },
+      {
+        "when": "born_miner",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/born_miner"
+        }
+      },
+      {
+        "when": "lucky_star",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/lucky_star"
+        }
+      },
+      {
+        "when": "fast_learner",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/fast_learner"
+        }
+      },
+      {
+        "when": "camel",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/camel"
+        }
+      },
+      {
+        "when": "used_to_hell",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/used_to_hell"
+        }
+      },
+      {
+        "when": "winter_survival",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/winter_survival"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "capitalism:item/skill_book",
+      "tints": [
+        {
+          "type": "minecraft:custom_model_data",
+          "index": 0,
+          "default": 9067346
+        },
+        {
+          "type": "minecraft:constant",
+          "value": 16777215
+        }
+      ]
+    }
+  }
+}

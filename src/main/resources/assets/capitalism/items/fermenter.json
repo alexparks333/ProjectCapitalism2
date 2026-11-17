@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "capitalism:item/fermenter_block",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 14721088
+      }
+    ]
+  }
+}

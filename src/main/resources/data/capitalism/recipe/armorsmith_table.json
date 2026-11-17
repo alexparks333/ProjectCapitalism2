@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:iron_chestplate",
+    "M": "minecraft:smithing_table",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "ISI",
+    "PMP",
+    "P P"
+  ],
+  "result": {
+    "id": "capitalism:armorsmith_table"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": "minecraft:prismarine_shard",
+    "P": "minecraft:paper"
+  },
+  "pattern": [
+    "XXX",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:osmosis_filter"
+  }
+}

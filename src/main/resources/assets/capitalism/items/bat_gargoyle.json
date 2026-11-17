@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "capitalism:item/blood_decor",
+    "model": {
+      "type": "capitalism:blood_decor",
+      "decor": "bat_gargoyle"
+    }
+  }
+}

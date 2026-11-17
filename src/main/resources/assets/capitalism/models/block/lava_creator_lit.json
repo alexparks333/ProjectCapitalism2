@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "capitalism:block/lava_creator_top_lit",
+    "side": "capitalism:block/lava_creator_side",
+    "bottom": "minecraft:block/polished_blackstone"
+  }
+}

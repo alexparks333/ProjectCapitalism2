@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "capitalism:block/sink" },
+    "facing=east":  { "model": "capitalism:block/sink", "y": 90 },
+    "facing=south": { "model": "capitalism:block/sink", "y": 180 },
+    "facing=west":  { "model": "capitalism:block/sink", "y": 270 }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "capitalism:purge_switch"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/purge_switch"
+}

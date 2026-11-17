@@ -1,0 +1,46 @@
+{
+    "type":  "minecraft:block",
+    "pools":  [
+                  {
+                      "condition":  {
+                                        "type":  "minecraft:survives_explosion"
+                                    },
+                      "entries":  [
+                                      {
+                                          "type":  "minecraft:alternatives",
+                                          "children":  [
+                                                           {
+                                                               "type":  "minecraft:item",
+                                                               "name":  "capitalism:rotten_meat",
+                                                               "condition":  {
+                                                                                 "type":  "minecraft:match_block",
+                                                                                 "blocks":  "capitalism:chicken_breast_slab",
+                                                                                 "state":  {
+                                                                                               "rotten":  "true"
+                                                                                           }
+                                                                             },
+                                                               "modifier":  {
+                                                                                "type":  "minecraft:set_count",
+                                                                                "count":  3
+                                                                            }
+                                                           },
+                                                           {
+                                                               "type":  "minecraft:item",
+                                                               "name":  "capitalism:chicken_breast_slab",
+                                                               "modifier":  {
+                                                                                "type":  "minecraft:copy_components",
+                                                                                "source":  "block_entity",
+                                                                                "include":  [
+                                                                                                "capitalism:rots_at",
+                                                                                                "capitalism:lean"
+                                                                                            ]
+                                                                            }
+                                                           }
+                                                       ]
+                                      }
+                                  ],
+                      "rolls":  1
+                  }
+              ],
+    "random_sequence":  "capitalism:blocks/chicken_breast_slab"
+}

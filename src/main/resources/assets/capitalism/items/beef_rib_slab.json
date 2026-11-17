@@ -1,0 +1,6 @@
+{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "capitalism:block/beef_rib_slab"
+              }
+}

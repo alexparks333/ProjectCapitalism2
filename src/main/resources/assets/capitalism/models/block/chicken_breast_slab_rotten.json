@@ -1,0 +1,8 @@
+{
+    "parent":  "capitalism:block/chicken_breast_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/chicken_breast_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/chicken_breast_meat_rotten",
+                     "skin":  "capitalism:block/meat_slab/chicken_breast_skin_rotten"
+                 }
+}

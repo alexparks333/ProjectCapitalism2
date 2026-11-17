@@ -1,0 +1,6 @@
+{
+  "parent": "capitalism:block/oven",
+  "textures": {
+    "front": "capitalism:block/oven_front_on"
+  }
+}

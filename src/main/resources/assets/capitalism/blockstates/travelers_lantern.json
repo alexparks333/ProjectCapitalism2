@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "capitalism:block/travelers_lantern" },
+    "lit=true": { "model": "capitalism:block/travelers_lantern_lit" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "pet_trainer",
+  "category": "misc",
+  "key": {
+    "M": "capitalism:compacted_iron",
+    "H": "minecraft:hay_block"
+  },
+  "pattern": [
+    "M M",
+    "MHM",
+    "MMM"
+  ],
+  "result": {
+    "id": "capitalism:large_food_trough"
+  }
+}

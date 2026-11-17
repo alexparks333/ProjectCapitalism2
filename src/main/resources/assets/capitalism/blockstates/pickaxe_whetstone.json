@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "capitalism:block/pickaxe_whetstone" },
+    "facing=east":  { "model": "capitalism:block/pickaxe_whetstone", "y": 90 },
+    "facing=south": { "model": "capitalism:block/pickaxe_whetstone", "y": 180 },
+    "facing=west":  { "model": "capitalism:block/pickaxe_whetstone", "y": 270 }
+  }
+}

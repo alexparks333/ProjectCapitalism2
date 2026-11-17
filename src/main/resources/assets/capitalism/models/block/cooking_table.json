@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/spruce_planks",
+    "front": "capitalism:block/cooking_front",
+    "wood": "minecraft:block/spruce_planks",
+    "counter": "minecraft:block/smooth_stone",
+    "counter_side": "minecraft:block/smooth_stone_slab_side",
+    "board": "minecraft:block/stripped_birch_log",
+    "carrot": "minecraft:block/orange_concrete",
+    "leaf": "minecraft:block/lime_concrete",
+    "plate": "capitalism:block/plate",
+    "steel": "minecraft:block/iron_block",
+    "handle": "minecraft:block/dark_oak_planks"
+  },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 14, 16],
+      "faces": {
+        "north": { "uv": [0, 2, 16, 16], "texture": "#front" },
+        "south": { "uv": [0, 2, 16, 16], "texture": "#wood" },
+        "east": { "uv": [0, 2, 16, 16], "texture": "#wood" },
+        "west": { "uv": [0, 2, 16, 16], "texture": "#wood" },
+        "down": { "uv": [0, 0, 16, 16], "texture": "#wood" }
+      } },
+    { "from": [0,14,0], "to": [16,16,16], "faces": { "north": { "uv": [0, 0, 16, 2], "texture": "#counter_side" }, "south": { "uv": [0, 0, 16, 2], "texture": "#counter_side" }, "east": { "uv": [0, 0, 16, 2], "texture": "#counter_side" }, "west": { "uv": [0, 0, 16, 2], "texture": "#counter_side" }, "up": { "uv": [0, 0, 16, 16], "texture": "#counter" }, "down": { "uv": [0, 0, 16, 16], "texture": "#counter_side" } } },
+    { "from": [1.5,16,3], "to": [8,16.5,12], "faces": { "north": { "uv": [0, 0, 6.5, 0.5], "texture": "#board" }, "east": { "uv": [0, 0, 9, 0.5], "texture": "#board" }, "south": { "uv": [0, 0, 6.5, 0.5], "texture": "#board" }, "west": { "uv": [0, 0, 9, 0.5], "texture": "#board" }, "up": { "uv": [0, 0, 6.5, 9], "texture": "#board" } } },
+    { "from": [3,16.5,5], "to": [7,17,6], "faces": { "north": { "uv": [0, 0, 4, 0.5], "texture": "#carrot" }, "east": { "uv": [0, 0, 1, 0.5], "texture": "#carrot" }, "south": { "uv": [0, 0, 4, 0.5], "texture": "#carrot" }, "west": { "uv": [0, 0, 1, 0.5], "texture": "#carrot" }, "up": { "uv": [0, 0, 4, 1], "texture": "#carrot" }, "down": { "uv": [0, 0, 4, 1], "texture": "#carrot" } } },
+    { "from": [7,16.5,5], "to": [7.8,17,6], "faces": { "north": { "uv": [0, 0, 0.8, 0.5], "texture": "#leaf" }, "east": { "uv": [0, 0, 1, 0.5], "texture": "#leaf" }, "south": { "uv": [0, 0, 0.8, 0.5], "texture": "#leaf" }, "west": { "uv": [0, 0, 1, 0.5], "texture": "#leaf" }, "up": { "uv": [0, 0, 0.8, 1], "texture": "#leaf" }, "down": { "uv": [0, 0, 0.8, 1], "texture": "#leaf" } } },
+    { "from": [3,16.5,8], "to": [6,17,9], "faces": { "north": { "uv": [0, 0, 3, 0.5], "texture": "#carrot" }, "east": { "uv": [0, 0, 1, 0.5], "texture": "#carrot" }, "south": { "uv": [0, 0, 3, 0.5], "texture": "#carrot" }, "west": { "uv": [0, 0, 1, 0.5], "texture": "#carrot" }, "up": { "uv": [0, 0, 3, 1], "texture": "#carrot" }, "down": { "uv": [0, 0, 3, 1], "texture": "#carrot" } } },
+    { "from": [2,16.5,10], "to": [6.5,16.7,11], "faces": { "north": { "uv": [0, 0, 4.5, 0.2], "texture": "#steel" }, "east": { "uv": [0, 0, 1, 0.2], "texture": "#steel" }, "south": { "uv": [0, 0, 4.5, 0.2], "texture": "#steel" }, "west": { "uv": [0, 0, 1, 0.2], "texture": "#steel" }, "up": { "uv": [0, 0, 4.5, 1], "texture": "#steel" } } },
+    { "from": [6.5,16.5,10], "to": [8.5,16.9,11], "faces": { "north": { "uv": [0, 0, 2, 0.4], "texture": "#handle" }, "east": { "uv": [0, 0, 1, 0.4], "texture": "#handle" }, "south": { "uv": [0, 0, 2, 0.4], "texture": "#handle" }, "west": { "uv": [0, 0, 1, 0.4], "texture": "#handle" }, "up": { "uv": [0, 0, 2, 1], "texture": "#handle" } } },
+    { "from": [9,16,4], "to": [15,16.4,10], "faces": { "north": { "uv": [0, 0, 6, 0.4], "texture": "#plate" }, "east": { "uv": [0, 0, 6, 0.4], "texture": "#plate" }, "south": { "uv": [0, 0, 6, 0.4], "texture": "#plate" }, "west": { "uv": [0, 0, 6, 0.4], "texture": "#plate" }, "up": { "uv": [0, 0, 6, 6], "texture": "#plate" }, "down": { "uv": [0, 0, 6, 6], "texture": "#plate" } } }
+  ]
+}

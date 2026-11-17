@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "capitalism:small_food_trough"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/small_food_trough"
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "K": "minecraft:dried_kelp",
+    "C": "minecraft:cod",
+    "P": "minecraft:bamboo_planks",
+    "B": "minecraft:bamboo"
+  },
+  "pattern": [
+    "KCK",
+    "PPP",
+    "B B"
+  ],
+  "result": {
+    "id": "capitalism:sushi_table"
+  }
+}

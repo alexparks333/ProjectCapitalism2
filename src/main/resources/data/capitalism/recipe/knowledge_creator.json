@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "librarian",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:book",
+    "F": "minecraft:feather",
+    "W": "#minecraft:planks",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "BFB",
+    "WWW",
+    "III"
+  ],
+  "result": {
+    "id": "capitalism:knowledge_creator"
+  }
+}

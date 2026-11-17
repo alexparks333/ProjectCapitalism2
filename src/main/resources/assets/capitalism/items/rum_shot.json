@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "capitalism:item/shot_glass",
+    "tints": [
+      { "type": "minecraft:constant", "value": 12088364 }
+    ]
+  }
+}

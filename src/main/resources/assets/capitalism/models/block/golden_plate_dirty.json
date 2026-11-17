@@ -1,0 +1,6 @@
+{
+  "parent": "capitalism:block/golden_plate",
+  "textures": {
+    "top": "capitalism:block/golden_plate_dirty"
+  }
+}

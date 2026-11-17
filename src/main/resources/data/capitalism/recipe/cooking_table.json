@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": "minecraft:smooth_stone_slab",
+    "T": "minecraft:crafting_table",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "SSS",
+    "PTP",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:cooking_table"
+  }
+}

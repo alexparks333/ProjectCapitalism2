@@ -1,0 +1,99 @@
+{
+  "render_type": "minecraft:translucent",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "capitalism:block/snow_globe_base",
+    "base": "capitalism:block/snow_globe_base",
+    "gold": "capitalism:block/snow_globe_gold",
+    "snow": "capitalism:block/snow_globe_snow",
+    "front": "capitalism:block/snow_globe_cabin_front",
+    "side": "capitalism:block/snow_globe_cabin_side",
+    "roof": "capitalism:block/snow_globe_roof",
+    "chimney": "capitalism:block/snow_globe_chimney",
+    "pine": "capitalism:block/snow_globe_pine",
+    "trunk": "capitalism:block/snow_globe_trunk",
+    "snowman": "capitalism:block/snow_globe_snowman",
+    "face": "capitalism:block/snow_globe_snowman_face",
+    "glass": "capitalism:block/snow_globe_glass"
+  },
+  "elements": [
+    { "__comment": "the polished base, a gold band round its top",
+      "from": [2, 0, 2], "to": [14, 3, 14], "faces": {
+      "north": {"uv": [0, 0, 16, 4], "texture": "#base"}, "south": {"uv": [0, 0, 16, 4], "texture": "#base"},
+      "east": {"uv": [0, 0, 16, 4], "texture": "#base"}, "west": {"uv": [0, 0, 16, 4], "texture": "#base"},
+      "up": {"texture": "#base"}, "down": {"texture": "#base"} } },
+    { "from": [2.25, 3, 2.25], "to": [13.75, 3.5, 13.75], "faces": {
+      "north": {"uv": [0, 0, 16, 1], "texture": "#gold"}, "south": {"uv": [0, 0, 16, 1], "texture": "#gold"},
+      "east": {"uv": [0, 0, 16, 1], "texture": "#gold"}, "west": {"uv": [0, 0, 16, 1], "texture": "#gold"},
+      "up": {"texture": "#gold"} } },
+    { "__comment": "the snowy ground, a drift in the middle",
+      "from": [3, 3.5, 3], "to": [13, 4.5, 13], "faces": {
+      "north": {"texture": "#snow"}, "south": {"texture": "#snow"}, "east": {"texture": "#snow"}, "west": {"texture": "#snow"},
+      "up": {"texture": "#snow"} } },
+    { "from": [4, 4.5, 4], "to": [12, 5, 12], "faces": {
+      "north": {"texture": "#snow"}, "south": {"texture": "#snow"}, "east": {"texture": "#snow"}, "west": {"texture": "#snow"},
+      "up": {"texture": "#snow"} } },
+    { "__comment": "the log cabin: door and lit windows in front",
+      "from": [4.5, 5, 6.5], "to": [8.5, 9, 10], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#side"}, "south": {"uv": [0, 0, 16, 16], "texture": "#front"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#side"}, "west": {"uv": [0, 0, 16, 16], "texture": "#side"} } },
+    { "__comment": "the roof, snow on top, overhanging",
+      "from": [4, 9, 6], "to": [9, 10, 10.5], "faces": {
+      "north": {"uv": [0, 12, 16, 16], "texture": "#roof"}, "south": {"uv": [0, 12, 16, 16], "texture": "#roof"},
+      "east": {"uv": [0, 12, 16, 16], "texture": "#roof"}, "west": {"uv": [0, 12, 16, 16], "texture": "#roof"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#roof"}, "down": {"uv": [0, 0, 16, 16], "texture": "#trunk"} } },
+    { "from": [4.75, 10, 6.75], "to": [8.25, 11, 9.75], "faces": {
+      "north": {"uv": [0, 12, 16, 16], "texture": "#roof"}, "south": {"uv": [0, 12, 16, 16], "texture": "#roof"},
+      "east": {"uv": [0, 12, 16, 16], "texture": "#roof"}, "west": {"uv": [0, 12, 16, 16], "texture": "#roof"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#roof"} } },
+    { "from": [7, 9.5, 8.5], "to": [8, 12, 9.5], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#chimney"}, "south": {"uv": [0, 0, 16, 16], "texture": "#chimney"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#chimney"}, "west": {"uv": [0, 0, 16, 16], "texture": "#chimney"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "__comment": "the tall pine: trunk and three tiers",
+      "from": [10.5, 5, 5.5], "to": [11.5, 6, 6.5], "faces": {
+      "north": {"texture": "#trunk"}, "south": {"texture": "#trunk"}, "east": {"texture": "#trunk"}, "west": {"texture": "#trunk"} } },
+    { "from": [9.25, 6, 4.25], "to": [12.75, 8.25, 7.75], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "south": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "west": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"}, "down": {"uv": [0, 0, 16, 16], "texture": "#pine"} } },
+    { "from": [9.75, 8.25, 4.75], "to": [12.25, 10.25, 7.25], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "south": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "west": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "from": [10.25, 10.25, 5.25], "to": [11.75, 12.25, 6.75], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "south": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "west": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "__comment": "the little pine at the back",
+      "from": [10, 5, 9.5], "to": [12, 7, 11.5], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "south": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "west": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "from": [10.5, 7, 10], "to": [11.5, 8.5, 11], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "south": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#pine"}, "west": {"uv": [0, 0, 16, 16], "texture": "#pine"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "__comment": "the snowman: body and head (face to the front)",
+      "from": [5.5, 5, 3.5], "to": [7.5, 7, 5.5], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#snowman"}, "south": {"uv": [0, 0, 16, 16], "texture": "#snowman"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#snowman"}, "west": {"uv": [0, 0, 16, 16], "texture": "#snowman"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snow"} } },
+    { "from": [5.85, 7, 3.85], "to": [7.15, 8.3, 5.15], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#snowman"}, "south": {"uv": [0, 0, 16, 16], "texture": "#face"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#snowman"}, "west": {"uv": [0, 0, 16, 16], "texture": "#snowman"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#snowman"} } },
+    { "__comment": "the glass dome",
+      "from": [2.5, 3.5, 2.5], "to": [13.5, 14.5, 13.5], "faces": {
+      "north": {"uv": [0, 0, 16, 16], "texture": "#glass"}, "south": {"uv": [0, 0, 16, 16], "texture": "#glass"},
+      "east": {"uv": [0, 0, 16, 16], "texture": "#glass"}, "west": {"uv": [0, 0, 16, 16], "texture": "#glass"},
+      "up": {"uv": [0, 0, 16, 16], "texture": "#glass"} } }
+  ],
+  "display": {
+    "gui": { "rotation": [25, 200, 0], "translation": [0, 0, 0], "scale": [0.85, 0.85, 0.85] },
+    "ground": { "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5] },
+    "fixed": { "scale": [0.9, 0.9, 0.9] },
+    "thirdperson_righthand": { "rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.4, 0.4, 0.4] },
+    "firstperson_righthand": { "rotation": [0, 45, 0], "translation": [0, 2, 0], "scale": [0.45, 0.45, 0.45] }
+  }
+}

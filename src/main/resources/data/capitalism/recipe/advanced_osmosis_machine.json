@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "bartender",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glass",
+    "C": "minecraft:cauldron",
+    "B": "minecraft:bucket"
+  },
+  "pattern": [
+    "IGI",
+    "GCG",
+    "IBI"
+  ],
+  "result": {
+    "id": "capitalism:advanced_osmosis_machine"
+  }
+}

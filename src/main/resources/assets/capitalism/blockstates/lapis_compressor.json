@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "facing=north,lit=false": { "model": "capitalism:block/lapis_compressor" },
+    "facing=north,lit=true": { "model": "capitalism:block/lapis_compressor_lit" },
+    "facing=east,lit=false": { "model": "capitalism:block/lapis_compressor", "y": 90 },
+    "facing=east,lit=true": { "model": "capitalism:block/lapis_compressor_lit", "y": 90 },
+    "facing=south,lit=false": { "model": "capitalism:block/lapis_compressor", "y": 180 },
+    "facing=south,lit=true": { "model": "capitalism:block/lapis_compressor_lit", "y": 180 },
+    "facing=west,lit=false": { "model": "capitalism:block/lapis_compressor", "y": 270 },
+    "facing=west,lit=true": { "model": "capitalism:block/lapis_compressor_lit", "y": 270 }
+  }
+}

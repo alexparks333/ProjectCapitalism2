@@ -1,0 +1,16 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": ["weaponsmith", "toolsmith", "armorsmith"],
+  "category": "equipment",
+  "key": {
+    "X": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "XXX",
+    " X ",
+    " X "
+  ],
+  "result": {
+    "id": "capitalism:salvage_hammer"
+  }
+}

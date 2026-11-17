@@ -1,0 +1,9 @@
+{
+    "parent":  "capitalism:block/chicken_leg_quarter_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/chicken_leg_quarter_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/chicken_leg_quarter_meat_rotten",
+                     "skin":  "capitalism:block/meat_slab/chicken_leg_quarter_skin_rotten",
+                     "bone":  "capitalism:block/meat_slab/bone_rotten"
+                 }
+}

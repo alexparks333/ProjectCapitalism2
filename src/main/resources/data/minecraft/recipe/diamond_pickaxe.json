@@ -1,0 +1,13 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "toolsmith",
+  "category": "equipment",
+  "key": {
+    "#": "minecraft:stick",
+    "X": "minecraft:diamond"
+  },
+  "pattern": ["XXX", " # ", " # "],
+  "result": {
+    "id": "minecraft:diamond_pickaxe"
+  }
+}

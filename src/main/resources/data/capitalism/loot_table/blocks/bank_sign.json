@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "capitalism:bank_sign",
+          "conditions": [
+            { "condition": "minecraft:block_state_property", "block": "capitalism:bank_sign", "properties": { "right": "false" } }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "capitalism:blocks/bank_sign"
+}

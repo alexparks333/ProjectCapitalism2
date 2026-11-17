@@ -1,0 +1,15 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:has_component",
+    "component": "capitalism:carried_animal",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "capitalism:item/animal_bjorn_full"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "capitalism:item/animal_bjorn"
+    }
+  }
+}

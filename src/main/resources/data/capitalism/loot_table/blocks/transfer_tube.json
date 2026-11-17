@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "capitalism:transfer_tube",
+            "state": {
+              "part": "middle_bottom"
+            }
+          },
+          "name": "capitalism:transfer_tube"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/transfer_tube"
+}

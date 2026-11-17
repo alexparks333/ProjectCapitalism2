@@ -1,0 +1,8 @@
+{
+  "parent": "capitalism:block/event_switch_off",
+  "textures": {
+    "plate": "capitalism:block/blood_switch_plate",
+    "knob": "capitalism:block/blood_switch_knob",
+    "metal": "capitalism:block/blood_switch_metal"
+  }
+}

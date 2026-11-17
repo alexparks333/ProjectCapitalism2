@@ -1,0 +1,21 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "librarian",
+  "category": "misc",
+  "key": {
+    "F": "minecraft:feather",
+    "B": "minecraft:book",
+    "I": "minecraft:ink_sac",
+    "S": "minecraft:bookshelf",
+    "L": "minecraft:lectern",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "FBI",
+    "SLS",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:librarian_table"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "multipart": [
+    { "when": { "half": "lower", "facing": "north" }, "apply": { "model": "capitalism:block/fermenter_lower", "y": 0 } },
+    { "when": { "half": "upper", "facing": "north" }, "apply": { "model": "capitalism:block/fermenter_upper", "y": 0 } },
+    { "when": { "half": "lower", "facing": "east" }, "apply": { "model": "capitalism:block/fermenter_lower", "y": 90 } },
+    { "when": { "half": "upper", "facing": "east" }, "apply": { "model": "capitalism:block/fermenter_upper", "y": 90 } },
+    { "when": { "half": "lower", "facing": "south" }, "apply": { "model": "capitalism:block/fermenter_lower", "y": 180 } },
+    { "when": { "half": "upper", "facing": "south" }, "apply": { "model": "capitalism:block/fermenter_upper", "y": 180 } },
+    { "when": { "half": "lower", "facing": "west" }, "apply": { "model": "capitalism:block/fermenter_lower", "y": 270 } },
+    { "when": { "half": "upper", "facing": "west" }, "apply": { "model": "capitalism:block/fermenter_upper", "y": 270 } },
+    { "when": { "half": "upper", "working": "false", "fill": "1" }, "apply": { "model": "capitalism:block/fermenter_liquid_still_1" } },
+    { "when": { "half": "upper", "working": "true", "fill": "1" }, "apply": { "model": "capitalism:block/fermenter_liquid_bubbling_1" } },
+    { "when": { "half": "upper", "working": "false", "fill": "2" }, "apply": { "model": "capitalism:block/fermenter_liquid_still_2" } },
+    { "when": { "half": "upper", "working": "true", "fill": "2" }, "apply": { "model": "capitalism:block/fermenter_liquid_bubbling_2" } },
+    { "when": { "half": "upper", "working": "false", "fill": "3" }, "apply": { "model": "capitalism:block/fermenter_liquid_still_3" } },
+    { "when": { "half": "upper", "working": "true", "fill": "3" }, "apply": { "model": "capitalism:block/fermenter_liquid_bubbling_3" } },
+    { "when": { "half": "upper", "working": "false", "fill": "4" }, "apply": { "model": "capitalism:block/fermenter_liquid_still_4" } },
+    { "when": { "half": "upper", "working": "true", "fill": "4" }, "apply": { "model": "capitalism:block/fermenter_liquid_bubbling_4" } },
+    { "when": { "half": "upper", "working": "false", "fill": "5" }, "apply": { "model": "capitalism:block/fermenter_liquid_still_5" } },
+    { "when": { "half": "upper", "working": "true", "fill": "5" }, "apply": { "model": "capitalism:block/fermenter_liquid_bubbling_5" } }
+  ]
+}

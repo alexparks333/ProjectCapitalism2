@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "capitalism:block/lava_creator" },
+    "lit=true": { "model": "capitalism:block/lava_creator_lit" }
+  }
+}

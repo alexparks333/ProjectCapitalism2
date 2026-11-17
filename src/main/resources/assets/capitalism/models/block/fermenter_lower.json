@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/barrel_side",
+    "side": "minecraft:block/barrel_side",
+    "bottom": "minecraft:block/barrel_bottom",
+    "brass": "capitalism:block/bar_brass"
+  },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 16, 16],
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "north" },
+        "east":  { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south" },
+        "west":  { "uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west" },
+        "down":  { "uv": [0, 0, 16, 16], "texture": "#bottom", "cullface": "down" }
+      }
+    },
+    { "from": [7, 5, -2], "to": [9, 6.5, 0], "faces": { "north": { "uv": [0, 0, 2, 1.5], "texture": "#brass" }, "east": { "uv": [0, 0, 2, 1.5], "texture": "#brass" }, "west": { "uv": [0, 0, 2, 1.5], "texture": "#brass" }, "up": { "uv": [0, 0, 2, 2], "texture": "#brass" }, "down": { "uv": [0, 0, 2, 2], "texture": "#brass" } } }
+,
+    { "from": [7.25, 3.5, -2], "to": [8.75, 5, -1], "faces": { "north": { "uv": [0, 0, 1.5, 1.5], "texture": "#brass" }, "east": { "uv": [0, 0, 1, 1.5], "texture": "#brass" }, "south": { "uv": [0, 0, 1.5, 1.5], "texture": "#brass" }, "west": { "uv": [0, 0, 1, 1.5], "texture": "#brass" }, "up": { "uv": [0, 0, 1.5, 1], "texture": "#brass" }, "down": { "uv": [0, 0, 1.5, 1], "texture": "#brass" } } }
+,
+    { "from": [7.5, 6.5, -1.5], "to": [8.5, 8.5, -0.5], "faces": { "north": { "uv": [0, 0, 1, 2], "texture": "#brass" }, "east": { "uv": [0, 0, 1, 2], "texture": "#brass" }, "south": { "uv": [0, 0, 1, 2], "texture": "#brass" }, "west": { "uv": [0, 0, 1, 2], "texture": "#brass" }, "up": { "uv": [0, 0, 1, 1], "texture": "#brass" }, "down": { "uv": [0, 0, 1, 1], "texture": "#brass" } } }
+  ]
+}

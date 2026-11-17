@@ -1,0 +1,90 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.1.39'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+}
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+    exclude("**/*.bbmodel")
+    exclude("src/generated/**/.cache")
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', mod_id
+        argument '--nogui'
+    }
+
+    // gradlew runPhoto: DEV ONLY, a client in runs/photo (its own world, saves/photo) that runs client/PhotoShoot:
+    // builds a scene, takes screenshots of the boats (runs/photo/screenshots) and quits
+    photo {
+        runType 'client'
+        workingDirectory project.file('runs/photo')
+        systemProperty 'capitalism.photo', project.findProperty('photo') ?: 'decor'
+        // -Pphoto=perf: a Java Flight Recorder profile of the run, runs/photo/perf.jfr (jfr view hot-methods runs/photo/perf.jfr)
+        if (project.findProperty('photo') == 'perf') {
+            jvmArgument '-XX:StartFlightRecording=filename=' + project.file('runs/photo/perf.jfr').absolutePath + ',settings=profile'
+        }
+    }
+
+    // gradlew runGameTestServer: runs the mod's game tests (librarian/SkillBookTests) in runs/gameTestServer and quits
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+}
+
+repositories {}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        minecraft_version      : minecraft_version,
+        minecraft_version_range: minecraft_version_range,
+        neo_version            : neo_version,
+        loader_version_range   : loader_version_range,
+        mod_id                 : mod_id,
+        mod_name               : mod_name,
+        mod_version            : mod_version,
+        mod_authors            : mod_authors,
+        mod_description        : mod_description,
+        mod_license            : mod_license,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "capitalism:item/skill_books/stonemasons_guide",
+    "layer1": "capitalism:item/skill_books/numeral_i"
+  }
+}

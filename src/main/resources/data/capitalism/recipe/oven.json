@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:bricks",
+    "F": "minecraft:furnace",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "BBB",
+    "BFB",
+    "BIB"
+  ],
+  "result": {
+    "id": "capitalism:oven"
+  }
+}

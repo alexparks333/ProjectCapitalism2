@@ -1,0 +1,6 @@
+{
+  "parent": "capitalism:block/travelers_lantern",
+  "textures": {
+    "glass": "capitalism:block/travelers_lantern_glass_lit"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": { "type": "minecraft:survives_explosion" },
+      "entries": [ { "type": "minecraft:item", "name": "capitalism:blood_crystal_block" } ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/blood_crystal_block"
+}

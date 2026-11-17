@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "capitalism:block/sewing_machine" },
+    "facing=east": { "model": "capitalism:block/sewing_machine", "y": 90 },
+    "facing=south": { "model": "capitalism:block/sewing_machine", "y": 180 },
+    "facing=west": { "model": "capitalism:block/sewing_machine", "y": 270 }
+  }
+}

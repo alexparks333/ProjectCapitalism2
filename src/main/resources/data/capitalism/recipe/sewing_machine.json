@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "designer",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "S": "minecraft:string",
+    "W": "#minecraft:wooden_slabs"
+  },
+  "pattern": [
+    "III",
+    "IRS",
+    "WWW"
+  ],
+  "result": {
+    "id": "capitalism:sewing_machine"
+  }
+}

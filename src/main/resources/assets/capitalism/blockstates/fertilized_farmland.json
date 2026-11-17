@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "fertilizer=yield,moisture=0": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=1": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=2": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=3": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=4": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=5": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=6": { "model": "capitalism:block/fertilized_farmland_yield" },
+    "fertilizer=yield,moisture=7": { "model": "capitalism:block/fertilized_farmland_yield_moist" },
+    "fertilizer=super_yield,moisture=0": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=1": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=2": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=3": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=4": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=5": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=6": { "model": "capitalism:block/fertilized_farmland_super_yield" },
+    "fertilizer=super_yield,moisture=7": { "model": "capitalism:block/fertilized_farmland_super_yield_moist" },
+    "fertilizer=fast,moisture=0": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=1": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=2": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=3": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=4": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=5": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=6": { "model": "capitalism:block/fertilized_farmland_fast" },
+    "fertilizer=fast,moisture=7": { "model": "capitalism:block/fertilized_farmland_fast_moist" }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "capitalism:block/purification_table_bar_lit",
+    "lit": "capitalism:block/purification_table_bar_lit"
+  },
+  "elements": [
+    { "from": [7, 4, -0.05], "to": [9, 6, 0], "light_emission": 12, "shade": false,
+      "faces": { "north": { "uv": [0, 0, 2, 2], "texture": "#lit" } } }
+  ]
+}

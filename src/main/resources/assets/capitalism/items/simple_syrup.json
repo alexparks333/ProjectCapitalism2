@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "capitalism:item/syrup_pourer",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 15654312
+      }
+    ]
+  }
+}

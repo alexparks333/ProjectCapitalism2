@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "capitalism:block/osmosis_machine_top",
+    "side": "capitalism:block/osmosis_machine_side",
+    "front": "capitalism:block/osmosis_machine_front"
+  }
+}

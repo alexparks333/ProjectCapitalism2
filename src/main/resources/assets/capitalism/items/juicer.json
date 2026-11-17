@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:composite",
+    "models": [
+      { "type": "minecraft:model", "model": "capitalism:block/juicer_base" },
+      { "type": "minecraft:model", "model": "capitalism:block/juicer_gears" },
+      { "type": "minecraft:model", "model": "capitalism:block/juicer_juice_3", "tints": [ { "type": "minecraft:constant", "value": 14829140 } ] }
+    ]
+  }
+}

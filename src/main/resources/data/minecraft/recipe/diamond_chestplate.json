@@ -1,0 +1,12 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "armorsmith",
+  "category": "equipment",
+  "key": {
+    "X": "minecraft:diamond"
+  },
+  "pattern": ["X X", "XXX", "XXX"],
+  "result": {
+    "id": "minecraft:diamond_chestplate"
+  }
+}

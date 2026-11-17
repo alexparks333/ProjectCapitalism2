@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "capitalism:item/wine_glass",
+    "tints": [
+      { "type": "minecraft:constant", "value": 7999536 }
+    ]
+  }
+}

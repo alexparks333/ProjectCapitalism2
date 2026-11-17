@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:glass_bottle",
+    "W": "capitalism:purified_water_bucket"
+  },
+  "pattern": [
+    "BBB",
+    "BWB",
+    "BBB"
+  ],
+  "result": {
+    "id": "capitalism:purified_water",
+    "count": 8
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "parent":  "capitalism:block/rabbit_saddle_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/rabbit_saddle_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/rabbit_saddle_meat_rotten",
+                     "skin":  "capitalism:block/meat_slab/rabbit_saddle_skin_rotten",
+                     "bone":  "capitalism:block/meat_slab/bone_rotten"
+                 }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": ["weaponsmith", "toolsmith", "armorsmith"],
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:blaze_rod",
+    "C": "minecraft:cauldron"
+  },
+  "pattern": [
+    "IBI",
+    "ICI",
+    "III"
+  ],
+  "result": {
+    "id": "capitalism:lava_creator"
+  }
+}

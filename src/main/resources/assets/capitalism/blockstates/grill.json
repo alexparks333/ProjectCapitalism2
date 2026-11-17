@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "capitalism:block/grill"
+    },
+    "lit=true": {
+      "model": "capitalism:block/grill_lit"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "pet_trainer",
+  "category": "equipment",
+  "key": {
+    "L": "minecraft:lead",
+    "R": "minecraft:fishing_rod",
+    "D": "minecraft:diamond",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "LRD",
+    " S ",
+    " S "
+  ],
+  "result": {
+    "id": "capitalism:training_stick"
+  }
+}

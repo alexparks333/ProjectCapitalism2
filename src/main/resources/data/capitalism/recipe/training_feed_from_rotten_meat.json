@@ -1,0 +1,16 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "cook",
+  "category": "misc",
+  "key": {
+    "S": "#capitalism:seeds",
+    "M": "capitalism:rotten_meat"
+  },
+  "pattern": [
+    "SM"
+  ],
+  "result": {
+    "id": "capitalism:training_feed",
+    "count": 6
+  }
+}

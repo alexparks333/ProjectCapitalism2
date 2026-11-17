@@ -1,0 +1,110 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "board": "capitalism:block/city_sale_sign",
+    "post": "minecraft:block/stripped_dark_oak_log",
+    "particle": "capitalism:block/city_sale_sign"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        9,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#post"
+        },
+        "south": {
+          "texture": "#post"
+        },
+        "east": {
+          "texture": "#post"
+        },
+        "west": {
+          "texture": "#post"
+        },
+        "up": {
+          "texture": "#post"
+        },
+        "down": {
+          "texture": "#post"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        8,
+        7.5
+      ],
+      "to": [
+        15,
+        16,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#board",
+          "uv": [
+            0,
+            0,
+            14,
+            8
+          ]
+        },
+        "south": {
+          "texture": "#board",
+          "uv": [
+            0,
+            0,
+            14,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#board",
+          "uv": [
+            14,
+            8,
+            14.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#board",
+          "uv": [
+            14,
+            8,
+            14.5,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#board",
+          "uv": [
+            14,
+            8,
+            14.5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#board",
+          "uv": [
+            14,
+            8,
+            14.5,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

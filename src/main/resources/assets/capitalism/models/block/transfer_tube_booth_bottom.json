@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": { "particle": "minecraft:block/dark_oak_planks", "wood": "minecraft:block/dark_oak_planks", "post": "minecraft:block/dark_oak_log", "glass": "capitalism:block/transfer_tube_glass", "floor": "capitalism:block/transfer_tube_floor" },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 1, 16], "faces": { "up": {"texture": "#floor"}, "down": {"texture": "#wood"}, "north": {"texture": "#wood"}, "south": {"texture": "#wood"}, "east": {"texture": "#wood"}, "west": {"texture": "#wood"} } },
+    { "from": [2, 1, 14.5], "to": [14, 16, 15.5], "faces": { "north": {"texture": "#glass"}, "south": {"texture": "#glass"} } },
+    { "from": [0.5, 1, 2], "to": [1.5, 16, 14], "faces": { "east": {"texture": "#glass"}, "west": {"texture": "#glass"} } },
+    { "from": [14.5, 1, 2], "to": [15.5, 16, 14], "faces": { "east": {"texture": "#glass"}, "west": {"texture": "#glass"} } },
+    { "from": [0, 1, 0], "to": [2, 16, 2], "faces": { "north": {"texture": "#post"}, "south": {"texture": "#post"}, "east": {"texture": "#post"}, "west": {"texture": "#post"}, "up": {"texture": "#post"}, "down": {"texture": "#post"} } },
+    { "from": [14, 1, 0], "to": [16, 16, 2], "faces": { "north": {"texture": "#post"}, "south": {"texture": "#post"}, "east": {"texture": "#post"}, "west": {"texture": "#post"}, "up": {"texture": "#post"}, "down": {"texture": "#post"} } },
+    { "from": [0, 1, 14], "to": [2, 16, 16], "faces": { "north": {"texture": "#post"}, "south": {"texture": "#post"}, "east": {"texture": "#post"}, "west": {"texture": "#post"}, "up": {"texture": "#post"}, "down": {"texture": "#post"} } },
+    { "from": [14, 1, 14], "to": [16, 16, 16], "faces": { "north": {"texture": "#post"}, "south": {"texture": "#post"}, "east": {"texture": "#post"}, "west": {"texture": "#post"}, "up": {"texture": "#post"}, "down": {"texture": "#post"} } }
+  ]
+}

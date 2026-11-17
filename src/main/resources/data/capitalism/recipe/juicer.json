@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "H": "minecraft:hopper",
+    "P": "#minecraft:planks",
+    "G": "minecraft:grindstone"
+  },
+  "pattern": [
+    "CHC",
+    "PGP",
+    "CPC"
+  ],
+  "result": {
+    "id": "capitalism:juicer"
+  }
+}

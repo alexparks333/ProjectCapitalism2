@@ -1,0 +1,34 @@
+{
+    "variants":  {
+                     "facing=north,rotten=false":  {
+                                                       "model":  "capitalism:block/mutton_rack_slab"
+                                                   },
+                     "facing=north,rotten=true":  {
+                                                      "model":  "capitalism:block/mutton_rack_slab_rotten"
+                                                  },
+                     "facing=east,rotten=false":  {
+                                                      "model":  "capitalism:block/mutton_rack_slab",
+                                                      "y":  90
+                                                  },
+                     "facing=east,rotten=true":  {
+                                                     "model":  "capitalism:block/mutton_rack_slab_rotten",
+                                                     "y":  90
+                                                 },
+                     "facing=south,rotten=false":  {
+                                                       "model":  "capitalism:block/mutton_rack_slab",
+                                                       "y":  180
+                                                   },
+                     "facing=south,rotten=true":  {
+                                                      "model":  "capitalism:block/mutton_rack_slab_rotten",
+                                                      "y":  180
+                                                  },
+                     "facing=west,rotten=false":  {
+                                                      "model":  "capitalism:block/mutton_rack_slab",
+                                                      "y":  270
+                                                  },
+                     "facing=west,rotten=true":  {
+                                                     "model":  "capitalism:block/mutton_rack_slab_rotten",
+                                                     "y":  270
+                                                 }
+                 }
+}

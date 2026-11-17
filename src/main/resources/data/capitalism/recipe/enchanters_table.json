@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "enchanter",
+  "category": "misc",
+  "key": {
+    "C": "#minecraft:candles",
+    "B": "minecraft:book",
+    "I": "capitalism:compacted_iron",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "CBC",
+    "BIB",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:enchanters_table"
+  }
+}

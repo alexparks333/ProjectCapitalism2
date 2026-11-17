@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "up=false": { "model": "capitalism:block/decor_empty" },
+    "up=true": [ { "model": "capitalism:block/fallen_leaves_a" }, { "model": "capitalism:block/fallen_leaves_a", "y": 90 }, { "model": "capitalism:block/fallen_leaves_a", "y": 180 }, { "model": "capitalism:block/fallen_leaves_a", "y": 270 }, { "model": "capitalism:block/fallen_leaves_b" }, { "model": "capitalism:block/fallen_leaves_b", "y": 90 }, { "model": "capitalism:block/fallen_leaves_b", "y": 180 }, { "model": "capitalism:block/fallen_leaves_b", "y": 270 } ]
+  }
+}

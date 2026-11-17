@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_right_open",
+  "textures": {
+    "bottom": "capitalism:block/mayoral_door_bottom",
+    "top": "capitalism:block/mayoral_door_top"
+  }
+}

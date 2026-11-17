@@ -1,0 +1,15 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "pet_trainer",
+  "category": "misc",
+  "key": {
+    "N": "minecraft:name_tag",
+    "D": "minecraft:diamond"
+  },
+  "pattern": [
+    "ND"
+  ],
+  "result": {
+    "id": "capitalism:ownership_tag"
+  }
+}

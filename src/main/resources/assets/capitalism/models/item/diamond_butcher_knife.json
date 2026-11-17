@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "capitalism:item/diamond_butcher_knife"
+  }
+}

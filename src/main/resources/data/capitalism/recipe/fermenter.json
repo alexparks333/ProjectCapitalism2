@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glass",
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:barrel",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "GGG",
+    "IBI",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:fermenter"
+  }
+}

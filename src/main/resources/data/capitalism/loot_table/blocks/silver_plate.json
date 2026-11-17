@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "capitalism:silver_plate",
+                "state": {
+                  "dirty": "true"
+                }
+              },
+              "name": "capitalism:dirty_silver_plate"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "capitalism:silver_plate"
+            }
+          ]
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/silver_plate"
+}

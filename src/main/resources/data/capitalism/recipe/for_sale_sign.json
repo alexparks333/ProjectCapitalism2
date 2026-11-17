@@ -1,0 +1,16 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "real_estate_agent",
+  "category": "misc",
+  "key": {
+    "D": "minecraft:red_dye",
+    "S": "#minecraft:signs"
+  },
+  "pattern": [
+    "D",
+    "S"
+  ],
+  "result": {
+    "id": "capitalism:for_sale_sign"
+  }
+}

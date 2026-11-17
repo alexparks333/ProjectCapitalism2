@@ -1,0 +1,8 @@
+{
+    "parent":  "capitalism:block/beef_brisket_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/beef_brisket_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/beef_brisket_meat_rotten",
+                     "fat":  "capitalism:block/meat_slab/beef_brisket_fat_rotten"
+                 }
+}

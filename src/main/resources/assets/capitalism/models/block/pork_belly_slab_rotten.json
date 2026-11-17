@@ -1,0 +1,9 @@
+{
+    "parent":  "capitalism:block/pork_belly_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/pork_belly_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/pork_belly_meat_rotten",
+                     "fat":  "capitalism:block/meat_slab/pork_belly_fat_rotten",
+                     "skin":  "capitalism:block/meat_slab/pork_belly_skin_rotten"
+                 }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        { "condition": "minecraft:survives_explosion" }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "capitalism:mayoral_door",
+              "condition": "minecraft:block_state_property",
+              "properties": { "half": "lower" }
+            }
+          ],
+          "name": "capitalism:mayoral_door"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "capitalism:blocks/mayoral_door"
+}

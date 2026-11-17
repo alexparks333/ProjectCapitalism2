@@ -1,0 +1,9 @@
+{
+    "parent":  "capitalism:block/beef_chuck_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/beef_chuck_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/beef_chuck_meat_rotten",
+                     "fat":  "capitalism:block/meat_slab/beef_chuck_fat_rotten",
+                     "bone":  "capitalism:block/meat_slab/bone_rotten"
+                 }
+}

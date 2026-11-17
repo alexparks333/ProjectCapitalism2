@@ -1,0 +1,18 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "cook",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:iron_bars",
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:campfire"
+  },
+  "pattern": [
+    "BBB",
+    "ICI",
+    "I I"
+  ],
+  "result": {
+    "id": "capitalism:grill"
+  }
+}

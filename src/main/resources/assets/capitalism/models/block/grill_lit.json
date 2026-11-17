@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "capitalism:block/grill_top_lit",
+    "side": "capitalism:block/grill_side",
+    "bottom": "capitalism:block/grill_bottom"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "capitalism:block/designer_table" },
+    "facing=east": { "model": "capitalism:block/designer_table", "y": 90 },
+    "facing=south": { "model": "capitalism:block/designer_table", "y": 180 },
+    "facing=west": { "model": "capitalism:block/designer_table", "y": 270 }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "capitalism:crimson_canopy_bed",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "capitalism:crimson_canopy_bed",
+            "state": {
+              "part": "head"
+            }
+          }
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "capitalism:blocks/crimson_canopy_bed"
+}

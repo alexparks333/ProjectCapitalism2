@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "capitalism:block/fridge_front",
+    "side": "capitalism:block/fridge_side",
+    "top": "capitalism:block/fridge_top"
+  }
+}

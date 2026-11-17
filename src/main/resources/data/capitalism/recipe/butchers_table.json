@@ -1,0 +1,18 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "farmer",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "#minecraft:wooden_slabs",
+    "L": "#minecraft:logs"
+  },
+  "pattern": [
+    "I  ",
+    "SSS",
+    "L L"
+  ],
+  "result": {
+    "id": "capitalism:butchers_table"
+  }
+}

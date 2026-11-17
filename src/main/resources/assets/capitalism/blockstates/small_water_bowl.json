@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "capitalism:block/small_water_bowl_0"
+    },
+    "level=1": {
+      "model": "capitalism:block/small_water_bowl_1"
+    },
+    "level=2": {
+      "model": "capitalism:block/small_water_bowl_2"
+    },
+    "level=3": {
+      "model": "capitalism:block/small_water_bowl_3"
+    }
+  }
+}

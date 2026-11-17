@@ -1,0 +1,10 @@
+{
+    "parent":  "capitalism:block/mutton_leg_slab",
+    "textures":  {
+                     "particle":  "capitalism:block/meat_slab/mutton_leg_meat_rotten",
+                     "meat":  "capitalism:block/meat_slab/mutton_leg_meat_rotten",
+                     "fat":  "capitalism:block/meat_slab/mutton_leg_fat_rotten",
+                     "bone":  "capitalism:block/meat_slab/bone_rotten",
+                     "marrow":  "capitalism:block/meat_slab/marrow_rotten"
+                 }
+}

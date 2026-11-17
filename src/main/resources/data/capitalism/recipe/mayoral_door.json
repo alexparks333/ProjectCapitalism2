@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "E": "minecraft:emerald"
+  },
+  "pattern": [
+    "GG",
+    "GE",
+    "GG"
+  ],
+  "result": {
+    "id": "capitalism:mayoral_door"
+  }
+}

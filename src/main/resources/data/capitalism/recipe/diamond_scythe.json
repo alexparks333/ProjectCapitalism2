@@ -1,0 +1,17 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "farmer",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:diamond",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "III",
+    "  S",
+    "  S"
+  ],
+  "result": {
+    "id": "capitalism:diamond_scythe"
+  }
+}

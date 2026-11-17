@@ -1,0 +1,16 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "pet_trainer",
+  "category": "misc",
+  "key": {
+    "M": "minecraft:copper_ingot",
+    "B": "minecraft:bucket"
+  },
+  "pattern": [
+    "MBM",
+    "MMM"
+  ],
+  "result": {
+    "id": "capitalism:small_water_bowl"
+  }
+}

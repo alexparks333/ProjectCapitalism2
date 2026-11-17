@@ -1,0 +1,28 @@
+{
+  "values": [
+    "minecraft:beef",
+    "minecraft:porkchop",
+    "minecraft:chicken",
+    "minecraft:mutton",
+    "minecraft:rabbit",
+    "minecraft:cod",
+    "minecraft:salmon",
+    "minecraft:tropical_fish",
+    "minecraft:pufferfish",
+    "capitalism:raw_beef_chuck",
+    "capitalism:raw_beef_brisket",
+    "capitalism:raw_beef_round",
+    "capitalism:raw_beef_rib",
+    "capitalism:raw_pork_shoulder",
+    "capitalism:raw_pork_belly",
+    "capitalism:raw_pork_ham",
+    "capitalism:raw_pork_loin",
+    "capitalism:raw_mutton_shoulder",
+    "capitalism:raw_mutton_leg",
+    "capitalism:raw_mutton_rack",
+    "capitalism:raw_chicken_leg_quarter",
+    "capitalism:raw_chicken_breast",
+    "capitalism:raw_rabbit_hind_legs",
+    "capitalism:raw_rabbit_saddle"
+  ]
+}

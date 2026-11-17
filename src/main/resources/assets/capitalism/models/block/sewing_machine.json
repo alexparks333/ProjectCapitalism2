@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "capitalism:block/sewing_machine_enamel",
+    "enamel": "capitalism:block/sewing_machine_enamel",
+    "metal": "capitalism:block/sewing_machine_metal",
+    "wood": "capitalism:block/sewing_machine_wood",
+    "spool": "capitalism:block/sewing_machine_spool"
+  },
+  "elements": [
+    {"from":[1,0,3],"to":[15,2,13],"faces":{"north":{"texture":"#wood"},"south":{"texture":"#wood"},"east":{"texture":"#wood"},"west":{"texture":"#wood"},"up":{"texture":"#wood"},"down":{"texture":"#wood"}}},
+    {"from":[11,2,5.5],"to":[14,11,11.5],"faces":{"north":{"texture":"#enamel"},"south":{"texture":"#enamel"},"east":{"texture":"#enamel"},"west":{"texture":"#enamel"},"up":{"texture":"#enamel"},"down":{"texture":"#enamel"}}},
+    {"from":[3,9,6],"to":[14,12,11],"faces":{"north":{"texture":"#enamel"},"south":{"texture":"#enamel"},"east":{"texture":"#enamel"},"west":{"texture":"#enamel"},"up":{"texture":"#enamel"},"down":{"texture":"#enamel"}}},
+    {"from":[2,5,5.5],"to":[6,12.5,11.5],"faces":{"north":{"texture":"#enamel"},"south":{"texture":"#enamel"},"east":{"texture":"#enamel"},"west":{"texture":"#enamel"},"up":{"texture":"#enamel"},"down":{"texture":"#enamel"}}},
+    {"from":[3.5,2.5,8],"to":[4.5,5,9],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[2.5,2,7],"to":[5.5,2.5,10],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[14,6.5,6.5],"to":[15,11.5,10.5],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[2.5,2,6],"to":[8,2.2,11],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}},
+    {"from":[8.5,12,7.5],"to":[10.5,14.5,9.5],"faces":{"north":{"texture":"#spool"},"south":{"texture":"#spool"},"east":{"texture":"#spool"},"west":{"texture":"#spool"},"up":{"texture":"#spool"},"down":{"texture":"#spool"}}},
+    {"from":[9.25,14.5,8.25],"to":[9.75,15.5,8.75],"faces":{"north":{"texture":"#metal"},"south":{"texture":"#metal"},"east":{"texture":"#metal"},"west":{"texture":"#metal"},"up":{"texture":"#metal"},"down":{"texture":"#metal"}}}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "pet_trainer",
+  "category": "equipment",
+  "key": {
+    "S": "minecraft:string",
+    "R": "minecraft:rabbit_hide",
+    "B": "capitalism:backpack"
+  },
+  "pattern": [
+    "S S",
+    "RBR",
+    "RRR"
+  ],
+  "result": {
+    "id": "capitalism:animal_bjorn"
+  }
+}

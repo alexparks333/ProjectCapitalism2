@@ -1,0 +1,20 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "librarian",
+  "category": "misc",
+  "key": {
+    "S": "minecraft:string",
+    "H": "minecraft:shears",
+    "L": "minecraft:leather",
+    "C": "minecraft:crafting_table",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "SHS",
+    "LCL",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:stitching_table"
+  }
+}

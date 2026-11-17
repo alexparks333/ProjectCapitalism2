@@ -1,0 +1,5 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "render_type": "minecraft:translucent",
+  "textures": { "all": "capitalism:block/blood_crystal_block" }
+}

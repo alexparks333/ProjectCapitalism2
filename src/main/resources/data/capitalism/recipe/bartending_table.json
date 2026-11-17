@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "minecraft:black_wool",
+    "I": "minecraft:iron_ingot",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "WWW",
+    "III",
+    "PPP"
+  ],
+  "result": {
+    "id": "capitalism:bartending_table"
+  }
+}

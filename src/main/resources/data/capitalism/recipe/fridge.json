@@ -1,0 +1,21 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": [
+    "farmer",
+    "cook"
+  ],
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:chest",
+    "X": "minecraft:redstone"
+  },
+  "pattern": [
+    "III",
+    "ICI",
+    "IXI"
+  ],
+  "result": {
+    "id": "capitalism:fridge"
+  }
+}

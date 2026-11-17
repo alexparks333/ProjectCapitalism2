@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,working=false": {
+      "model": "capitalism:block/knowledge_creator"
+    },
+    "facing=north,working=true": {
+      "model": "capitalism:block/knowledge_creator"
+    },
+    "facing=east,working=false": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 90
+    },
+    "facing=east,working=true": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 90
+    },
+    "facing=south,working=false": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 180
+    },
+    "facing=south,working=true": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 180
+    },
+    "facing=west,working=false": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 270
+    },
+    "facing=west,working=true": {
+      "model": "capitalism:block/knowledge_creator",
+      "y": 270
+    }
+  }
+}

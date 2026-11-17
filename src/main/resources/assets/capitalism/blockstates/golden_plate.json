@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "dirty=false": { "model": "capitalism:block/golden_plate" },
+    "dirty=true": { "model": "capitalism:block/golden_plate_dirty" }
+  }
+}

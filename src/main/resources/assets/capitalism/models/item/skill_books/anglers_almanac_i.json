@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "capitalism:item/skill_books/anglers_almanac",
+    "layer1": "capitalism:item/skill_books/numeral_i"
+  }
+}

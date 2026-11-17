@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/spruce_planks",
+    "front": "capitalism:block/cooking_front",
+    "wood": "minecraft:block/spruce_planks",
+    "stone": "minecraft:block/smooth_stone",
+    "stone_side": "minecraft:block/smooth_stone_slab_side",
+    "water": "capitalism:block/sink_water",
+    "steel": "minecraft:block/iron_block"
+  },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 13, 16],
+      "faces": {
+        "north": { "uv": [0, 3, 16, 16], "texture": "#front" },
+        "south": { "uv": [0, 3, 16, 16], "texture": "#wood" },
+        "east": { "uv": [0, 3, 16, 16], "texture": "#wood" },
+        "west": { "uv": [0, 3, 16, 16], "texture": "#wood" },
+        "down": { "uv": [0, 0, 16, 16], "texture": "#wood" },
+        "up": { "uv": [0, 0, 16, 16], "texture": "#stone" }
+      } },
+    { "from": [2, 13, 2], "to": [14, 13.5, 14], "faces": { "up": { "uv": [2, 2, 14, 14], "texture": "#water" } } },
+    { "from": [0, 13, 0], "to": [16, 16, 2], "faces": { "north": { "uv": [0, 0, 16, 3], "texture": "#stone_side" }, "south": { "uv": [0, 0, 16, 3], "texture": "#stone_side" }, "east": { "uv": [0, 0, 2, 3], "texture": "#stone_side" }, "west": { "uv": [0, 0, 2, 3], "texture": "#stone_side" }, "up": { "uv": [0, 0, 16, 2], "texture": "#stone" } } },
+    { "from": [0, 13, 14], "to": [16, 16, 16], "faces": { "north": { "uv": [0, 0, 16, 3], "texture": "#stone_side" }, "south": { "uv": [0, 0, 16, 3], "texture": "#stone_side" }, "east": { "uv": [0, 0, 2, 3], "texture": "#stone_side" }, "west": { "uv": [0, 0, 2, 3], "texture": "#stone_side" }, "up": { "uv": [0, 0, 16, 2], "texture": "#stone" } } },
+    { "from": [0, 13, 2], "to": [2, 16, 14], "faces": { "east": { "uv": [0, 0, 12, 3], "texture": "#stone_side" }, "west": { "uv": [0, 0, 12, 3], "texture": "#stone_side" }, "up": { "uv": [0, 0, 2, 12], "texture": "#stone" } } },
+    { "from": [14, 13, 2], "to": [16, 16, 14], "faces": { "east": { "uv": [0, 0, 12, 3], "texture": "#stone_side" }, "west": { "uv": [0, 0, 12, 3], "texture": "#stone_side" }, "up": { "uv": [0, 0, 2, 12], "texture": "#stone" } } },
+    { "from": [7, 16, 14], "to": [9, 20, 15.5], "faces": { "north": { "uv": [0, 0, 2, 4], "texture": "#steel" }, "south": { "uv": [0, 0, 2, 4], "texture": "#steel" }, "east": { "uv": [0, 0, 1.5, 4], "texture": "#steel" }, "west": { "uv": [0, 0, 1.5, 4], "texture": "#steel" }, "up": { "uv": [0, 0, 2, 1.5], "texture": "#steel" } } },
+    { "from": [7, 18.5, 10], "to": [9, 20, 14], "faces": { "north": { "uv": [0, 0, 2, 1.5], "texture": "#steel" }, "east": { "uv": [0, 0, 4, 1.5], "texture": "#steel" }, "west": { "uv": [0, 0, 4, 1.5], "texture": "#steel" }, "up": { "uv": [0, 0, 2, 4], "texture": "#steel" }, "down": { "uv": [0, 0, 2, 4], "texture": "#steel" } } },
+    { "from": [6.5, 16, 14.5], "to": [9.5, 16.5, 15.5], "faces": { "north": { "uv": [0, 0, 3, 0.5], "texture": "#steel" }, "up": { "uv": [0, 0, 3, 1], "texture": "#steel" } } }
+  ]
+}

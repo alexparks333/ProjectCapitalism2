@@ -1,0 +1,19 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": "enchanter",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "P": "minecraft:piston",
+    "L": "minecraft:lapis_block",
+    "C": "capitalism:compacted_iron"
+  },
+  "pattern": [
+    "IPI",
+    "LCL",
+    "III"
+  ],
+  "result": {
+    "id": "capitalism:lapis_compressor"
+  }
+}

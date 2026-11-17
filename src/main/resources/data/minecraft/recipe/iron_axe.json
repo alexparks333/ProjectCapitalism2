@@ -1,0 +1,13 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": ["weaponsmith", "toolsmith"],
+  "category": "equipment",
+  "key": {
+    "#": "minecraft:stick",
+    "X": "minecraft:iron_ingot"
+  },
+  "pattern": ["XX", "X#", " #"],
+  "result": {
+    "id": "minecraft:iron_axe"
+  }
+}

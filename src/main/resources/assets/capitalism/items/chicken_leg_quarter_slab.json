@@ -1,0 +1,6 @@
+{
+    "model":  {
+                  "type":  "minecraft:model",
+                  "model":  "capitalism:block/chicken_leg_quarter_slab"
+              }
+}

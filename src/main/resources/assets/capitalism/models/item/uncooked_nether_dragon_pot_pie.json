@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "capitalism:item/uncooked_nether_dragon_pot_pie"
+  }
+}

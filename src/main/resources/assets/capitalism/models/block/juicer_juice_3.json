@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "capitalism:block/juicer_juice",
+    "juice": "capitalism:block/juicer_juice"
+  },
+  "elements": [
+    { "from": [4, 2, 0.6], "to": [12, 3.8, 2.5], "light_emission": 9,
+      "faces": {
+        "north": { "uv": [0, 0, 16, 5.4], "texture": "#juice", "tintindex": 0 },
+        "up":    { "uv": [0, 0, 16, 5], "texture": "#juice", "tintindex": 0 }
+      }
+    }
+  ]
+}

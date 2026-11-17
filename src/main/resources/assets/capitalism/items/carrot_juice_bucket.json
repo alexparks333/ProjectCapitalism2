@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "capitalism:item/juice_bucket",
+    "tints": [
+      { "type": "minecraft:constant", "value": 15764008 }
+    ]
+  }
+}

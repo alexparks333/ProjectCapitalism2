@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "capitalism:block/toolsmith_side",
+    "side": "capitalism:block/toolsmith_side",
+    "front": "capitalism:block/toolsmith_front",
+    "top": "capitalism:block/weaponsmith_top",
+    "edge": "capitalism:block/weaponsmith_edge",
+    "iron": "capitalism:block/weaponsmith_iron",
+    "blade": "capitalism:block/weaponsmith_blade",
+    "grip": "capitalism:block/weaponsmith_grip"
+  },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 13, 16], "faces": { "north": { "uv": [0, 0, 16, 13], "texture": "#front" }, "east": { "uv": [0, 0, 16, 13], "texture": "#side" }, "south": { "uv": [0, 0, 16, 13], "texture": "#side" }, "west": { "uv": [0, 0, 16, 13], "texture": "#side" }, "down": { "uv": [0, 0, 16, 16], "texture": "#side" } } },
+    { "from": [-0.5, 13, -0.5], "to": [16.5, 15, 16.5], "faces": { "north": { "uv": [0, 0, 16, 2], "texture": "#edge" }, "east": { "uv": [0, 0, 16, 2], "texture": "#edge" }, "south": { "uv": [0, 0, 16, 2], "texture": "#edge" }, "west": { "uv": [0, 0, 16, 2], "texture": "#edge" }, "up": { "uv": [0, 0, 16, 16], "texture": "#top" }, "down": { "uv": [0, 0, 16, 16], "texture": "#edge" } } },
+    { "from": [9, 15, 9], "to": [14, 16, 13.5], "faces": { "north": { "uv": [0, 0, 5, 1], "texture": "#iron" }, "east": { "uv": [0, 0, 4.5, 1], "texture": "#iron" }, "south": { "uv": [0, 0, 5, 1], "texture": "#iron" }, "west": { "uv": [0, 0, 4.5, 1], "texture": "#iron" }, "up": { "uv": [0, 0, 5, 4.5], "texture": "#iron" }, "down": { "uv": [0, 0, 5, 4.5], "texture": "#iron" } } },
+    { "from": [10.5, 16, 10], "to": [12.5, 17.5, 12.5], "faces": { "north": { "uv": [0, 0, 2, 1.5], "texture": "#iron" }, "east": { "uv": [0, 0, 2.5, 1.5], "texture": "#iron" }, "south": { "uv": [0, 0, 2, 1.5], "texture": "#iron" }, "west": { "uv": [0, 0, 2.5, 1.5], "texture": "#iron" }, "up": { "uv": [0, 0, 2, 2.5], "texture": "#iron" }, "down": { "uv": [0, 0, 2, 2.5], "texture": "#iron" } } },
+    { "from": [8, 17.5, 9.5], "to": [15, 19, 13], "faces": { "north": { "uv": [0, 0, 7, 1.5], "texture": "#iron" }, "east": { "uv": [0, 0, 3.5, 1.5], "texture": "#iron" }, "south": { "uv": [0, 0, 7, 1.5], "texture": "#iron" }, "west": { "uv": [0, 0, 3.5, 1.5], "texture": "#iron" }, "up": { "uv": [0, 0, 7, 3.5], "texture": "#iron" }, "down": { "uv": [0, 0, 7, 3.5], "texture": "#iron" } } },
+    { "from": [6.5, 18, 10.5], "to": [8, 19, 12], "faces": { "north": { "uv": [0, 0, 1.5, 1], "texture": "#iron" }, "east": { "uv": [0, 0, 1.5, 1], "texture": "#iron" }, "south": { "uv": [0, 0, 1.5, 1], "texture": "#iron" }, "west": { "uv": [0, 0, 1.5, 1], "texture": "#iron" }, "up": { "uv": [0, 0, 1.5, 1.5], "texture": "#iron" }, "down": { "uv": [0, 0, 1.5, 1.5], "texture": "#iron" } } },
+    { "from": [2.5, 15, 3.5], "to": [3.5, 15.6, 14.5], "faces": { "north": { "texture": "#grip" }, "east": { "texture": "#grip" }, "south": { "texture": "#grip" }, "west": { "texture": "#grip" }, "up": { "texture": "#grip" }, "down": { "texture": "#grip" } } },
+    { "from": [0.5, 15, 2.5], "to": [5.5, 15.8, 3.5], "faces": { "north": { "texture": "#blade" }, "east": { "texture": "#blade" }, "south": { "texture": "#blade" }, "west": { "texture": "#blade" }, "up": { "texture": "#blade" }, "down": { "texture": "#blade" } } },
+    { "from": [0.5, 15, 3.5], "to": [1.5, 15.7, 4.5], "faces": { "north": { "texture": "#blade" }, "east": { "texture": "#blade" }, "south": { "texture": "#blade" }, "west": { "texture": "#blade" }, "up": { "texture": "#blade" }, "down": { "texture": "#blade" } } },
+    { "from": [4.5, 15, 3.5], "to": [5.5, 15.7, 4.5], "faces": { "north": { "texture": "#blade" }, "east": { "texture": "#blade" }, "south": { "texture": "#blade" }, "west": { "texture": "#blade" }, "up": { "texture": "#blade" }, "down": { "texture": "#blade" } } }
+  ]
+}

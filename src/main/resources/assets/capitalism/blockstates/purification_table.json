@@ -1,0 +1,30 @@
+{
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "capitalism:block/purification_table_base", "y": 0 } },
+    { "when": { "facing": "east" }, "apply": { "model": "capitalism:block/purification_table_base", "y": 90 } },
+    { "when": { "facing": "south" }, "apply": { "model": "capitalism:block/purification_table_base", "y": 180 } },
+    { "when": { "facing": "west" }, "apply": { "model": "capitalism:block/purification_table_base", "y": 270 } },
+    { "when": { "water": "dirty" }, "apply": { "model": "capitalism:block/purification_table_water_dirty" } },
+    { "when": { "water": "clean" }, "apply": { "model": "capitalism:block/purification_table_water_clean" } },
+    { "when": { "facing": "north", "progress": "1|2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_1", "y": 0 } },
+    { "when": { "facing": "east", "progress": "1|2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_1", "y": 90 } },
+    { "when": { "facing": "south", "progress": "1|2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_1", "y": 180 } },
+    { "when": { "facing": "west", "progress": "1|2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_1", "y": 270 } },
+    { "when": { "facing": "north", "progress": "2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_2", "y": 0 } },
+    { "when": { "facing": "east", "progress": "2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_2", "y": 90 } },
+    { "when": { "facing": "south", "progress": "2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_2", "y": 180 } },
+    { "when": { "facing": "west", "progress": "2|3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_2", "y": 270 } },
+    { "when": { "facing": "north", "progress": "3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_3", "y": 0 } },
+    { "when": { "facing": "east", "progress": "3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_3", "y": 90 } },
+    { "when": { "facing": "south", "progress": "3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_3", "y": 180 } },
+    { "when": { "facing": "west", "progress": "3|4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_3", "y": 270 } },
+    { "when": { "facing": "north", "progress": "4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_4", "y": 0 } },
+    { "when": { "facing": "east", "progress": "4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_4", "y": 90 } },
+    { "when": { "facing": "south", "progress": "4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_4", "y": 180 } },
+    { "when": { "facing": "west", "progress": "4|5" }, "apply": { "model": "capitalism:block/purification_table_bar_4", "y": 270 } },
+    { "when": { "facing": "north", "progress": "5" }, "apply": { "model": "capitalism:block/purification_table_bar_5", "y": 0 } },
+    { "when": { "facing": "east", "progress": "5" }, "apply": { "model": "capitalism:block/purification_table_bar_5", "y": 90 } },
+    { "when": { "facing": "south", "progress": "5" }, "apply": { "model": "capitalism:block/purification_table_bar_5", "y": 180 } },
+    { "when": { "facing": "west", "progress": "5" }, "apply": { "model": "capitalism:block/purification_table_bar_5", "y": 270 } }
+  ]
+}

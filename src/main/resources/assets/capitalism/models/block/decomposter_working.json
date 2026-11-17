@@ -1,0 +1,6 @@
+{
+  "parent": "capitalism:block/decomposter",
+  "textures": {
+    "compost": "capitalism:block/decomposter_compost_working"
+  }
+}

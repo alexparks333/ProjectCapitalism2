@@ -1,0 +1,18 @@
+{
+  "type": "capitalism:job_shaped",
+  "job": ["toolsmith", "farmer"],
+  "category": "equipment",
+  "key": {
+    "D": "minecraft:diamond",
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " DD",
+    " I ",
+    "S  "
+  ],
+  "result": {
+    "id": "capitalism:diamond_butcher_knife"
+  }
+}

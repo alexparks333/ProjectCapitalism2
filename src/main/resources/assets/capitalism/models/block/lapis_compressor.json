@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top": "capitalism:block/lapis_compressor_top",
+    "bottom": "capitalism:block/lapis_compressor_bottom",
+    "side": "capitalism:block/lapis_compressor_side",
+    "front": "capitalism:block/lapis_compressor_front"
+  }
+}

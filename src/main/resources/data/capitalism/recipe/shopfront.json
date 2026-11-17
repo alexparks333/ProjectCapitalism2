@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "minecraft:white_wool",
+    "R": "minecraft:redstone_block",
+    "S": "minecraft:stick",
+    "G": "minecraft:gold_block",
+    "P": "#minecraft:planks",
+    "C": "minecraft:chest"
+  },
+  "pattern": [
+    "WRW",
+    "SGS",
+    "PCP"
+  ],
+  "result": {
+    "id": "capitalism:shopfront"
+  }
+}
