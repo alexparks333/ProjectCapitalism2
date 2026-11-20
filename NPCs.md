@@ -2,7 +2,7 @@
 
 **NPCs fill in for missing players, and sometimes compete with them.** Each job can have an NPC shopkeeper. It is
 always there while **no player with that job is online**, so job goods are always for sale, and on top of that it has
-its own **20% chance each day** of coming to town anyway (all day, even with players of its job online), a little
+its own **35% chance each day** of coming to town anyway (all day, even with players of its job online), a little
 competition for them (`NpcManager.inTownToday`, `DAILY_CHANCE`).
 
 ## Rules (decided)
@@ -132,6 +132,9 @@ item's rolled stats. Scroll the list if you carry more than 7. A real smith's Fo
 | Shop (8 per restock) | Fair | NPC price |
 |---|---|---|
 | Sword / Pickaxe / Armor Whetstone (their own one) | 2 gold | **3 gold** |
+| Bow (Weaponsmith only: bows are Weaponsmith-only to craft) | 2 gold | **3 gold** |
+| Scythe (Toolsmith only: scythes are Toolsmith-only to craft; 4 per restock) | 4 gold | **6 gold** |
+| Iron Butcher Knife (Toolsmith only: knives are Toolsmith-only to craft, Farmers need them; 4 per restock) | 2 gold 6 nuggets | **4 gold** |
 
 Code: `npc/NpcRepairs` (what, how much, price), `NpcShopMenu.repair`, `client/NpcShopScreen` (the Repair tab).
 
@@ -139,6 +142,29 @@ Code: `npc/NpcRepairs` (what, how much, price), `NpcShopMenu.repair`, `client/Np
 ## The Boat Master
 Not a job NPC: a town NPC who is always there once placed with `/npc setspot boat_master`, selling boats and the Premium
 boats (the Pirate Ship). See `Boats.md`.
+
+## The Butcher
+Not a job NPC: a town shopkeeper (`npc/Butcher`; he and the Boat Master are `npc/Shopkeeper`s) placed with
+`/npc setspot butcher` (`/npc removespot butcher`; `/npc list` says whether he's in town today). Why: ten Cook meals need
+a Farmer's fine cut (four of them specialties: Prime Rib Dinner, Comfort Soup, Night Watch Hotpot, Ironworker's Stew),
+a Cook can never be a Farmer, and Farmer is a Fun job nobody may take. He makes those meals *sometimes* possible; a real
+Farmer is still the steady, cheaper supply. Looks like a villager in the butcher's apron with a deep red cap, a Beef Rib
+across his arms (`textures/entity/npc/butcher.png`, `tools/make_npc_skins.ps1`).
+
+- **Comes to town on 35% of days** (`NpcManager.DAILY_CHANCE`, like the job NPCs; his own roll each Calendar day,
+  `NpcManager.shopkeeperInTown`). The other days his spot stays empty.
+- **4 random cuts a day** (`NpcShops.CUTS_A_DAY`, `Butcher.todaysCuts`: the same all day, new ones the next), in one
+  **Cuts** tab. (A second tab is planned, not decided yet.) His menu's shop key is `butcher:<mask>` so the client shows
+  the same 4 cuts and that day's stock is kept apart.
+
+| Cut | Per restock (20 min) | Fair | NPC price |
+|---|---|---|---|
+| Common (Chuck, Brisket, Pork Shoulder, Belly, Mutton Shoulder, Chicken Leg Quarter, Rabbit Hind Legs) | 4 | 6 nuggets | **1 gold** |
+| Better (Beef Round, Pork Ham, Mutton Leg, Chicken Breast, Rabbit Saddle) | 2 | 12 nuggets | **2 gold** |
+| Rare (Beef Rib, Pork Loin, Mutton Rack) | 1 | 2 gold | **3 gold** |
+
+Raw cuts give no effects, so the NPC rule holds. They start rotting the moment they're bought (`farmer/Freshness`
+stamps them like a fresh cut). Prices go through `npcPrice` like every NPC.
 
 ## Health bars (`client/MobHealthBars`)
 When a mob (or another player) loses health, a little bar floats over its head for 5 seconds after the last hit, then

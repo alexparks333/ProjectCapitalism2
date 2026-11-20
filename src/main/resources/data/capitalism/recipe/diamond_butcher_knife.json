@@ -1,6 +1,6 @@
 {
   "type": "capitalism:job_shaped",
-  "job": ["toolsmith", "farmer"],
+  "job": "toolsmith",
   "category": "equipment",
   "key": {
     "D": "minecraft:diamond",

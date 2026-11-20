@@ -1,6 +1,6 @@
 {
   "type": "capitalism:job_shaped",
-  "job": "farmer",
+  "job": "toolsmith",
   "category": "equipment",
   "key": {
     "I": "minecraft:iron_ingot",

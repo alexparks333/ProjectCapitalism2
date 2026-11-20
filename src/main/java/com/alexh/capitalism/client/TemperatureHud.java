@@ -72,6 +72,7 @@ public final class TemperatureHud {
         if ((mask & BodyTemperature.R_WINTER_SURVIVAL) != 0) out.add("Winter Survival: the cold can't touch you.");
         if ((mask & BodyTemperature.R_HOT_PEPPER) != 0) out.add("Hot Pepper: the cold can't touch you.");
         if ((mask & BodyTemperature.R_NO_HEAT) != 0) out.add("The heat can't touch you.");
+        if ((mask & BodyTemperature.R_COMFORTED) != 0) out.add("Comfort Soup: you're perfectly comfortable.");
         if ((mask & BodyTemperature.R_WARMED_UP) != 0) out.add("You're warmed up: the cold can't reach you.");
         if ((mask & BodyTemperature.R_COOLED_OFF) != 0) out.add("Frosty Melon Sorbet keeps you cool.");
         if ((mask & BodyTemperature.R_HAND_WARMER) != 0) out.add("Your Hand Warmer keeps the cold off.");

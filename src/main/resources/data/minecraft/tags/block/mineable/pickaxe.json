@@ -1,6 +1,7 @@
 {
   "values": [
     "capitalism:bloodstone_bricks",
+    "capitalism:butcher_shop_ice",
     "capitalism:blood_crystal_block",
     "capitalism:purification_table",
     "capitalism:oven",
@@ -30,6 +31,7 @@
     "capitalism:bat_gargoyle",
     "capitalism:crimson_chandelier",
     "capitalism:iron_maiden",
+    "capitalism:haunted_tombstone",
     "capitalism:blood_moon_altar",
     "capitalism:blood_crystal_fireplace"
   ]

@@ -48,7 +48,11 @@ public enum BloodDecorKind {
         1, 0, 1, 31, 9, 15, 0.4, 0, 0.2, 2.4, 32, 2.0, 0.4, 0, 14.0, 2.4, 32, 15.8, 29.6, 0, 0.2, 31.6, 32, 2.0,
         29.6, 0, 14.0, 31.6, 32, 15.8, 29.6, 9, 1, 31.4, 26, 15),
     BLOOD_CRYSTAL_FIREPLACE("blood_crystal_fireplace", "Blood Crystal Fireplace", 13, F.GLOWS | F.LIGHTS, 2, 2, 1,
-        6, 0, 0, 16, 32, 32, 2, 0, 3, 6, 1, 29);
+        6, 0, 0, 16, 32, 32, 2, 0, 3, 6, 1, 29),
+    // ── the Halloween ones (the Blood Merchant's Spooky tab, only in the Halloween weeks: BloodMerchantShop.SPOOKY) ──
+    GRINNING_JACK_O_LANTERN("grinning_jack_o_lantern", "Grinning Jack-o'-Lantern", 15, F.GLOWS, 1, 1, 1, 2, 0, 2, 14, 13, 14),
+    HAUNTED_TOMBSTONE("haunted_tombstone", "Haunted Tombstone", 0, F.GLOWS, 1, 1, 1, 6, 0, 1, 11, 15, 15),
+    POSSESSED_SCARECROW("possessed_scarecrow", "Possessed Scarecrow", 4, F.GLOWS, 1, 2, 1, 6, 0, 6, 10, 32, 10);
 
     // flags
     static final class F {

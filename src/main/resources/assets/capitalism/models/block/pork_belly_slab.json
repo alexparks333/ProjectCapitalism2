@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "capitalism:block/meat_slab_base",
   "textures": {
     "particle": "capitalism:block/meat_slab/pork_belly_meat",
     "meat": "capitalism:block/meat_slab/pork_belly_meat",

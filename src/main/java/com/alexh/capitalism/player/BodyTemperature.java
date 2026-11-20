@@ -88,7 +88,7 @@ public final class BodyTemperature {
     // Why: what's acting on you right now (a bitmask, sent for the hover)
     public static final int R_RAIN = 1, R_COLD_WATER = 2, R_SNOWY = 4, R_POWDER_SNOW = 8, R_FIRE = 16, R_FIREPLACE = 32,
         R_LEATHER = 64, R_NETHER = 128, R_SUN = 256, R_WATER_COOLING = 512, R_WINTER_SURVIVAL = 1024, R_WET = 2048,
-        R_ICE = 4096, R_BLAZE = 8192, R_NO_HEAT = 16384, R_HOT_PEPPER = 32768, R_LEATHER_HOT = 65536, R_WARMED_UP = 131072, R_COOLED_OFF = 262144, R_HAND_WARMER = 524288, R_ON_ICE = 1048576, R_CLOSE_HEAT = 2097152;
+        R_ICE = 4096, R_BLAZE = 8192, R_NO_HEAT = 16384, R_HOT_PEPPER = 32768, R_LEATHER_HOT = 65536, R_WARMED_UP = 131072, R_COOLED_OFF = 262144, R_HAND_WARMER = 524288, R_ON_ICE = 1048576, R_CLOSE_HEAT = 2097152, R_COMFORTED = 4194304;
 
     // Freezing: never below this much health
     public static final float MIN_HEALTH = 2f;
@@ -338,6 +338,9 @@ public final class BodyTemperature {
         data.drySeconds = 0;
     }
 
+    // how far Comforted moves your body heat toward 70 each second (from freezing to fine in a few seconds)
+    public static final float COMFORT_STEP = 15f;
+
     // Once a second (WellnessEvents): move the body heat, soak / dry leather, and Freezing costs health.
     // Creative / spectator: always 70%, dry.
     public static void tick(ServerPlayer player, WellbeingData data) {
@@ -349,6 +352,11 @@ public final class BodyTemperature {
         Climate climate = climate(player);
         data.bodyHeat = step(data.bodyHeat, climate.target(), climate.heated(), climate.fast(), climate.chill());
         data.heatReasons = climate.reasons();
+        // Comforted (a Comfort Soup): pulled fast to a perfect 70 and held there, whatever the weather
+        if (player.hasEffect(com.alexh.capitalism.core.ModEffects.COMFORTED)) {
+            data.bodyHeat = data.bodyHeat < NORMAL ? Math.min(NORMAL, data.bodyHeat + COMFORT_STEP) : Math.max(NORMAL, data.bodyHeat - COMFORT_STEP);
+            data.heatReasons = R_COMFORTED;
+        }
         // the Hand Warmer burns down a second at a time while it keeps the cold off
         if ((climate.reasons() & R_HAND_WARMER) != 0) {
             var warmer = player.getOffhandItem();

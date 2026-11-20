@@ -40,12 +40,16 @@ public class BloodDecorRenderer implements BlockEntityRenderer<BloodDecorBlockEn
         // the model's state (BloodDecorModels.Anim)
         public float time, open, x, y, z;
         public boolean lit;
+        // the Haunted Tombstone's epitaph, and which way it faces (for the text)
+        public String epitaph = "";
+        public Direction facing = Direction.WEST;
     }
 
     private record Look(BloodDecorModels.Base model, Identifier texture, Identifier glow) {
     }
 
     private final Map<BloodDecorKind, Look> looks = new EnumMap<>(BloodDecorKind.class);
+    private final net.minecraft.client.gui.Font font;
 
     // each decoration's model (also drawn as its item: client/BloodDecorItemRenderer)
     record Def(ModelLayerLocation layer, Function<ModelPart, BloodDecorModels.Base> model) {
@@ -79,9 +83,13 @@ public class BloodDecorRenderer implements BlockEntityRenderer<BloodDecorBlockEn
         def(BloodDecorKind.BAT_ROOST, BloodDecorModels2.BatRoost.LAYER, BloodDecorModels2.BatRoost::new);
         def(BloodDecorKind.CRIMSON_CANOPY_BED, BloodDecorModels2.CanopyBed.LAYER, BloodDecorModels2.CanopyBed::new);
         def(BloodDecorKind.BLOOD_CRYSTAL_FIREPLACE, BloodDecorModels2.Fireplace.LAYER, BloodDecorModels2.Fireplace::new);
+        def(BloodDecorKind.GRINNING_JACK_O_LANTERN, SpookyDecorModels.JackOLantern.LAYER, SpookyDecorModels.JackOLantern::new);
+        def(BloodDecorKind.HAUNTED_TOMBSTONE, SpookyDecorModels.Tombstone.LAYER, SpookyDecorModels.Tombstone::new);
+        def(BloodDecorKind.POSSESSED_SCARECROW, SpookyDecorModels.Scarecrow.LAYER, SpookyDecorModels.Scarecrow::new);
     }
 
     public BloodDecorRenderer(BlockEntityRendererProvider.Context context) {
+        this.font = context.font();
         for (var e : DEFS.entrySet()) this.add(context, e.getKey(), e.getValue().layer(), e.getValue().model());
     }
 
@@ -129,6 +137,8 @@ public class BloodDecorRenderer implements BlockEntityRenderer<BloodDecorBlockEn
         float now = decor.getLevel() == null ? 0 : decor.getLevel().getGameTime() + partialTicks;
         state.time = now;
         state.lit = block.hasProperty(BloodDecorBlock.LIT) && block.getValue(BloodDecorBlock.LIT);
+        state.facing = block.hasProperty(BloodDecorBlock.FACING) ? block.getValue(BloodDecorBlock.FACING) : Direction.WEST;
+        state.epitaph = decor.epitaph();
         // how far open it is (a lid, a door, curtains): eases toward open or shut, about a second either way
         boolean opened = block.hasProperty(BloodDecorBlock.OPEN) && block.getValue(BloodDecorBlock.OPEN);
         // the iron maiden: open while someone has its chest open or while it's armed; slammed shut on a victim
@@ -170,6 +180,59 @@ public class BloodDecorRenderer implements BlockEntityRenderer<BloodDecorBlockEn
         poseStack.scale(-s, -s, s);
         collector.submitModel(look.model(), anim, poseStack, look.texture(), state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         if (state.kind.glows) collector.submitModel(look.model(), anim, poseStack, RenderTypes.eyes(look.glow()), state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
+        if (state.kind == BloodDecorKind.HAUNTED_TOMBSTONE && !state.epitaph.isEmpty()) this.carve(state, poseStack, collector);
+    }
+
+    // The epitaph carved on the tombstone's face (a Name Tag's name, BloodDecorBlock): big letters chiselled into the
+    // stone, filling the space between the carved skull and the line under it. As big as fits: one line, or wrapped onto
+    // two or three if that lets the letters be bigger. Each letter is drawn three times to look cut in: a pale lower lip
+    // catching the light, a dark upper edge in shadow, and the groove itself
+    private static final float EPITAPH_AREA_W = 11.0F / 16.0F;   // the room on the face, in blocks
+    private static final float EPITAPH_AREA_H = 6.0F / 16.0F;
+    private static final float EPITAPH_MAX_SCALE = 0.032F;       // a short name: about 5 pixels tall
+    private static final float EPITAPH_MID_Y = 6.0F / 16.0F;
+
+    private void carve(State state, PoseStack poseStack, SubmitNodeCollector collector) {
+        var epitaph = net.minecraft.network.chat.Component.literal(state.epitaph);
+        int total = this.font.width(epitaph);
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = null;
+        float scale = 0;
+        for (int n = 1; n <= 3; n++) {
+            var split = this.font.split(epitaph, n == 1 ? Integer.MAX_VALUE : total / n + 12);
+            if (split.size() > n) continue;
+            int widest = 1;
+            for (var l : split) widest = Math.max(widest, this.font.width(l));
+            float s = Math.min(EPITAPH_MAX_SCALE, Math.min(EPITAPH_AREA_W / widest, EPITAPH_AREA_H / (split.size() * 10.0F)));
+            if (s > scale) { scale = s; lines = split; }
+        }
+        if (lines == null) return;
+        int n = lines.size();
+        poseStack.pushPose();
+        poseStack.translate(0.5F, 0.0F, 0.5F);
+        // a frame with +z out of the tombstone's face, +x to the right along it, +y up
+        poseStack.rotateDegrees(Axis.YP, -state.facing.toYRot());
+        for (int i = 0; i < n; i++) {
+            var text = lines.get(i);
+            int w = this.font.width(text);
+            poseStack.pushPose();
+            poseStack.translate(0.0F, EPITAPH_MID_Y - (i - (n - 1) / 2.0F) * 10.0F * scale, 2.46F / 16.0F);
+            poseStack.scale(scale, -scale, scale);
+            float x = -w / 2.0F, y = -4.0F;
+            // back to front, each a hair further out so they don't flicker into each other
+            this.chisel(poseStack, collector, text, x + 0.6F, y + 0.6F, 0.0F, 0xFF9C9A98, state.lightCoords);  // the lit lower lip
+            this.chisel(poseStack, collector, text, x - 0.5F, y - 0.5F, 0.4F, 0xFF151418, state.lightCoords); // the shadowed top edge
+            this.chisel(poseStack, collector, text, x, y, 0.8F, 0xFF3E3C40, state.lightCoords);               // the groove
+            poseStack.popPose();
+        }
+        poseStack.popPose();
+    }
+
+    private void chisel(PoseStack poseStack, SubmitNodeCollector collector, net.minecraft.util.FormattedCharSequence text,
+                        float x, float y, float out, int color, int light) {
+        poseStack.pushPose();
+        poseStack.translate(0.0F, 0.0F, out);
+        collector.submitText(poseStack, x, y, text, false, net.minecraft.client.gui.Font.DisplayMode.POLYGON_OFFSET, light, color, 0, 0);
         poseStack.popPose();
     }
 

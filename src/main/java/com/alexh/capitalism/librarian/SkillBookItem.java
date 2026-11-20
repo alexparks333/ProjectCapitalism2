@@ -57,7 +57,7 @@ public class SkillBookItem extends Item {
     public static ItemStack write(ItemStack stack, Skill skill, boolean delicate) {
         stack.set(ModComponents.SKILL_BOOK.get(), new SkillBook(skill.id(), delicate));
         stack.set(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA,
-            new CustomModelData(List.of(), List.of(), skill.trait || skill.instant ? List.of(skill.id()) : List.of(skill.id(), delicate ? "ii" : "i"), List.of(skill.color)));
+            new CustomModelData(List.of(), List.of(), skill.trait || skill.instant || skill.bloodMoon() ? List.of(skill.id()) : List.of(skill.id(), delicate ? "ii" : "i"), List.of(skill.color)));
         if (skill.trait) stack.set(net.minecraft.core.component.DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         return stack;
     }
@@ -84,7 +84,9 @@ public class SkillBookItem extends Item {
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
         Skill skill = skill(stack);
-        return skill == null ? 1 : readTicks(skill);
+        if (skill == null) return 1;
+        // Quick Study (Midnight Oil Martini): read in half the time
+        return user.hasEffect(com.alexh.capitalism.core.ModEffects.QUICK_STUDY) ? readTicks(skill) / 2 : readTicks(skill);
     }
 
     // Pages turning while you read
@@ -115,8 +117,13 @@ public class SkillBookItem extends Item {
         } else {
             int ticks = book.delicate() ? Skill.DELICATE_TICKS : Skill.ROUGH_TICKS;
             if (Skills.has(player, Skill.BOOKWORM)) ticks = ticks * 3 / 2;
+            // Quick Study (Midnight Oil Martini): the lesson lasts 25% longer
+            if (player.hasEffect(ModEffects.QUICK_STUDY)) ticks = ticks * 5 / 4;
+            // a Blood Moon Book: exactly one night, the same from a Rough or a Delicate Book
+            if (skill.bloodMoon()) ticks = Skill.BLOOD_NIGHT_TICKS;
+            int amplifier = skill.bloodMoon() ? 0 : book.delicate() ? 1 : 0;
             // no particles, no vanilla icon: it shows in Wellness > Buffs & Debuffs
-            player.addEffect(new MobEffectInstance(ModEffects.BOOK_LESSONS.get(skill), ticks, book.delicate() ? 1 : 0, false, false, false));
+            player.addEffect(new MobEffectInstance(ModEffects.BOOK_LESSONS.get(skill), ticks, amplifier, false, false, false));
             player.sendOverlayMessage(Component.literal("You read " + skill.title + "."));
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.7F, 1.3F);
         }

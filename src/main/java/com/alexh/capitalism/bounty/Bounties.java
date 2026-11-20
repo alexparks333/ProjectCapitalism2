@@ -37,7 +37,13 @@ import java.util.function.Predicate;
 @EventBusSubscriber(modid = com.alexh.capitalism.Capitalism.MODID)
 public final class Bounties {
 
-    public static final int FEE = 2;
+    // what taking a task costs, in gold nuggets, by tier: Easy 2 nuggets, Medium 6, Hard 1 gold, Heroic 2 gold (a flat fee,
+    // not a shop price)
+    public static final int[] FEES = {2, 6, 9, 18};
+
+    public static int fee(BountyTask task) {
+        return task == null ? FEES[0] : FEES[task.tier.ordinal()];
+    }
     public static final int MILESTONE = 50;
 
     private Bounties() {
@@ -170,7 +176,7 @@ public final class Bounties {
         if (data.takenDay == day) return TakeResult.ALREADY_TODAY;
         BountyData.Open posted = posted(server);
         if (!posted.task().availableTo(player)) return TakeResult.CANT_DO_IT;
-        if (!player.isCreative() && !GoldMoney.take(player, FEE)) return TakeResult.NO_GOLD;
+        if (!player.isCreative() && !GoldMoney.take(player, fee(posted.task()))) return TakeResult.NO_GOLD;
         data = of(player);
         data.open.clear();
         data.open.add(posted.withProgress(0));

@@ -33,11 +33,16 @@ import static com.alexh.capitalism.client.BoatKit.*;
 //  - Wizard's Hat: a tall navy cone bending back, a wide brim, a gold band and gold stars
 //  - Farmer's Hat: a wide straw sun hat with a red band and an ear of wheat tucked in
 //  - Traveler's Pipe: just a clay-and-wood pipe hanging from the corner of your mouth, an ember glowing in its bowl
+//  - Ghost Sheet (the Blood Merchant's, Halloween): a white bedsheet over you down to the knees, two black eye holes,
+//    a ragged hem
 public class CosmeticHatLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
     public enum Kind {
         CHEFS_HAT(ModItems.CHEFS_HAT), WELDERS_MASK(ModItems.WELDERS_MASK), WIZARDS_HAT(ModItems.WIZARDS_HAT),
-        FARMERS_HAT(ModItems.FARMERS_HAT), TRAVELERS_PIPE(ModItems.TRAVELERS_PIPE);
+        FARMERS_HAT(ModItems.FARMERS_HAT), TRAVELERS_PIPE(ModItems.TRAVELERS_PIPE),
+        // the Blood Merchant's Halloween Ghost Sheet (player/SpookyGear): the sheet hangs from the shoulders and turns with
+        // the body; its hood (GHOST_HOOD, drawn along with it) sits on the head and turns and nods with it
+        GHOST_SHEET(ModItems.GHOST_SHEET), GHOST_HOOD(ModItems.GHOST_SHEET);
 
         final Supplier<? extends Item> item;
         public final ModelLayerLocation layer;
@@ -105,6 +110,22 @@ public class CosmeticHatLayer extends RenderLayer<AvatarRenderState, PlayerModel
                 k.box(DARKWOOD, 2.0, -3.6, -9.6, 2.2, 2.9, 2.2);
                 k.box(FIRE, 2.3, -3.75, -9.3, 1.6, 0.3, 1.6);
             }
+            case GHOST_SHEET -> {
+                k.box(WHITE, 0, 10, -8.4, 0.4, -3.6, 16.8, 10.0, 7.2);       // hanging off the shoulders, over the arms
+                k.box(WHITE, 0, 0, -7.6, 0.0, -3.0, 15.2, 0.6, 6.0);
+                double[] hem = {2.0, 1.2, 2.6, 1.4, 2.2, 1.0, 2.4};          // the ragged hem
+                for (int i = 0; i < hem.length; i++) {
+                    k.box(WHITE, i * 4, 20, -8.4 + i * 2.4, 10.4, -3.6, 2.4, hem[i], 0.8);
+                    k.box(WHITE, i * 4, 24, -8.4 + i * 2.4, 10.4, 2.8, 2.4, hem[hem.length - 1 - i], 0.8);
+                }
+            }
+            case GHOST_HOOD -> {
+                // in the head's space: snug over the head (and the hat layer), so it turns and nods with it
+                k.box(WHITE, -4.7, -9.0, -4.7, 9.4, 1.0, 9.4);              // over the top of the head
+                k.box(WHITE, 20, 0, -5.0, -8.0, -5.0, 10.0, 8.8, 10.0);       // round the head, down over the neck
+                k.box(BLACK, -2.9, -5.6, -5.15, 1.8, 2.2, 0.2).box(BLACK, 1.1, -5.6, -5.15, 1.8, 2.2, 0.2);   // the eye holes
+                k.box(BLACK, -1.0, -2.6, -5.1, 2.0, 1.2, 0.15);                                             // a little "oh" mouth
+            }
         }
         k.done();
         return LayerDefinition.create(mesh, 256, 256);
@@ -118,10 +139,18 @@ public class CosmeticHatLayer extends RenderLayer<AvatarRenderState, PlayerModel
             BloodDecorModels.Base model = this.models.get(kind);
             if (model == null) return;
             poseStack.pushPose();
-            this.getParentModel().head.translateAndRotate(poseStack);
+            (kind == Kind.GHOST_SHEET ? this.getParentModel().body : this.getParentModel().head).translateAndRotate(poseStack);
             collector.submitModel(model, new BloodDecorModels.Anim(0, 0, false, 0, 0, 0), poseStack, TEXTURE, lightCoords,
                 OverlayTexture.NO_OVERLAY, state.outlineColor);
             poseStack.popPose();
+            BloodDecorModels.Base hood = kind == Kind.GHOST_SHEET ? this.models.get(Kind.GHOST_HOOD) : null;
+            if (hood != null) {
+                poseStack.pushPose();
+                this.getParentModel().head.translateAndRotate(poseStack);
+                collector.submitModel(hood, new BloodDecorModels.Anim(0, 0, false, 0, 0, 0), poseStack, TEXTURE, lightCoords,
+                    OverlayTexture.NO_OVERLAY, state.outlineColor);
+                poseStack.popPose();
+            }
             return;
         }
     }

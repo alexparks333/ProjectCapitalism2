@@ -13,7 +13,7 @@ A full calendar on top of Minecraft's day (`calendar/`). **One Minecraft day (20
 - **`/calendar`**: the date, the time and the next festival. **`/calendar festivals`**: the year's festivals.
   **`/calendar set <season> <day> [year]`** (operators): moves the clock to that date, keeping the time of day.
   For testing (operators): **`/calendar goto <festival>`** jumps to 7 am on that festival this year, **`/calendar next`** to
-  7 am tomorrow, **`/calendar night`** to 8 pm today (fireworks).
+  7 am tomorrow, **`/calendar night`** to 8 pm today, **`/calendar midnight`** to 30 seconds before midnight (New Year's Eve fireworks).
   (Vanilla `/time set <number>` sets the clock to that absolute number, which resets the date. Use `/calendar set`.)
 
 ## Winter weather
@@ -43,7 +43,6 @@ Top right of the screen, at 85% size. It moves down below the status effect icon
 
 | Date | Festival | What happens all day |
 |---|---|---|
-| Spring 1 | New Year's Day | A celebration in the town: **fireworks all over the town** (3 to 6 a second), 8 pm to midnight |
 | Spring 7 | Founders' Day | Every town NPC's shop is **20% off** |
 | Spring 14 | Blossom Festival | Crops grow twice as fast |
 | Summer 9 | Angler's Derby | Everyone has **+3 Luck** (fishing) |
@@ -52,6 +51,7 @@ Top right of the screen, at 85% size. It moves down below the status effect icon
 | Fall 28 | Spooky Night | Monsters spawn in pumpkin masks; a treat for everyone (pumpkin pie, 4 cookies) |
 | Winter 8 | Christmas | **Right-click the Grand Christmas Tree for a Christmas Present** (once each) |
 | Winter 25 | Winter Fest | **It snows over the town** all day (whatever the biome) |
+| Winter 28 | New Year's Eve | At **exactly midnight** the new year is rung in ("Happy New Year! Welcome to Year 2!" in chat) and **fireworks go up all over the town** until 1 am (8 to 11 a second for the first 10 seconds, then 3 to 6). The night rolls over to Spring 1, so nothing happens on Spring 1 itself |
 
 - **Sales** go through `economy/NpcPricing` (`Festival.npcDiscount`), as every NPC price must.
 - **Crops twice as fast:** a crop's growth check passes half the time it would have failed (`CropGrowEvent`).
@@ -62,7 +62,7 @@ Top right of the screen, at 85% size. It moves down below the status effect icon
 - **Treats** (Spooky Night): into your inventory once that day per player (dropped if it's full).
 - (The festivals can also stop monsters spawning after dark: no festival does now.)
 
-Festival days also drive the seasonal decorations (`Decorations.md`): Spring and Summer decorations are up all season (1 to 28), the harvest all fall, Halloween Fall 18 to 28, Christmas Winter 5 to 28.
+Festival days also drive the seasonal decorations (`Decorations.md`): Spring decorations are up Spring 10 to 21, Summer 15 to 28, the harvest Fall 8 to 21, Halloween Fall 18 to 28, Christmas Winter 5 to 28. The rest of the year the town is bare.
 
 ## Testing
 `calendar/CalendarTests` (`calendar`) checks:

@@ -711,6 +711,15 @@ public final class SkillBookTests {
                 c.check(left.isEmpty(), what + ": the book is used up");
             }
         }
+        // a Blood Moon Book: one night, the same from a Delicate Book (no level II), Bookworm doesn't stretch it
+        ServerPlayer nightReader = c.player();
+        ItemStack bane = SkillBookItem.write(new ItemStack(ModItems.SKILL_BOOK.get()), Skill.WOLFSBANE, true);
+        bane.getItem().finishUsingItem(bane, c.level(), nightReader);
+        MobEffectInstance night = nightReader.getEffect(ModEffects.BOOK_LESSONS.get(Skill.WOLFSBANE));
+        c.check(night != null && night.getDuration() == Skill.BLOOD_NIGHT_TICKS && night.getAmplifier() == 0
+                && Skills.level(nightReader, Skill.WOLFSBANE) == 1,
+            "a Delicate Wolfsbane lasts one night (" + Skill.BLOOD_NIGHT_TICKS + " ticks), at the one strength");
+        nightReader.removeEffect(ModEffects.BOOK_LESSONS.get(Skill.WOLFSBANE));
         ServerPlayer reader = c.player();
         ItemStack trait = SkillBookItem.write(new ItemStack(ModItems.SKILL_BOOK.get()), Skill.NIMBLE, false);
         trait.getItem().finishUsingItem(trait, c.level(), reader);
@@ -746,17 +755,21 @@ public final class SkillBookTests {
                 String what = (delicate ? "Delicate" : "Rough") + (odds > 1 ? " + Lucky Librarian" : "");
                 c.near(traits / n, expected, expected * 0.08, what + ": share of traits");
                 // each lesson (and instant book): common = 10 / (all their weights) of the draw, rare = 4 / (all their weights)
-                double lessons = n - traits;
+                double blood = 0;
+                for (var entry : counts.entrySet()) if (entry.getKey().bloodMoon()) blood += entry.getValue();
+                double bloodExpected = (1 - expected) * (delicate ? Skill.DELICATE_BLOOD_CHANCE : Skill.ROUGH_BLOOD_CHANCE) * odds;
+                c.near(blood / n, bloodExpected, bloodExpected * 0.08, what + ": share of Blood Moon Books (a little more common than traits)");
+                double lessons = n - traits - blood;
                 double common = 0, rare = 0;
                 int commons = 0, rares = 0;
                 for (Skill skill : Skill.values()) {
-                    if (skill.trait) continue;
+                    if (skill.trait || skill.bloodMoon()) continue;
                     int count = counts.getOrDefault(skill, 0);
                     if (skill.rare) { rare += count; rares++; } else { common += count; commons++; }
                 }
                 c.near((rare / rares) / (common / commons), 0.4, 0.03, what + ": a rare lesson is 0.4x as likely as a common one");
                 int lessonWeight = 0;
-                for (Skill skill : Skill.values()) if (!skill.trait) lessonWeight += skill.weight();
+                for (Skill skill : Skill.values()) if (!skill.trait && !skill.bloodMoon()) lessonWeight += skill.weight();
                 c.near(common / commons / lessons, (double) Skill.COMMON_WEIGHT / lessonWeight, 0.003, what + ": each common lesson's share of lessons");
             }
         }

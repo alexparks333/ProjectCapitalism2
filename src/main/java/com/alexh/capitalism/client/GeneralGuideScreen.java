@@ -279,7 +279,8 @@ public class GeneralGuideScreen extends Screen {
             "The Mayor and Vice Mayor keep the Mayoral Chest, and the Town Hall Mailbox takes the town's mail.")));
         list.add(new Entry(Tab.TOWN, new ItemStack(Items.MAP), "The Bounty Clerk", null, List.of(), List.of(
             "Posts a task each day. Finish it for a reward,",
-            "and see how you stand in his Ledger.")));
+            "and see how you stand in his Ledger.",
+            "Harder tasks pay more, and cost more to take.")));
         list.add(new Entry(Tab.TOWN, new ItemStack(Items.COD), "The Fisherman", null, List.of(new ItemStack(Items.SALMON)), List.of(
             "Buys your catch.",
             "The sea holds rarer things than cod, for the patient.",
@@ -303,7 +304,7 @@ public class GeneralGuideScreen extends Screen {
         list.add(new Entry(Tab.JOBS, new ItemStack(Items.IRON_PICKAXE), "Jobs", null, List.of(), List.of(
             "You get one Essential job and one Fun job to start.",
             "Pick intentionally: changing jobs is rarely allowed.",
-            "Pick your starting jobs with /pick.")));
+            "Pick your starting jobs with /pick. A Cook can't also be a Farmer.")));
         list.add(new Entry(Tab.JOBS, new ItemStack(Items.GOLD_BLOCK), "Wealth Is Power", null, List.of(), List.of(
             "Every job has its perks and its downsides, so players need each other.",
             "Here money is the measure of a person: the more you earn, the more powerful you are.")));
@@ -338,7 +339,7 @@ public class GeneralGuideScreen extends Screen {
             "Each leather piece keeps some cold off; a full set keeps it all off, but bakes you somewhere hot.",
             "Swim in leather and it gets soaked: you stay wet until you dry off by a fire.",
             "The desert sun and the Nether heat you up. Water cools you off; a fire there only makes it worse.",
-            "A Cook's Campfire Chili keeps you warm; Frosty Melon Sorbet keeps you cool.")));
+            "A Cook's Campfire Chili or Comfort Soup and a Bartender's Hot Toddy keep you warm; Frosty Melon Sorbet keeps you cool.")));
         list.add(new Entry(Tab.WELLNESS, new ItemStack(Items.GOLDEN_APPLE), "Bonus Hearts", null, List.of(), List.of(
             "A Balanced diet and Good water for a while: +1 heart.",
             "With Excellent water: +2.",
@@ -346,7 +347,11 @@ public class GeneralGuideScreen extends Screen {
         list.add(new Entry(Tab.WELLNESS, new ItemStack(Items.CAKE), "Daily Cravings", null, List.of(), List.of(
             "Every morning you crave your own food and drink.",
             "Satisfy one and that bar fills right up to gold, with a point on the Cravings standings.",
-            "See Wellness > Tasks.")));        return list;
+            "See Wellness > Tasks.")));
+        list.add(new Entry(Tab.WELLNESS, new ItemStack(ModItems.SHOTS.get(com.alexh.capitalism.block.LiquorType.WHISKEY).get()), "Drinking", null, List.of(), List.of(
+            "Every drink counts toward the day: three and you're Tipsy, five and you're Drunk.",
+            "The count starts over each morning. Wellness shows how many you've had today.")));
+        return list;
     }
 
     private @Nullable Tab tab() {

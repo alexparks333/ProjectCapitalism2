@@ -55,6 +55,9 @@ public final class FoodDrinkTests {
 
     static {
         GameTests.register("food_effects", FoodDrinkTests::itemEffects);
+        GameTests.register("intoxication", FoodDrinkTests::intoxication);
+        GameTests.register("specialty_drinks_2", FoodDrinkTests::specialtyDrinks2);
+        GameTests.register("specialty_meals_2", FoodDrinkTests::specialtyMeals2);
         GameTests.register("food_gold_bars", FoodDrinkTests::goldBars);
         GameTests.register("food_meal_specials", FoodDrinkTests::mealSpecials);
         GameTests.register("food_drink_specials", FoodDrinkTests::drinkSpecials);
@@ -114,7 +117,8 @@ public final class FoodDrinkTests {
                 c.check(left.is(back), name(stack) + " hands back " + name(new ItemStack(back)) + " (got " + name(left) + ")");
             }
         }
-        c.check(tested == 20, "found all 20 meals and drinks with effects (got " + tested + ")");
+        // 20 first-round meals and drinks + 8 second-round Specialty drinks + 8 second-round Specialty meals
+        c.check(tested == 36, "found all 36 meals and drinks with effects (got " + tested + ")");
     }
 
     // Overflow: cocktails / shots into gold water, Gourmet food into gold drumsticks (by hand: half)
@@ -231,6 +235,129 @@ public final class FoodDrinkTests {
 
     // Luminescent Aura, Magma Trail, Phase Step, Overworld Mojito, Phantom's Nightcap, Hangover Cure, Berserker's
     // Rage, Dolphin's Grace skimming
+    // Intoxication (Wellness.md): every alcoholic drink counts; 3 in a day = Tipsy (2 min), 5 = Drunk (4 min);
+    // non-alcoholic drinks don't count; a new day starts over
+    private static void intoxication(GameTests.Checks c) {
+        ServerPlayer p = c.player();
+        p.setData(ModAttachments.INTOXICATION.get(), new Intoxication.Data());
+        p.removeEffect(ModEffects.TIPSY);
+        p.removeEffect(ModEffects.DRUNK);
+        boolean allCount = true;
+        for (GoldenBonus bonus : GoldenBonus.ALL) allCount &= Intoxication.strength(new ItemStack(bonus.item().get())) > 0;
+        c.check(allCount, "every shot, wine and cocktail counts as a drink");
+        // the Bartending Table takes ingredients in any order: no two recipes may use the very same ones
+        java.util.Set<java.util.List<String>> seen = new java.util.HashSet<>();
+        String clash = null;
+        for (com.alexh.capitalism.block.BartenderRecipe recipe : com.alexh.capitalism.block.BartenderRecipe.RECIPES) {
+            java.util.List<String> key = new java.util.ArrayList<>();
+            for (var ingredient : recipe.ingredients()) key.add(BuiltInRegistries.ITEM.getKey(ingredient.get()).toString());
+            java.util.Collections.sort(key);
+            if (!seen.add(key)) clash = BuiltInRegistries.ITEM.getKey(recipe.result().get()).toString();
+        }
+        c.check(clash == null, "no two Bartending Table recipes use the same ingredients" + (clash == null ? "" : " (" + clash + ")"));
+        // every Oven meal counts toward the diet (DietValues), and its Cooking Table recipe makes what goes in the Oven
+        String noDiet = null;
+        for (com.alexh.capitalism.block.KitchenRecipes.Baking baking : com.alexh.capitalism.block.KitchenRecipes.OVEN) {
+            if (DietValues.sharesFor(new ItemStack(baking.result().get())) == null) noDiet = BuiltInRegistries.ITEM.getKey(baking.result().get()).toString();
+            boolean madeAtTable = com.alexh.capitalism.block.KitchenRecipes.COOKING.stream().anyMatch(a -> a.result().get() == baking.input().get());
+            if (!madeAtTable) noDiet = "no Cooking Table recipe for " + BuiltInRegistries.ITEM.getKey(baking.input().get());
+        }
+        c.check(noDiet == null, "every Oven meal has diet values and a Cooking Table recipe" + (noDiet == null ? "" : " (" + noDiet + ")"));
+        c.check(Intoxication.strength(new ItemStack(ModItems.PURIFIED_WATER.get())) == 0, "Purified Water doesn't");
+        ItemStack tequila = new ItemStack(ModItems.SHOTS.get(LiquorType.TEQUILA).get());
+        c.consume(p, tequila.copy());
+        c.consume(p, tequila.copy());
+        c.check(!p.hasEffect(ModEffects.TIPSY) && Intoxication.today(p) == 20, "2 shots: not tipsy yet");
+        c.consume(p, tequila.copy());
+        MobEffectInstance tipsy = p.getEffect(ModEffects.TIPSY);
+        c.check(tipsy != null && tipsy.getDuration() > Intoxication.TIPSY_TICKS - 40, "3 shots: Tipsy for 2 minutes");
+        c.consume(p, tequila.copy());
+        c.consume(p, tequila.copy());
+        MobEffectInstance drunk = p.getEffect(ModEffects.DRUNK);
+        c.check(drunk != null && drunk.getDuration() > Intoxication.DRUNK_TICKS - 40 && !p.hasEffect(ModEffects.TIPSY),
+            "5 shots: Drunk for 4 minutes (instead of Tipsy)");
+        p.setData(ModAttachments.INTOXICATION.get(), new Intoxication.Data(-5L, 50));
+        c.check(Intoxication.today(p) == 0, "a new day starts the count over");
+        p.setData(ModAttachments.INTOXICATION.get(), new Intoxication.Data());
+        p.removeEffect(ModEffects.DRUNK);
+    }
+
+    // The second round of Specialty cocktails (Bartending.md): each gives its effect for its time; Silver Tongue
+    // takes 10% off NPC prices; Quick Study halves a skill book's reading time
+    private static void specialtyDrinks2(GameTests.Checks c) {
+        ServerPlayer p = c.player();
+        Object[][] drinks = {
+            {ModItems.FORGEFIRE_OLD_FASHIONED, ModEffects.STEADY_FORGE, 5 * 60},
+            {ModItems.ANGLERS_SUNRISE, ModEffects.LUCKY_LINE, 5 * 60},
+            {ModItems.BUTCHERS_BLOODY_MARY, ModEffects.STEADY_HANDS, 5 * 60},
+            {ModItems.HOT_TODDY, ModEffects.WARMED_UP, 8 * 60},
+            {ModItems.MIDNIGHT_OIL_MARTINI, ModEffects.QUICK_STUDY, 3 * 60},
+            {ModItems.HAGGLERS_HIGHBALL, ModEffects.SILVER_TONGUE, 5 * 60},
+            {ModItems.DESERT_ROSE, ModEffects.QUENCHED, 4 * 60},
+            {ModItems.MOONSTALKER_SANGRIA, ModEffects.MOONSTALKER, 5 * 60}};
+        long before = com.alexh.capitalism.economy.NpcPricing.npcPrice(90, p);
+        for (Object[] d : drinks) {
+            @SuppressWarnings("unchecked") var item = (java.util.function.Supplier<Item>) d[0];
+            @SuppressWarnings("unchecked") var effect = (net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>) d[1];
+            int seconds = (Integer) d[2];
+            c.consume(p, new ItemStack(item.get()));
+            MobEffectInstance got = p.getEffect(effect);
+            c.check(got != null && got.getDuration() > (seconds - 2) * 20 && got.getDuration() <= seconds * 20,
+                BuiltInRegistries.ITEM.getKey(item.get()).getPath() + " gives its effect for " + seconds + " s");
+        }
+        long after = com.alexh.capitalism.economy.NpcPricing.npcPrice(90, p);
+        c.check(after == Math.round(90 * 1.5 * (1.0 - com.alexh.capitalism.economy.NpcPricing.discount(p))) && after < before,
+            "Silver Tongue: NPC prices 10% cheaper (" + before + " -> " + after + " nuggets)");
+        ItemStack book = com.alexh.capitalism.librarian.SkillBookItem.write(new ItemStack(ModItems.SKILL_BOOK.get()),
+            com.alexh.capitalism.librarian.Skill.FISHERMANS_PATIENCE, false);
+        com.alexh.capitalism.librarian.SkillBookItem bookItem = (com.alexh.capitalism.librarian.SkillBookItem) book.getItem();
+        int fast = bookItem.getUseDuration(book, p);
+        p.removeEffect(ModEffects.QUICK_STUDY);
+        int slow = bookItem.getUseDuration(book, p);
+        c.check(slow > 1 && fast * 2 == slow, "Quick Study: a skill book reads in half the time (" + slow + " -> " + fast + " ticks)");
+        for (Object[] d : drinks) {
+            @SuppressWarnings("unchecked") var effect = (net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>) d[1];
+            p.removeEffect(effect);
+        }
+    }
+
+    // The second round of Specialty meals (Cook.md): Hearty adds a heart on top of the Wellness hearts and takes it off
+    // again; Long Reach adds 1.5 blocks; Comfort Soup cures Hunger and warms you; Second Wind: sprinting costs no hunger
+    private static void specialtyMeals2(GameTests.Checks c) {
+        ServerPlayer p = c.player();
+        float maxBefore = p.getMaxHealth();
+        c.consume(p, new ItemStack(ModItems.PRIME_RIB_DINNER.get()));
+        c.check(p.hasEffect(ModEffects.HEARTY) && Math.abs(p.getMaxHealth() - (maxBefore + 2)) < 0.01,
+            "Prime Rib Dinner: +1 heart (" + maxBefore + " -> " + p.getMaxHealth() + ")");
+        p.removeEffect(ModEffects.HEARTY);
+        c.check(Math.abs(p.getMaxHealth() - maxBefore) < 0.01, "...and it comes off again when Hearty ends");
+        double reach = p.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+        c.consume(p, new ItemStack(ModItems.BRICK_OVEN_PIZZA.get()));
+        c.check(Math.abs(p.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) - (reach + 1.5)) < 0.01, "Brick-Oven Pizza: reach 1.5 blocks further");
+        p.removeEffect(ModEffects.LONG_REACH);
+        p.addEffect(new MobEffectInstance(MobEffects.HUNGER, 600));
+        WellbeingData wellbeing = p.getData(ModAttachments.WELLBEING.get());
+        wellbeing.bodyHeat = 40f;
+        c.consume(p, new ItemStack(ModItems.COMFORT_SOUP.get()));
+        c.check(!p.hasEffect(MobEffects.HUNGER) && p.getData(ModAttachments.WELLBEING.get()).bodyHeat >= BodyTemperature.NORMAL
+            && p.hasEffect(ModEffects.COMFORTED), "Comfort Soup: cures Hunger, warms you back to normal, Comforted");
+        // Comforted holds you at a perfect 70 whatever the weather: too hot comes down fast too
+        p.getData(ModAttachments.WELLBEING.get()).bodyHeat = 95f;
+        for (int i = 0; i < 3; i++) BodyTemperature.tick(p, p.getData(ModAttachments.WELLBEING.get()));
+        c.check(Math.abs(p.getData(ModAttachments.WELLBEING.get()).bodyHeat - BodyTemperature.NORMAL) < 0.01
+                && p.getEffect(ModEffects.COMFORTED).getDuration() <= 3 * 60 * 20,
+            "Comforted (3 min): body heat pulled to 70 within seconds and held there");
+        p.removeEffect(ModEffects.COMFORTED);
+        p.addEffect(new MobEffectInstance(ModEffects.SECOND_WIND, 200));
+        p.setSprinting(true);
+        float before = p.getFoodData().getSaturationLevel();
+        int food = p.getFoodData().getFoodLevel();
+        p.causeFoodExhaustion(40.0F);
+        c.check(p.getFoodData().getSaturationLevel() == before && p.getFoodData().getFoodLevel() == food, "Second Wind: sprinting costs no hunger");
+        p.setSprinting(false);
+        p.removeEffect(ModEffects.SECOND_WIND);
+    }
+
     private static void drinkSpecials(GameTests.Checks c) {
         // Luminescent Aura: a light block at your head, gone when the effect ends
         ServerPlayer glow = c.player();

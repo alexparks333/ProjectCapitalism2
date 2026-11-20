@@ -45,7 +45,22 @@ final class BloodDecorExtras {
                 state.x = (float) Math.max(-1, Math.min(1, across * 1.6));
                 state.y = (float) Math.max(-1, Math.min(1, -up * 1.6));
             }
-            case BAT_ROOST, CRIMSON_THRONE -> state.z = night(clock) ? 1.0F : 0.0F;
+            case BAT_ROOST, CRIMSON_THRONE, HAUNTED_TOMBSTONE -> state.z = night(clock) ? 1.0F : 0.0F;
+            case POSSESSED_SCARECROW -> {
+                // its head turns toward the nearest player (radians from straight ahead, toward its left side +), up
+                // to about 70 degrees either way; with nobody near it looks straight out
+                state.z = night(clock) ? 1.0F : 0.0F;
+                Vec3 head = Vec3.atBottomCenterOf(decor.getBlockPos()).add(0, 2.0, 0);
+                Player nearest = level.getNearestPlayer(head.x, head.y, head.z, 16.0, false);
+                if (nearest == null) return;
+                Vec3 d = nearest.getEyePosition(partialTicks).subtract(head);
+                var block = decor.getBlockState();
+                Direction front = block.hasProperty(BloodDecorBlock.FACING) ? block.getValue(BloodDecorBlock.FACING) : Direction.WEST;
+                Direction side = front.getCounterClockWise();
+                double ahead = d.x * front.getStepX() + d.z * front.getStepZ();
+                double across = d.x * side.getStepX() + d.z * side.getStepZ();
+                state.x = (float) Math.max(-1.2, Math.min(1.2, Math.atan2(across, ahead)));
+            }
             default -> {
             }
         }

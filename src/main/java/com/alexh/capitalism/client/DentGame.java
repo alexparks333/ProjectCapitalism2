@@ -61,7 +61,10 @@ final class DentGame {
         this.weapon = weapon.copy();
         this.start = Util.getMillis();
         this.dentCount = DentForging.dents(weapon);
-        this.dentLife = DentForging.dentLife(weapon);
+        // Steady Forge (Forgefire Old Fashioned): dents stay hot 50% longer
+        var me = net.minecraft.client.Minecraft.getInstance().player;
+        boolean steady = me != null && me.hasEffect(com.alexh.capitalism.core.ModEffects.STEADY_FORGE);
+        this.dentLife = DentForging.dentLife(weapon) * (steady ? 3 : 2) / 2;
         long spawnEvery = DentForging.spawnEvery(weapon);
         RandomSource random = RandomSource.create();
         List<int[]> spots = ItemSilhouette.pixels(weapon.getItem());

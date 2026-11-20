@@ -108,6 +108,43 @@ public record BartenderRecipe(Kind kind, Supplier<? extends Item> result, int co
             ModItems.SHOTS.get(LiquorType.RUM), ModItems.JUICES.get(JuiceType.KELP), ModItems.JUICES.get(JuiceType.WATERMELON), syrup, sugar));
         recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.BEETROOT_VELVET_SOUR, 1, 1,
             ModItems.SHOTS.get(LiquorType.TEQUILA), ModItems.JUICES.get(JuiceType.BEETROOT), bitters, syrup, () -> Items.EGG));
+        // the second round of Specialty cocktails (each helps a job)
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.FORGEFIRE_OLD_FASHIONED, 1, 1,
+            ModItems.SHOTS.get(LiquorType.WHISKEY), bitters, () -> Items.MAGMA_CREAM, () -> Items.IRON_NUGGET, syrup));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.ANGLERS_SUNRISE, 1, 1,
+            ModItems.SHOTS.get(LiquorType.TEQUILA), ModItems.JUICES.get(JuiceType.KELP), ModItems.JUICES.get(JuiceType.GLOW_BERRY), () -> Items.COD, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.BUTCHERS_BLOODY_MARY, 1, 1,
+            ModItems.SHOTS.get(LiquorType.VODKA), ModItems.JUICES.get(JuiceType.BEETROOT), ModItems.JUICES.get(JuiceType.CARROT), bitters, () -> Items.BONE_MEAL));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.HOT_TODDY, 1, 1,
+            ModItems.SHOTS.get(LiquorType.WHISKEY), () -> Items.HONEY_BOTTLE, ModItems.PURIFIED_WATER, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.MIDNIGHT_OIL_MARTINI, 1, 1,
+            ModItems.SHOTS.get(LiquorType.VODKA), () -> Items.COCOA_BEANS, syrup, bitters, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.HAGGLERS_HIGHBALL, 1, 1,
+            ModItems.SHOTS.get(LiquorType.WHISKEY), () -> Items.GOLD_NUGGET, () -> Items.WATER_BUCKET, bitters, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.DESERT_ROSE, 1, 1,
+            ModItems.SHOTS.get(LiquorType.TEQUILA), () -> Items.CACTUS, ModItems.JUICES.get(JuiceType.WATERMELON), syrup, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.MOONSTALKER_SANGRIA, 1, 1,
+            ModItems.SHOTS.get(LiquorType.RED_WINE), ModItems.JUICES.get(JuiceType.BEETROOT), () -> Items.SWEET_BERRIES, bitters, () -> Items.SPIDER_EYE));
+
+        // the second round of classics. Cactus = the lime, Snowball = the ice, Carrot Juice = the ginger,
+        // Copper Ingot = the mug
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.MARGARITA, 1, 1,
+            ModItems.SHOTS.get(LiquorType.TEQUILA), syrup, () -> Items.CACTUS, sugar, () -> Items.SNOWBALL));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.BERRY_DAIQUIRI, 1, 1,
+            ModItems.SHOTS.get(LiquorType.RUM), ModItems.JUICES.get(JuiceType.SWEET_BERRY), syrup, () -> Items.SNOWBALL));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.COSMOPOLITAN, 1, 1,
+            ModItems.SHOTS.get(LiquorType.VODKA), ModItems.JUICES.get(JuiceType.SWEET_BERRY), ModItems.JUICES.get(JuiceType.APPLE), syrup));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.TEQUILA_SUNRISE, 1, 1,
+            ModItems.SHOTS.get(LiquorType.TEQUILA), ModItems.JUICES.get(JuiceType.GLOW_BERRY), ModItems.JUICES.get(JuiceType.SWEET_BERRY), syrup));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.MOSCOW_MULE, 1, 1,
+            ModItems.SHOTS.get(LiquorType.VODKA), ModItems.JUICES.get(JuiceType.CARROT), syrup, bitters, () -> Items.COPPER_INGOT));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.RUM_PUNCH, 1, 1,
+            ModItems.SHOTS.get(LiquorType.RUM), ModItems.JUICES.get(JuiceType.WATERMELON), ModItems.JUICES.get(JuiceType.SWEET_BERRY),
+            ModItems.JUICES.get(JuiceType.APPLE), sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.ROSE_SPRITZ, 1, 1,
+            ModItems.SHOTS.get(LiquorType.RED_WINE), ModItems.JUICES.get(JuiceType.WATERMELON), syrup, sugar));
+        recipes.add(new BartenderRecipe(Kind.DRINK, ModItems.PUMPKIN_SPICE_FLIP, 1, 1,
+            ModItems.SHOTS.get(LiquorType.RUM), () -> Items.PUMPKIN, () -> Items.EGG, () -> Items.MILK_BUCKET, sugar));
 
         return List.copyOf(recipes);
     }

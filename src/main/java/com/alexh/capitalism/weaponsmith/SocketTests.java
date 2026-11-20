@@ -42,6 +42,19 @@ public final class SocketTests {
         ItemStack sword = new ItemStack(Items.DIAMOND_SWORD), pick = new ItemStack(Items.DIAMOND_PICKAXE), axe = new ItemStack(Items.DIAMOND_AXE);
         ItemStack helmet = new ItemStack(Items.IRON_HELMET), boots = new ItemStack(Items.IRON_BOOTS), chest = new ItemStack(Items.IRON_CHESTPLATE);
         c.check(Socketing.socketable(SmithTable.TOOLSMITH, axe) && Socketing.socketable(SmithTable.TOOLSMITH, pick), "the Toolsmith Table sockets axes and pickaxes");
+        // gems are set by the item's smith at their table: socketed item + a gem that fits; broken out (lost) alone
+        ItemStack emptyChest = Socketing.withSocket(chest);
+        ItemStack redstone = new ItemStack(Items.REDSTONE);
+        c.check(Socketing.canSetGem(SmithTable.ARMORSMITH, emptyChest, redstone) && !Socketing.canSetGem(SmithTable.WEAPONSMITH, emptyChest, redstone)
+                && !Socketing.canSetGem(SmithTable.ARMORSMITH, chest, redstone) && !Socketing.canSetGem(SmithTable.ARMORSMITH, emptyChest, new ItemStack(Items.QUARTZ)),
+            "only the Armorsmith Table sets a gem in armor, only in a socket, only a gem that fits (Quartz doesn't)");
+        ItemStack redChest = Socketing.withGem(emptyChest, redstone);
+        c.check(Socketing.gem(redChest) == Gem.REDSTONE && !Socketing.canSetGem(SmithTable.ARMORSMITH, redChest, new ItemStack(Items.LAPIS_LAZULI)),
+            "set: the chestplate holds Redstone, and a full socket takes no second gem");
+        c.check(Socketing.canBreakGem(SmithTable.ARMORSMITH, redChest, ItemStack.EMPTY) && !Socketing.canBreakGem(SmithTable.ARMORSMITH, emptyChest, ItemStack.EMPTY)
+                && Socketing.hasSocket(Socketing.withEmptySocket(redChest)) && Socketing.gem(Socketing.withEmptySocket(redChest)) == null,
+            "alone at the table a gem is broken out: the socket stays, empty");
+        c.check(Socketing.GEM_XP == 1, "setting a gem costs 1 XP level");
         // maces and tridents: Weaponsmith Table, sword gems; Weaponsmith repairs: shields, bow + bow
         ItemStack mace = new ItemStack(net.minecraft.world.item.Items.MACE);
         ItemStack trident = new ItemStack(net.minecraft.world.item.Items.TRIDENT);

@@ -55,7 +55,9 @@ public class JobEvents {
         sync(player);
         // no jobs yet (everyone starts with none): how to begin
         JobData data = player.getData(ModAttachments.JOBS.get());
-        if (data.jobs().isEmpty()) {
+        if (JobDraft.anyActive()) {
+            JobDraft.onLogin(player);
+        } else if (data.jobs().isEmpty()) {
             player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Welcome! Type ").withStyle(net.minecraft.ChatFormatting.GOLD)
                 .append(net.minecraft.network.chat.Component.literal("/pick").withStyle(net.minecraft.ChatFormatting.YELLOW, net.minecraft.ChatFormatting.BOLD))
                 .append(net.minecraft.network.chat.Component.literal(" to choose your jobs: one Essential and one Fun. Choose well: they're for good!").withStyle(net.minecraft.ChatFormatting.GOLD)));

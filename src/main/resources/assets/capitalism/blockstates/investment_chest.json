@@ -1,0 +1,1 @@
+{ "variants": { "facing=north": { "model": "capitalism:block/investment_chest" }, "facing=south": { "model": "capitalism:block/investment_chest" }, "facing=east": { "model": "capitalism:block/investment_chest" }, "facing=west": { "model": "capitalism:block/investment_chest" } } }

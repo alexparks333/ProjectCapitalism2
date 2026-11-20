@@ -47,6 +47,9 @@ public class ModEntities {
     // The Boat Master (npc/BoatMaster): the docks' shopkeeper, villager-sized like the job NPCs
     public static final DeferredHolder<EntityType<?>, EntityType<com.alexh.capitalism.npc.BoatMaster>> BOAT_MASTER = ENTITIES.registerEntityType("boat_master",
         com.alexh.capitalism.npc.BoatMaster::new, MobCategory.MISC, builder -> builder.sized(0.6F, 1.95F).eyeHeight(1.62F).clientTrackingRange(10));
+    // The Butcher (npc/Butcher): sells raw fine cuts, villager-sized like the job NPCs
+    public static final DeferredHolder<EntityType<?>, EntityType<com.alexh.capitalism.npc.Butcher>> BUTCHER = ENTITIES.registerEntityType("butcher",
+        com.alexh.capitalism.npc.Butcher::new, MobCategory.MISC, builder -> builder.sized(0.6F, 1.95F).eyeHeight(1.62F).clientTrackingRange(10));
 
     // The Premium boats (boats/PremiumBoat, Boats.md): each a boat's size on the water (they only look huge), seen
     // from further away
@@ -103,6 +106,7 @@ public class ModEntities {
     @SubscribeEvent
     public static void onAttributes(EntityAttributeCreationEvent event) {
         event.put(BOAT_MASTER.get(), JobNpc.createAttributes().build());
+        event.put(BUTCHER.get(), JobNpc.createAttributes().build());
         event.put(JOB_NPC.get(), JobNpc.createAttributes().build());
         event.put(APPRENTICE.get(), ArmorStand.createAttributes().build());
         event.put(WHISPERER.get(), com.alexh.capitalism.town.Whisperer.createAttributes().build());

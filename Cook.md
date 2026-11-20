@@ -42,7 +42,7 @@ Type **`/guides`** and click **Cook's Guide** (oven icon). **Only Cooks see it**
 - **Recipes:** four tabs, **Sushi** (plain sushi), **Specialty Sushi** (sushi with effects, e.g. Ocean Sovereign Roll), **Food** (plain Cooking Table dishes) and **Specialty Food** (Cooking Table dishes with effects, e.g. Fiery Mushroom Bowl), each with a grid of dishes. Click one for its recipe:
   - Sushi shows the slots in order (numbered slots first, the rest any order).
   - Cooking Table dishes show the same round plate as the table (rim, ring and shine) with each ingredient in its exact slot, then Uncooked dish > Oven > meal, the bake time and when it burns.
-  - Both show the drumsticks and any effects.
+  - Both show the drumsticks and any effects, and a Specialty meal also shows what it does in one line (the same line as its tooltip, `client/SpecialtyTips`).
 - Built straight from `KitchenRecipes` and the items, so new dishes appear on their own. Only the Kitchen lines are hand-written (`CooksGuideScreen.buildKitchen`); keep them matching this file.
 - **Undiscovered recipes (Smash Bros style):** anything you haven't made yet shows as a **black silhouette**, and its page says **"???"** instead of the name, with its drops / drumsticks / effects hidden ("Make it once to unlock its name and info!"). The **recipe itself still shows** (ingredients aren't hidden), so you can work out how to make it. Make it **once** (take it out of the machine's result slot) and the picture, name and info unlock for good. Per player, kept through death.
   - Counts as "made": crafting it (blocks, plates), smelting it (Cooked Rice), taking it out of the Juicer / Fermenter bucket slot, the Bartending Table result, the Sushi Table output, the Cooking Table result, or an Oven meal slot, by hand (clicking or shift-clicking). Pulling it out with a hopper doesn't count. Buying it doesn't count.
@@ -123,12 +123,28 @@ Each meal comes in three versions: put the ingredients together at the **Cooking
 | Scholar's Brain Stew | Slime Ball, Spider Eye, Bone Meal, Sugar, Bowl | 16 s | 8 s | 8 (4) | 0.6 | 60% protein, 40% carbs |
 | Campfire Chili | Raw Beef, Beetroot, Beetroot, Brown Mushroom, Bowl | 45 s (simmered extra long: the longest bake) | 15 s | 12 (6) | 0.7 | 55% protein, 35% vegetables, 10% carbs |
 | Frosty Melon Sorbet | Melon Slice, Snowball, Sugar, Sweet Berries, Bowl | no Oven (made Gourmet at the Cooking Table) | - | 6 (3) | 0.4 | 75% fruit, 25% carbs |
+| Pulled Pork Sandwich | **Raw Pork Shoulder** (a Farmer's cut; the town Butcher NPC sometimes sells them, `NPCs.md`), Bread, Beetroot, Sugar, - | 14 s | 7 s | 12 (6) | 0.75 | 55% protein, 35% carbs, 10% vegetables |
+| Brisket & Potatoes | **Raw Beef Brisket**, Potato, Potato, Carrot, - | 18 s | 9 s | 14 (7) | 0.8 | 50% protein, 35% carbs, 15% vegetables |
+| Shepherd's Pie | **Raw Mutton Shoulder**, Potato, Carrot, Bread, Bowl (bowl back when eaten) | 18 s | 9 s | 14 (7) | 0.8 | 45% protein, 35% carbs, 20% vegetables |
+| Ham & Egg Breakfast | **Raw Pork Ham**, Egg, Egg, Bread, - | 12 s | 6 s | 12 (6) | 0.7 | 65% protein, 35% carbs |
+| Hunter's Rabbit Pie | **Raw Rabbit Saddle**, Carrot, Potato, Wheat, Brown Mushroom | 16 s | 8 s | 13 (6.5) | 0.8 | 40% protein, 30% vegetables, 30% carbs |
+| Fish Tacos | Raw Cod, Wheat, Carrot, Sweet Berries, - | 10 s | 5 s | 10 (5) | 0.7 | 40% protein, 30% carbs, 15% vegetables, 15% fruit |
+| Mushroom Risotto | Cooked Rice, Brown Mushroom, Red Mushroom, Milk Bucket (bucket back), Bowl (bowl back when eaten) | 14 s | 7 s | 11 (5.5) | 0.7 | 55% carbs, 35% vegetables, 10% protein |
+| Apple Crumble | Apple, Apple, Sugar, Wheat, Egg | 12 s | 6 s | 9 (4.5) | 0.5 | 55% fruit, 40% carbs, 5% protein |
+| **Ironworker's Stew** | **Raw Beef Chuck**, Iron Nugget, Potato, Carrot, Bowl (bowl back) | 18 s | 9 s | 14 (7) | 0.8 | 50% protein, 30% carbs, 20% vegetables. **Tempered 5:00** |
+| **Lumberjack Flapjacks** | Wheat, Egg, Milk Bucket (bucket back), Honey Bottle (bottle back), Sugar | 12 s | 6 s | 10 (5) | 0.6 | 85% carbs, 15% protein. **Timber 5:00** |
+| **Builder's Brick-Oven Pizza** | Bread, **Raw Pork Ham**, Beetroot, Brown Mushroom, Milk Bucket (bucket back) | 15 s | 8 s | 12 (6) | 0.7 | 40% carbs, 35% protein, 25% vegetables. **Long Reach 5:00** |
+| **Prime Rib Dinner** | **Raw Beef Rib**, Baked Potato, Carrot, Golden Carrot, Bowl (bowl back) | 22 s | 11 s | 16 (8) | 0.9 | 55% protein, 25% carbs, 20% vegetables. **Hearty 5:00** |
+| **Angler's Fish Pie** | Raw Salmon, Raw Cod, Potato, Egg, Bread | 15 s | 8 s | 12 (6) | 0.7 | 55% protein, 40% carbs, 5% vegetables. **Quick Bite 3:00** |
+| **Comfort Soup** | **Raw Chicken Breast**, Carrot, Potato, Cooked Rice, Bowl (bowl back) | 14 s | 7 s | 10 (5) | 0.7 | 40% protein, 30% vegetables, 30% carbs. **Cures sickness, Comforted 3:00** |
+| **Trail Mix Bar** | Sweet Berries, Cocoa Beans, Wheat, Honey Bottle (bottle back), Sugar | 10 s | 5 s | 6 (3) | 0.5 | 60% carbs, 40% fruit. **Second Wind 5:00** |
+| **Night Watch Hotpot** | Cooked Rice, **Raw Pork Loin**, Brown Mushroom, Carrot, Bowl (bowl back) | 16 s | 8 s | 12 (6) | 0.7 | 40% protein, 35% carbs, 25% vegetables. **Night Watch 5:00** |
 
 **Names:** a dish keeps its name through the Oven: "Uncooked X" bakes into "X".
 
-**Leftovers:** meals made with a Bowl (Seafood Chowder, Fiery Mushroom Bowl, Golden Glazed Feast, Miner's Casserole, Scholar's Brain Stew, Campfire Chili, Frosty Melon Sorbet) give the empty bowl back when eaten, and skewers give back a Stick, by hand or off a plate.
+**Leftovers:** meals made with a Bowl (Seafood Chowder, Fiery Mushroom Bowl, Golden Glazed Feast, Miner's Casserole, Scholar's Brain Stew, Campfire Chili, Frosty Melon Sorbet, Shepherd's Pie, Mushroom Risotto, Ironworker's Stew, Prime Rib Dinner, Comfort Soup, Night Watch Hotpot) give the empty bowl back when eaten, and skewers give back a Stick, by hand or off a plate.
 
-**Meal effects** (by hand or off a plate):
+**Meal effects** (by hand or off a plate; each Specialty meal has a one-line "what it does" on its tooltip, `client/SpecialtyTips`):
 - **Fiery Mushroom Bowl:** Fire Resistance for 4 minutes, plus **Lava Swimmer** for the first minute: you move **3x as fast** through lava (our own effect, with a lava-drop icon). Code: `core/ModEffects.java`, the movement in `player/MealEffects.java` (runs on your own client, since players move client-side).
 - **Miner's Casserole:** Night Vision and Haste for 2 minutes.
 - **Nether Dragon Pot Pie:** Fire Resistance and **Ender Leap** for 3 minutes. With Ender Leap, **sneak + hold jump** to blink up to 8 blocks forward (the way you're facing), like a short Ender Pearl: it stops before walls, can hop up one block, never gives fall damage, and costs half a hunger point each time (gold drumsticks pay first). Once a second while you hold the keys; no leaping on an empty food bar. Code: the keys in `client/ClientMealEffects.java` -> `EnderLeapPacket` -> `MealEffects.enderLeap`.
@@ -138,6 +154,15 @@ Each meal comes in three versions: put the ingredients together at the **Cooking
 - **Scholar's Brain Stew:** **Scholar's Focus** for 3 minutes: every mob you kill drops **double experience**.
 - **Campfire Chili:** **Warmed Up** for 5 minutes: the cold can't reach you (body heat, `Wellness.md`).
 - **Frosty Melon Sorbet:** **Cooled Off** for 5 minutes: you can't get hot (never above 70).
+- **The second round** (each helps a job; textures `tools/make_meals.ps1`, icons `tools/make_effect_icons.ps1`, behaviour in `player/MealEffects` unless said):
+  - **Ironworker's Stew: Tempered** 5 min: swords, tools and armor wear down half as fast (each bit of wear has a 50% chance to be skipped; `weaponsmith/Wear`, `Sharpness`).
+  - **Lumberjack Flapjacks: Timber** 5 min: an axe chops logs 25% faster.
+  - **Builder's Brick-Oven Pizza: Long Reach** 5 min: reach 1.5 blocks further when mining and building.
+  - **Prime Rib Dinner: Hearty** 5 min: +1 heart, its own health modifier, so it stacks with the Wellness hearts (and the bonus ones); it comes off cleanly when it ends.
+  - **Angler's Fish Pie: Quick Bite** 3 min: fish bite faster, like one more level of Lure (`mixin/FishingRodItemMixin`).
+  - **Comfort Soup**: cures the sickness from raw water (Hunger); **Comforted** 3 min: your body heat is pulled fast to a perfect 70 (about 15 a second) and held there whatever the weather (`BodyTemperature`, the HUD says "Comfort Soup: you're perfectly comfortable."), and while you're thriving the Wellbeing meter fills twice as fast (`WellnessEvents`).
+  - **Trail Mix Bar: Second Wind** 5 min: sprinting costs no hunger (`mixin/PlayerMixin`).
+  - **Night Watch Hotpot: Night Watch** 5 min: hostile mobs only notice you from half as far away.
 
 The chili and sorbet textures (recolored chowder bowls) and their effect icons are drawn by scratchpad `meals.ps1`.
 

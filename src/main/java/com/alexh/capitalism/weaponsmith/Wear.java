@@ -142,12 +142,19 @@ public final class Wear {
         stack.remove(ModComponents.ARMOR_DENTS.get());
     }
 
+    // Tempered (an Ironworker's Stew): half of the wear never happens (each bit of wear has a 50% chance to be skipped)
+    public static boolean tempered(net.minecraft.world.entity.player.Player player) {
+        return player.hasEffect(com.alexh.capitalism.core.ModEffects.TEMPERED) && player.getRandom().nextBoolean();
+    }
+
     // A block mined with the right tool (pickaxe, shovel or axe): one closer to dull
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBreak(BreakBlockEvent event) {
         if (event.isCanceled() || !(event.getPlayer() instanceof ServerPlayer player) || player.isCreative()) return;
         ItemStack pickaxe = player.getMainHandItem();
         if (!wears(pickaxe) || isDullTool(pickaxe) || pickaxe.getDestroySpeed(event.getState()) <= 1.0F) return;
+        // Tempered (an Ironworker's Stew): wears half as fast
+        if (tempered(player)) return;
         int used = Math.min(pickaxeMax(pickaxe), pickaxeUsed(pickaxe) + wearFor(event.getState()));
         pickaxe.set(ModComponents.PICKAXE_WEAR.get(), used);
         if (used >= pickaxeMax(pickaxe)) {
@@ -166,6 +173,7 @@ public final class Wear {
         for (EquipmentSlot slot : ARMOR_SLOTS) {
             ItemStack piece = player.getItemBySlot(slot);
             if (!isArmor(piece) || isDented(piece)) continue;
+            if (tempered(player)) continue;
             int dents = armorDents(piece) + 1;
             piece.set(ModComponents.ARMOR_DENTS.get(), dents);
             if (dents >= armorMax(piece)) {

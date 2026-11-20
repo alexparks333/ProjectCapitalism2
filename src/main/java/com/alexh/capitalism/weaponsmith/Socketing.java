@@ -50,8 +50,10 @@ import java.util.Set;
 //  - Set: at the smith table for the item (sword: Weaponsmith, pickaxe: Toolsmith, armor: Armorsmith), item in the big
 //    slot + Molten Socket in the small one = the same item with an empty socket, for SOCKET_XP levels
 //    (SmithTableMenu). One socket per item. Stored as ModComponents.SOCKET ("empty" or the gem's id).
-//  - Gems: anyone can set a gem in their own socket, in any inventory: right-click the item with the gem on the cursor.
-//    Right-click it with an empty cursor to take the gem back out. Some gems only fit some items (Gem.fits).
+//  - Gems: set by the item's smith at their table (SmithTableMenu): the socketed item in the big slot + a gem that fits
+//    in the small one, for GEM_XP levels. The item alone in the big slot (a gem in it) = the same item with an empty
+//    socket: the gem is destroyed. (Only the Smith's Chisel works in an inventory: the socket pops out, gem and all.)
+//    Some gems only fit some items (Gem.fits).
 //      Lapis:      sword +50% XP from kills, pickaxe +50% XP from mining, armor +20% XP from kills each. They add up.
 //      Redstone:   sword 75% less recharge per swing (4x attack speed), pickaxe +20% mining speed, armor +5% speed each.
 //      Emerald:    sword 2% Molten Socket drops, pickaxe 7.5% bonus Compacted Iron / Diamond from iron / diamond ore,
@@ -245,6 +247,34 @@ public final class Socketing {
         return copy;
     }
 
+    // ── Gems are set by the item's smith, at their table (SmithTableMenu) ──
+    // Setting a gem costs this many XP levels; breaking one out is free (the gem is destroyed)
+    public static final int GEM_XP = 1;
+
+    // At this smith's table: a socketed item with an empty socket + a gem that fits it
+    public static boolean canSetGem(SmithTable kind, ItemStack item, ItemStack gemStack) {
+        Gem gem = Gem.byItem(gemStack);
+        return gem != null && socketable(kind, item) && hasSocket(item) && gem(item) == null && gem.fits(item);
+    }
+
+    // At this smith's table: a socketed item holding a gem, alone (nothing in the small slot): break the gem out
+    public static boolean canBreakGem(SmithTable kind, ItemStack item, ItemStack small) {
+        return small.isEmpty() && socketable(kind, item) && gem(item) != null;
+    }
+
+    public static ItemStack withGem(ItemStack item, ItemStack gemStack) {
+        ItemStack copy = item.copyWithCount(1);
+        Gem gem = Gem.byItem(gemStack);
+        if (gem != null) copy.set(ModComponents.SOCKET.get(), gem.id);
+        return copy;
+    }
+
+    public static ItemStack withEmptySocket(ItemStack item) {
+        ItemStack copy = item.copyWithCount(1);
+        copy.set(ModComponents.SOCKET.get(), EMPTY);
+        return copy;
+    }
+
     // What the gem does in this item, for the tooltip
     public static String effect(Gem gem, ItemStack item) {
         int kind = kind(item);
@@ -273,7 +303,8 @@ public final class Socketing {
         };
     }
 
-    // ── Setting and taking out gems: right-click the item in an inventory ──
+    // ── In an inventory: only the Smith's Chisel. (Gems are set and broken out by the item's smith at their table,
+    // SmithTableMenu; right-clicking an item with a gem only says so.) ──
 
     @SubscribeEvent
     public static void onStackedOn(ItemStackedOnOtherEvent event) {
@@ -294,30 +325,18 @@ public final class Socketing {
             if (player instanceof ServerPlayer serverPlayer) serverPlayer.sendOverlayMessage(Component.literal("The Molten Socket pops free."));
             return;
         }
-        if (!carried.isEmpty()) {
-            Gem gem = Gem.byItem(carried);
-            if (gem == null) return; // not a gem: normal clicking
+        // a gem on the cursor: point them to the smith (and don't let the gem drop into the item's slot)
+        if (!carried.isEmpty() && Gem.byItem(carried) != null) {
             event.cancelWithResult(true);
-            if (inside != null) return; // already holds a gem: take it out first
-            if (!gem.fits(target)) {
-                if (player instanceof ServerPlayer serverPlayer) {
-                    serverPlayer.sendOverlayMessage(Component.literal(gem.title + " only fits in " + gem.fitsWhere() + "."));
-                }
-                return;
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.sendOverlayMessage(Component.literal("Gems are set by " + smithFor(target) + " at their table."));
             }
-            target.set(ModComponents.SOCKET.get(), gem.id);
-            ItemStack rest = carried.copy();
-            rest.shrink(1);
-            event.getCarriedSlotAccess().set(rest);
-            event.getSlot().setChanged();
-            player.playSound(SoundEvents.AMETHYST_BLOCK_PLACE, 0.8F, 1.3F);
-        } else if (inside != null) {
-            event.cancelWithResult(true);
-            target.set(ModComponents.SOCKET.get(), EMPTY);
-            event.getCarriedSlotAccess().set(new ItemStack(inside.item));
-            event.getSlot().setChanged();
-            player.playSound(SoundEvents.AMETHYST_BLOCK_HIT, 0.8F, 0.9F);
         }
+    }
+
+    // who sets gems in this item: "a Weaponsmith", "a Toolsmith" or "an Armorsmith"
+    public static String smithFor(ItemStack item) {
+        return isMeleeWeapon(item) ? "a Weaponsmith" : Wear.isArmor(item) ? "an Armorsmith" : "a Toolsmith";
     }
 
     // ── Redstone and Prismarine: speed (shows in the item's attribute lines too) ──

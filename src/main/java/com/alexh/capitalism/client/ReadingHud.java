@@ -69,8 +69,8 @@ public final class ReadingHud {
         y += 6;
         graphics.centeredText(font, book.delicate() ? "Delicate Book" : "Rough Book", leftCenter, y, INK_DIM);
         y += 11;
-        graphics.centeredText(font, skill.trait ? "Persistent" : skill.instant ? "Instant" : "Temporary", leftCenter, y,
-            skill.trait ? GOLD : skill.instant ? 0xFF2A8A80 : 0xFF3E7A3A);
+        graphics.centeredText(font, skill.trait ? "Persistent" : skill.bloodMoon() ? "Blood Moon" : skill.instant ? "Instant" : "Temporary", leftCenter, y,
+            skill.trait ? GOLD : skill.bloodMoon() ? 0xFFB01C30 : skill.instant ? 0xFF2A8A80 : 0xFF3E7A3A);
 
         // right page: what it teaches, written in as you read, then faint lines of text
         int textX = mid + 8;

@@ -54,12 +54,12 @@ public final class BountyTests {
         return Bounties.take(player);
     }
 
-    // turn in a "Deliver 1 Bread"-sized task right away (for counting turn-ins)
+    // turn in a "Deliver 12 Bones"-sized task right away (for counting turn-ins)
     private static void quickTurnIn(ServerLevel level, ServerPlayer player) {
         nextDay(level);
         GoldMoney.give(player, 9);
-        takeTask(player, "deliver_bread", 12);
-        player.getInventory().add(new ItemStack(Items.BREAD, 12));
+        takeTask(player, "deliver_bones", 12);
+        player.getInventory().add(new ItemStack(Items.BONE, 12));
         Bounties.turnIn(player, null);
     }
 
@@ -76,15 +76,15 @@ public final class BountyTests {
         Set<String> ids = new HashSet<>();
         boolean unique = true;
         for (BountyTask t : BountyTask.all()) unique &= ids.add(t.id);
-        c.check(unique && BountyTask.all().size() >= 120, "about 125 tasks, every id different (" + BountyTask.all().size() + ")");
+        c.check(unique && BountyTask.all().size() >= 100, "about 130 tasks, every id different (" + BountyTask.all().size() + ")");
         boolean deliveriesPay = true;
         for (BountyTask t : BountyTask.all()) {
             if (t.kind != BountyTask.Kind.DELIVER) continue;
             for (int amount : new int[]{t.min, t.max}) deliveriesPay &= Bounties.reward(t, amount) > Bounties.bankValue(t.item(), amount);
         }
         c.check(deliveriesPay, "every delivery pays more than the Banker gives for its items");
-        c.check(BountyTask.all().stream().filter(t -> t.tier == BountyTask.Tier.HARD).allMatch(t -> t.goldFor(t.min) >= 10 * 9 && t.goldFor(t.max) <= 20 * 9),
-            "Hard tasks pay 10 to 20 gold");
+        c.check(BountyTask.all().stream().filter(t -> t.tier == BountyTask.Tier.HARD).allMatch(t -> t.goldFor(t.min) >= 14 * 9 && t.goldFor(t.max) <= 24 * 9),
+            "Hard tasks pay 14 to 24 gold (10 to 20, +4 for the tier)");
 
         // ── the tier weights hold over many rolls (Easy 40, Medium 30, Hard 20, Heroic 10) ──
         Map<BountyTask.Tier, Integer> rolls = new EnumMap<>(BountyTask.Tier.class);
@@ -97,13 +97,15 @@ public final class BountyTests {
         // ── one shared posted task, a new one the moment it's taken ──
         BountyData.Open posted = Bounties.posted(server);
         c.check(posted.equals(Bounties.posted(server)) && Bounties.of(other).offer() != null, "one task is posted for everyone");
-        c.check(!BountyTask.byId("feed_pet").availableTo(player), "with no pet, \"feed your pet\" can't be taken");
+        c.check(!BountyTask.byId("shop_sell").availableTo(player), "with no Shopfront, \"sell from your Shopfront\" can't be taken");
 
         // ── progress only after taking it; the fee; a new task posted ──
         killZombie(c, player);
         GoldMoney.give(player, 9);
         long before = GoldMoney.carried(player);
-        c.check(takeTask(player, "kill_zombies", 2) == Bounties.TakeResult.OK && GoldMoney.carried(player) == before - 2, "taking it costs exactly 2 gold nuggets");
+        c.check(takeTask(player, "kill_zombies", 2) == Bounties.TakeResult.OK && GoldMoney.carried(player) == before - 2, "taking an Easy task costs exactly 2 gold nuggets");
+        c.check(Bounties.fee(BountyTask.byId("kill_creepers")) == 6 && Bounties.fee(BountyTask.byId("kill_blazes")) == 9
+            && Bounties.fee(BountyTask.byId("slay_wither")) == 18, "Medium costs 6 nuggets, Hard 1 gold, Heroic 2 gold");
         c.check(Bounties.of(player).task() != null && Bounties.of(player).task().progress() == 0, "a zombie killed before taking it doesn't count");
         BountyData.Open next = Bounties.posted(server);
         c.check(!next.id().equals("kill_zombies") && next.equals(Bounties.of(other).offer()),
@@ -131,9 +133,9 @@ public final class BountyTests {
 
         // ── a delivery takes its items; abandon ──
         nextDay(level);
-        takeTask(player, "deliver_bread", 12);
-        player.getInventory().add(new ItemStack(Items.BREAD, 14));
-        c.check(Bounties.turnIn(player, null) && player.getInventory().countItem(Items.BREAD) == 2, "turning in a delivery takes exactly its 12 bread");
+        takeTask(player, "deliver_bones", 12);
+        player.getInventory().add(new ItemStack(Items.BONE, 14));
+        c.check(Bounties.turnIn(player, null) && player.getInventory().countItem(Items.BONE) == 2, "turning in a delivery takes exactly its 12 bones");
         nextDay(level);
         takeTask(player, "kill_skeletons", 4);
         c.check(Bounties.abandon(player) && Bounties.of(player).task() == null, "abandoning drops the task (no refund)");

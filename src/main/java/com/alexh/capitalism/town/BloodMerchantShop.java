@@ -69,6 +69,23 @@ public final class BloodMerchantShop {
         new Offer("gorefang_skull_trophy", 300, ModItems.GOREFANG_CREST::get, false),
         new Offer("essential_wishing_star", 0, ModItems.BLOOD_MOON_CREST::get, true));
 
+    // ── Spooky: his Halloween stall (a third tab, only in the Halloween weeks: spookyOpen) ──
+    // Blood Moon-style decorations with a little life (decor/BloodDecorKind) and two things to wear and ride
+    // (player/SpookyGear, player/WitchsBroomItem). Bought like the Curios; anyone can buy as many as they like.
+    public static final List<Offer> SPOOKY = List.of(
+        new Offer("grinning_jack_o_lantern", 40, null, false),
+        new Offer("haunted_tombstone", 60, null, false),
+        new Offer("possessed_scarecrow", 90, null, false),
+        new Offer("ghost_sheet", 120, null, false),
+        new Offer("witchs_broom", 1500, null, false));
+
+    // Is the Spooky tab open? In the Halloween weeks (the seasonal decorations' window, decor/DecorKind.Holiday.HALLOWEEN:
+    // Fall 18 to 28), or while an op has put the decorations up by hand (/decorations up: for trying it out)
+    public static boolean spookyOpen(net.minecraft.world.level.Level level) {
+        return com.alexh.capitalism.decor.DecorKind.Holiday.HALLOWEEN.on(com.alexh.capitalism.calendar.Calendar.date(level))
+            || com.alexh.capitalism.decor.Decorations.shouldBeUp(level, com.alexh.capitalism.decor.DecorKind.SCARECROW);
+    }
+
     private BloodMerchantShop() {
     }
 
@@ -125,6 +142,13 @@ public final class BloodMerchantShop {
 
         public void add(UUID player) {
             if (this.players.add(player.toString())) this.setDirty();
+        }
+
+        // /admin stock refill: they can buy their star again
+        public boolean remove(UUID player) {
+            boolean removed = this.players.remove(player.toString());
+            if (removed) this.setDirty();
+            return removed;
         }
     }
 }

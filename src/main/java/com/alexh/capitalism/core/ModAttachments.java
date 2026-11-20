@@ -97,6 +97,16 @@ public class ModAttachments {
                 .copyOnDeath()
                 .build());
 
+    // A player's drinks today (player/Intoxication, Wellness.md > Intoxication). Saved, kept through death, synced to
+    // that player (the Wellness screen).
+    public static final Supplier<AttachmentType<com.alexh.capitalism.player.Intoxication.Data>> INTOXICATION =
+        ATTACHMENT_TYPES.register("intoxication", () ->
+            AttachmentType.builder(() -> new com.alexh.capitalism.player.Intoxication.Data())
+                .serialize(com.alexh.capitalism.player.Intoxication.Data.CODEC)
+                .sync((holder, player) -> holder == player, com.alexh.capitalism.player.Intoxication.Data.STREAM_CODEC)
+                .copyOnDeath()
+                .build());
+
     // A player's death tax, debts and Not-A-Scam Insurance (deathtax/DeathTaxData, Insurance.md). Saved, kept through
     // death (dying again adds to the debt), synced to that player (the Purgatory HUD, the respawn popup).
     public static final Supplier<AttachmentType<com.alexh.capitalism.deathtax.DeathTaxData>> DEATH_TAX =

@@ -64,6 +64,87 @@ public final class ModEffects {
         () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x96D6FF) {
         });
 
+    // ── Intoxication (player/Intoxication, client/IntoxicationClient): 3 drinks in a day = Tipsy, 5 = Drunk ──
+    // Neutral, so an Overworld Mojito (clears bad effects) doesn't sober you up; milk does.
+    public static final DeferredHolder<MobEffect, MobEffect> TIPSY = MOB_EFFECTS.register("tipsy",
+        () -> new MobEffect(MobEffectCategory.NEUTRAL, 0xE8B04A) {
+        });
+    public static final DeferredHolder<MobEffect, MobEffect> DRUNK = MOB_EFFECTS.register("drunk",
+        () -> new MobEffect(MobEffectCategory.NEUTRAL, 0xB0402C) {
+        });
+
+    // ── The second round of Specialty cocktails (Bartending.md > Cocktail effects; icons: tools/make_effect_icons.ps1).
+    // Each one helps a job, so they buy drinks from the Bartender. ──
+    // Steady Forge (Forgefire Old Fashioned): dents in the smith tables' repair game stay hot 50% longer (client/DentGame).
+    public static final DeferredHolder<MobEffect, MobEffect> STEADY_FORGE = MOB_EFFECTS.register("steady_forge",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xFF8A2A) {
+        });
+    // Lucky Line (Angler's Sunrise): rare catches come more often, like 3 more points of Luck (fishing/RareCatchModifier).
+    public static final DeferredHolder<MobEffect, MobEffect> LUCKY_LINE = MOB_EFFECTS.register("lucky_line",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x3CB4E6) {
+        });
+    // Steady Hands (Butcher's Bloody Mary): the butchery game's scanner lasts 50% longer and trimming may take a bit
+    // more meat before it's botched (client/ButcheryGame).
+    public static final DeferredHolder<MobEffect, MobEffect> STEADY_HANDS = MOB_EFFECTS.register("steady_hands",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xC83C3C) {
+        });
+    // Quick Study (Midnight Oil Martini): skill books read in half the time; Temporary lessons last 25% longer
+    // (librarian/SkillBookItem).
+    public static final DeferredHolder<MobEffect, MobEffect> QUICK_STUDY = MOB_EFFECTS.register("quick_study",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x6A4AC8) {
+        });
+    // Silver Tongue (Haggler's Highball): 10% off at NPC shops (economy/NpcPricing).
+    public static final DeferredHolder<MobEffect, MobEffect> SILVER_TONGUE = MOB_EFFECTS.register("silver_tongue",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xD8D8E8) {
+        });
+    // Quenched (Desert Rose): thirst drains half as fast (core/ModServerEvents).
+    public static final DeferredHolder<MobEffect, MobEffect> QUENCHED = MOB_EFFECTS.register("quenched",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x46A0E8) {
+        });
+    // Moonstalker (Moonstalker Sangria): +15% damage to hostile mobs at night, and to Blood Moon bosses any time
+    // (player/DrinkEffects).
+    public static final DeferredHolder<MobEffect, MobEffect> MOONSTALKER = MOB_EFFECTS.register("moonstalker",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x8A1E3C) {
+        });
+
+    // ── The second round of Specialty meals (Cook.md > Meal effects; the behaviour is in player/MealEffects unless
+    // said otherwise; icons: tools/make_effect_icons.ps1) ──
+    // Tempered (Ironworker's Stew): swords, tools and armor wear down half as fast (weaponsmith/Wear, Sharpness).
+    public static final DeferredHolder<MobEffect, MobEffect> TEMPERED = MOB_EFFECTS.register("tempered",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x8A9AAA) {
+        });
+    // Timber (Lumberjack Flapjacks): axes chop wood 25% faster.
+    public static final DeferredHolder<MobEffect, MobEffect> TIMBER = MOB_EFFECTS.register("timber",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x8A6236) {
+        });
+    // Long Reach (Builder's Brick-Oven Pizza): reach 1.5 blocks further when mining and building.
+    public static final DeferredHolder<MobEffect, MobEffect> LONG_REACH = MOB_EFFECTS.register("long_reach",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xE8A040) {
+        }.addAttributeModifier(Attributes.BLOCK_INTERACTION_RANGE, Identifier.fromNamespaceAndPath(Capitalism.MODID, "long_reach"),
+            1.5, AttributeModifier.Operation.ADD_VALUE));
+    // Hearty (Prime Rib Dinner): +1 heart (its own modifier, so it stacks with the Wellness hearts).
+    public static final DeferredHolder<MobEffect, MobEffect> HEARTY = MOB_EFFECTS.register("hearty",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xD83A3A) {
+        }.addAttributeModifier(Attributes.MAX_HEALTH, Identifier.fromNamespaceAndPath(Capitalism.MODID, "hearty"),
+            2.0, AttributeModifier.Operation.ADD_VALUE));
+    // Quick Bite (Angler's Fish Pie): fish bite faster, like Lure I (mixin/FishingRodItemMixin).
+    public static final DeferredHolder<MobEffect, MobEffect> QUICK_BITE = MOB_EFFECTS.register("quick_bite",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x4AA0C8) {
+        });
+    // Comforted (Comfort Soup), 3 minutes: body heat pulled fast to a perfect 70 and held there (player/BodyTemperature),
+    // and the Wellbeing meter fills twice as fast while you're thriving (player/WellnessEvents).
+    public static final DeferredHolder<MobEffect, MobEffect> COMFORTED = MOB_EFFECTS.register("comforted",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0xF0C878) {
+        });
+    // Second Wind (Trail Mix Bar): sprinting costs no hunger (mixin/PlayerMixin).
+    public static final DeferredHolder<MobEffect, MobEffect> SECOND_WIND = MOB_EFFECTS.register("second_wind",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x78C8E8) {
+        });
+    // Night Watch (Night Watch Hotpot): hostile mobs only notice you from half as far away.
+    public static final DeferredHolder<MobEffect, MobEffect> NIGHT_WATCH = MOB_EFFECTS.register("night_watch",
+        () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x2A3A6A) {
+        });
+
     // ── Bartender cocktails (see player/DrinkEffects and client/TreasureSightClient) ──
     // Luminescent Aura (Glowberry Gold Rush): a bright light follows you around.
     public static final DeferredHolder<MobEffect, MobEffect> LUMINESCENT_AURA = MOB_EFFECTS.register("luminescent_aura",

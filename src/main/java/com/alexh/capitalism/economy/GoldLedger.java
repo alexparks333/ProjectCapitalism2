@@ -56,7 +56,8 @@ public class GoldLedger extends SavedData {
 
     private static final Codec<GoldLedger> CODEC = RecordCodecBuilder.create(inst -> inst.group(
         ContainerRow.CODEC.listOf().fieldOf("containers").forGetter(GoldLedger::containerRows),
-        PlayerRow.CODEC.listOf().fieldOf("players").forGetter(GoldLedger::playerRows)
+        PlayerRow.CODEC.listOf().fieldOf("players").forGetter(GoldLedger::playerRows),
+        Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.LONG).optionalFieldOf("investments", Map.of()).forGetter(l -> new HashMap<>(l.investments))
     ).apply(inst, GoldLedger::new));
 
     public static final SavedDataType<GoldLedger> TYPE = new SavedDataType<>(
@@ -64,11 +65,15 @@ public class GoldLedger extends SavedData {
 
     private final Map<GlobalPos, ContainerEntry> containers = new HashMap<>();
     private final Map<UUID, PlayerEntry> players = new HashMap<>();
+    // each player's Investment Chest account (InvestmentBank: the gold in it + returns waiting), counted in the same
+    // recount as their inventory (GoldLeaderboard.recount), so gold moving in or out is never counted twice or missed
+    private final Map<UUID, Long> investments = new HashMap<>();
 
     public GoldLedger() {
     }
 
-    private GoldLedger(List<ContainerRow> containerRows, List<PlayerRow> playerRows) {
+    private GoldLedger(List<ContainerRow> containerRows, List<PlayerRow> playerRows, Map<UUID, Long> investments) {
+        this.investments.putAll(investments);
         containerRows.forEach(row -> this.containers.put(row.pos(), row.entry()));
         playerRows.forEach(row -> this.players.put(row.id(), row.entry()));
     }
@@ -121,10 +126,20 @@ public class GoldLedger extends SavedData {
         }
     }
 
+    public void setInvestment(UUID id, long nuggets) {
+        Long old = nuggets > 0 ? this.investments.put(id, nuggets) : this.investments.remove(id);
+        if (old == null ? nuggets > 0 : old != nuggets) this.setDirty();
+    }
+
+    public long investment(UUID id) {
+        return this.investments.getOrDefault(id, 0L);
+    }
+
     // Everyone with carried gold on record or at least one owned container.
     public Set<UUID> knownPlayers() {
         Set<UUID> ids = new HashSet<>(this.players.keySet());
         this.containers.values().forEach(entry -> ids.add(entry.owner()));
+        ids.addAll(this.investments.keySet());
         return ids;
     }
 
@@ -133,10 +148,10 @@ public class GoldLedger extends SavedData {
         return entry == null ? null : entry.name();
     }
 
-    // Carried gold (last known) + gold in every container they own, in nuggets.
+    // Carried gold (last known) + their Investment Chest account + gold in every container they own, in nuggets.
     public long netWorth(UUID id) {
         PlayerEntry entry = this.players.get(id);
-        long total = entry == null ? 0 : entry.carriedNuggets();
+        long total = (entry == null ? 0 : entry.carriedNuggets()) + this.investment(id);
         for (ContainerEntry container : this.containers.values()) {
             if (container.owner().equals(id)) total += container.nuggets();
         }

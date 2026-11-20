@@ -30,11 +30,13 @@ import java.util.List;
 //    once you've had yours). Hover for what it is and its whole price, click to buy.
 //  - Mend the Crest: the Blood Moon Crest drawn big and dim, broken in three; each piece you put in its socket shows in
 //    its place, so the crest comes together as you fill it; "Mend" (50 Blood Shards) joins them, and the crest flares.
+//  - Spooky (only in the Halloween weeks: the menu says when, BloodMerchantShop.spookyOpen): his Halloween stall
+//    (BloodMerchantShop.SPOOKY) on pumpkin-and-purple cards, picked and bought like the Curios.
 public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMenu> {
 
     private static final int W = 250;
     private static final int H = 250;
-    private static final String[] TABS = {"Curios", "Mend the Crest"};
+    private static final String[] TABS = {"Curios", "Mend the Crest", "Spooky"};
     private static final int TEXT = 0xFFF0D0D0;
     private static final int DIM = 0xFFA07080;
     private static final int GOLD = 0xFFD8A848;
@@ -82,6 +84,20 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
 
     // ── layout ──
 
+    // the Spooky tab only shows in the Halloween weeks
+    private int tabCount() {
+        return this.menu.spookyOpen() ? 3 : 2;
+    }
+
+    private boolean spooky() {
+        return this.tab == 2;
+    }
+
+    // the cards on this tab: the Curios, or the Spooky stall
+    private List<BloodMerchantShop.Offer> offers() {
+        return this.spooky() ? BloodMerchantShop.SPOOKY : BloodMerchantShop.OFFERS;
+    }
+
     private int tabX(int i) {
         int x = this.leftPos + 8;
         for (int k = 0; k < i; k++) x += this.font.width(TABS[k]) + 16;
@@ -102,7 +118,7 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
     }
 
     private int cardAt(double mx, double my) {
-        for (int i = this.page * PER_PAGE; i < Math.min(BloodMerchantShop.OFFERS.size(), (this.page + 1) * PER_PAGE); i++) {
+        for (int i = this.page * PER_PAGE; i < Math.min(this.offers().size(), (this.page + 1) * PER_PAGE); i++) {
             if (mx >= cardX(i) && mx < cardX(i) + CARD_W && my >= cardY(i) && my < cardY(i) + CARD_H) return i;
         }
         return -1;
@@ -155,13 +171,21 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
             g.fill(c[0] + 5, c[1], c[0] + 6, c[1] + 6, GOLD);
             g.fill(c[0], c[1] + 5, c[0] + 6, c[1] + 6, GOLD);
         }
-        for (int i = 0; i < TABS.length; i++) {
+        // (closed again while you look: back to the Curios)
+        if (this.spooky() && !this.menu.spookyOpen()) {
+            this.tab = 0;
+            this.menu.tab = 0;
+            this.selected = -1;
+            this.page = 0;
+        }
+        for (int i = 0; i < this.tabCount(); i++) {
             int x = tabX(i);
             boolean active = i == this.tab;
             boolean hover = mouseX >= x && mouseX < x + tabW(i) && mouseY >= t + 18 && mouseY < t + 32;
-            g.fill(x, t + 18, x + tabW(i), t + 32, active ? GOLD : hover ? 0xFF8A3040 : 0xFF4A1820);
-            g.fill(x + 1, t + 19, x + tabW(i) - 1, t + 31, active ? 0xFF3A0C16 : 0xFF1C0C12);
-            g.text(this.font, TABS[i], x + 6, t + 21, active ? TEXT : DIM, false);
+            boolean pumpkin = i == 2;
+            g.fill(x, t + 18, x + tabW(i), t + 32, active ? (pumpkin ? 0xFFF08A20 : GOLD) : hover ? 0xFF8A3040 : pumpkin ? 0xFF5A2A10 : 0xFF4A1820);
+            g.fill(x + 1, t + 19, x + tabW(i) - 1, t + 31, active ? (pumpkin ? 0xFF2A1238 : 0xFF3A0C16) : 0xFF1C0C12);
+            g.text(this.font, TABS[i], x + 6, t + 21, active ? (pumpkin ? 0xFFFFB050 : TEXT) : pumpkin ? 0xFFC07840 : DIM, false);
         }
         g.fill(l + 6, t + 32, l + W - 6, t + 33, GOLD);
         // the inventory's tray
@@ -172,7 +196,7 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
                 g.fill(l + slot.x, t + slot.y, l + slot.x + 16, t + slot.y + 16, 0xFF3E1A22);
             }
         }
-        if (this.tab == 0) this.drawCurios(g, mouseX, mouseY);
+        if (this.tab == 0 || this.spooky()) this.drawCurios(g, mouseX, mouseY);
         else this.drawMend(g, mouseX, mouseY);
     }
 
@@ -181,7 +205,8 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
     private void drawCurios(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         int shards = BloodMerchantShop.shards(this.minecraft.player);
         int hovered = this.cardAt(mouseX, mouseY);
-        List<BloodMerchantShop.Offer> offers = BloodMerchantShop.OFFERS;
+        List<BloodMerchantShop.Offer> offers = this.offers();
+        boolean spooky = this.spooky();
         for (int i = this.page * PER_PAGE; i < Math.min(offers.size(), (this.page + 1) * PER_PAGE); i++) {
             BloodMerchantShop.Offer offer = offers.get(i);
             int x = cardX(i), y = cardY(i);
@@ -191,8 +216,8 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
             boolean picked = i == this.selected;
             if (picked) g.fill(x - 2, y - 2, x + CARD_W + 2, y + CARD_H + 2, 0xFFFFE090);
             g.fill(x, y, x + CARD_W, y + CARD_H, picked ? 0xFFFFF0C0 : i == hovered && there && !done ? 0xFFF0C060 : offer.star() ? 0xFF8A6A20 : 0xFF0A0406);
-            g.fill(x + 1, y + 1, x + CARD_W - 1, y + CARD_H - 1, offer.star() ? 0xFF2E1430 : 0xFF3A0C18);
-            g.fill(x + 1, y + 1, x + CARD_W - 1, y + 3, offer.star() ? 0xFF4A2850 : 0xFF581424);
+            g.fill(x + 1, y + 1, x + CARD_W - 1, y + CARD_H - 1, offer.star() || spooky ? 0xFF2E1430 : 0xFF3A0C18);
+            g.fill(x + 1, y + 1, x + CARD_W - 1, y + 3, spooky ? 0xFFE07A18 : offer.star() ? 0xFF4A2850 : 0xFF581424);
             if (!there) {
                 g.centeredText(this.font, "?", x + CARD_W / 2, y + 14, DIM);
                 continue;
@@ -262,7 +287,7 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
             g.text(this.font, Component.literal("Pick something, then press Buy.").withStyle(ChatFormatting.ITALIC), l + 12, y + 4, DIM, false);
             return;
         }
-        BloodMerchantShop.Offer o = BloodMerchantShop.OFFERS.get(this.selected);
+        BloodMerchantShop.Offer o = this.offers().get(this.selected);
         ItemStack stack = new ItemStack(o.item());
         g.item(stack, l + 9, y);
         Item piece = o.piece() == null ? null : o.piece().get();
@@ -283,12 +308,12 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
     }
 
     private int pages() {
-        return (BloodMerchantShop.OFFERS.size() + PER_PAGE - 1) / PER_PAGE;
+        return (this.offers().size() + PER_PAGE - 1) / PER_PAGE;
     }
 
     // the page arrows, between the tabs and your shards: 0 back, 1 on
     private int arrowX(int side) {
-        return this.tabX(TABS.length - 1) + this.tabW(TABS.length - 1) + 10 + side * 40;
+        return this.tabX(this.tabCount() - 1) + this.tabW(this.tabCount() - 1) + 10 + side * 40;
     }
 
     private void curioTooltip(GuiGraphicsExtractor g, BloodMerchantShop.Offer offer, int shards, int mouseX, int mouseY) {
@@ -306,7 +331,8 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
             }
         } else {
             boolean block = offer.shards() == 1 && offer.piece() == null;
-            lines.add(Component.literal(block ? "A Blood Moon building block." : "A Blood Moon decoration: one of a kind.").withStyle(ChatFormatting.GRAY));
+            lines.add(Component.literal(this.spooky() ? "A Halloween special: only sold in the Halloween weeks." : block ? "A Blood Moon building block." : "A Blood Moon decoration: one of a kind.").withStyle(this.spooky() ? ChatFormatting.GOLD : ChatFormatting.GRAY));
+            if (this.spooky()) lines.add(Component.literal(spookyTip(offer.id())).withStyle(ChatFormatting.GRAY));
             if (block) lines.add(Component.literal("Buy 64: a stack for 64 Blood Shards.").withStyle(ChatFormatting.GOLD));
             Item piece = offer.piece() == null ? null : offer.piece().get();
             boolean can = shards >= offer.shards() && (piece == null || BloodMerchantShop.count(this.minecraft.player, piece) > 0);
@@ -314,6 +340,18 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
             lines.add(Component.literal("Click to pick, then Buy: " + price).withStyle(can ? ChatFormatting.GREEN : ChatFormatting.RED));
         }
         g.setComponentTooltipForNextFrame(this.font, lines, mouseX, mouseY, ItemStack.EMPTY);
+    }
+
+    // what each Spooky thing does (the same as its item tooltip, client/ClientModEvents)
+    private static String spookyTip(String id) {
+        return switch (id) {
+            case "grinning_jack_o_lantern" -> "Glows bright; at night it cackles at passers-by and lets out bats.";
+            case "haunted_tombstone" -> "A named Name Tag carves an epitaph; wisps rise from it at night.";
+            case "possessed_scarecrow" -> "Its head follows whoever is nearest; crows circle it at night.";
+            case "ghost_sheet" -> "Wear it on your head: monsters spot you from a little less far.";
+            case "witchs_broom" -> "Right-click to float up for a moment, then drift down.";
+            default -> "";
+        };
     }
 
     // ── Mend the Crest ──
@@ -390,17 +428,19 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.minecraft.gameMode != null) {
-            for (int i = 0; i < TABS.length; i++) {
+            for (int i = 0; i < this.tabCount(); i++) {
                 if (event.x() >= tabX(i) && event.x() < tabX(i) + tabW(i) && event.y() >= this.topPos + 18 && event.y() < this.topPos + 32) {
                     if (this.tab != i) {
                         this.tab = i;
                         this.menu.tab = i;
+                        this.selected = -1;
+                        this.page = 0;
                         this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
                     }
                     return true;
                 }
             }
-            if (this.tab == 0) {
+            if (this.tab == 0 || this.spooky()) {
                 for (int side = 0; side < 2 && this.pages() > 1; side++) {
                     int ax = this.arrowX(side), ay = this.topPos + 19;
                     if (event.x() >= ax && event.x() < ax + 12 && event.y() >= ay && event.y() < ay + 12) {
@@ -416,9 +456,10 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
                 // the Buy buttons for what's picked
                 if (this.selected >= 0) {
                     for (int which = 0; which < 2; which++) {
-                        if (which == 1 && !this.isBlock(BloodMerchantShop.OFFERS.get(this.selected))) continue;
+                        if (which == 1 && (this.spooky() || !this.isBlock(this.offers().get(this.selected)))) continue;
                         if (this.overBuy(which, event.x(), event.y())) {
-                            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, which == 1 ? BloodMerchantMenu.BULK + this.selected : this.selected);
+                            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId,
+                                this.spooky() ? BloodMerchantMenu.SPOOKY + this.selected : which == 1 ? BloodMerchantMenu.BULK + this.selected : this.selected);
                             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                             return true;
                         }
@@ -426,7 +467,7 @@ public class BloodMerchantScreen extends AbstractContainerScreen<BloodMerchantMe
                 }
                 // a card: pick it (buy with the button)
                 int card = this.cardAt(event.x(), event.y());
-                if (card >= 0 && BloodMerchantShop.OFFERS.get(card).exists()) {
+                if (card >= 0 && this.offers().get(card).exists()) {
                     this.selected = card;
                     this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.2F));
                     return true;

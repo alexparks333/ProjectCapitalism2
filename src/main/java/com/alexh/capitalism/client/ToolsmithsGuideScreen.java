@@ -92,6 +92,8 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
             "Gear back into 1 of its material."));
         list.add(made(USING, socket, "Molten Sockets", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_PICKAXE), socket),
             "Adds a gem socket to a pickaxe or axe.", "Try different gems."));
+        list.add(made(USING, new ItemStack(Items.REDSTONE), "Setting Gems", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Items.REDSTONE)),
+            "Only you set gems in tools, here.", "A tool alone breaks its gem out:", "the gem is lost."));
 
         // ── Recipes: Crafting ──
         addTools(list, iron, "Iron", Items.IRON_PICKAXE, Items.IRON_SHOVEL, Items.IRON_HOE);
@@ -104,6 +106,19 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
             "Smithing Table. Toolsmiths only."));
         list.add(made(CRAFTING, hammer, "Salvage Hammer", HowToMake.crafting(iron, iron, iron, e, iron, e, e, iron, e),
             "Smiths only. Wears out."));
+        // Farm tools: only Toolsmiths make them; Farmers buy them (data/capitalism/recipe/scythe.json etc.)
+        ItemStack scythe = new ItemStack(ModItems.SCYTHE.get());
+        ItemStack diamondScythe = new ItemStack(ModItems.DIAMOND_SCYTHE.get());
+        list.add(made(CRAFTING, scythe, "Scythe", HowToMake.crafting(iron, iron, iron, e, e, stick, e, e, stick),
+            "For Farmers: cuts a patch of", "ripe crops. Repair it here."));
+        list.add(made(CRAFTING, diamondScythe, "Diamond Scythe", HowToMake.crafting(diamond, diamond, diamond, e, e, stick, e, e, stick),
+            "Like the Scythe, but lasts", "far longer."));
+        list.add(made(CRAFTING, new ItemStack(ModItems.IRON_BUTCHER_KNIFE.get()), "Iron Butcher Knife",
+            HowToMake.crafting(e, iron, iron, e, iron, e, stick, e, e),
+            "For Farmers' Butcher's Table.", "Sharpen it with a Tool Whetstone."));
+        list.add(made(CRAFTING, new ItemStack(ModItems.DIAMOND_BUTCHER_KNIFE.get()), "Diamond Butcher Knife",
+            HowToMake.crafting(e, diamond, diamond, e, iron, e, stick, e, e),
+            "Cuts many more slabs."));
 
         // ── Information: Your Tools ──
         list.add(info(TOOLS, new ItemStack(Items.IRON_PICKAXE), "Efficiency", List.of(new ItemStack(Items.IRON_PICKAXE)),
@@ -128,6 +143,8 @@ public class ToolsmithsGuideScreen extends JobGuideScreen {
             "Others can't repair tools."));
         list.add(info(DEBUFFS, new ItemStack(Items.NETHERITE_PICKAXE), "No Netherite", List.of(),
             "Others can't make Netherite Pickaxes, Shovels or Hoes."));
+        list.add(info(DEBUFFS, new ItemStack(ModItems.SCYTHE.get()), "No Farm Tools", List.of(),
+            "Others can't make Scythes", "or Butcher Knives."));
         list.add(info(DEBUFFS, table, "Table Locked", List.of(),
             "Others can't use the Toolsmith Table", "or make Tool Whetstones."));
         return list;

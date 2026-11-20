@@ -29,7 +29,9 @@ $jobs = @(
   @('armorsmith','profession\armorer',''),
   @('enchanter','profession\cleric',''),
   # the Boat Master (npc/BoatMaster; not a job): the fisherman's outfit and a navy captain's hat
-  @('boat_master','profession\fisherman','captain'))
+  @('boat_master','profession\fisherman','captain'),
+  # the Butcher (npc/Butcher; not a job): the butcher's apron and a deep red cap
+  @('butcher','profession\butcher','butcher'))
 foreach($j in $jobs){
   $bmp = New-Object Drawing.Bitmap 64,64,([Drawing.Imaging.PixelFormat]::Format32bppArgb)
   $base = Load 'villager'; $type = Load 'type\plains'; $prof = Load $j[1]
@@ -37,6 +39,7 @@ foreach($j in $jobs){
   if($j[2] -eq 'chef'){ Hat $bmp @(150,150,155) @(255,255,255) }
   if($j[2] -eq 'smith'){ Hat $bmp @(28,20,16) @(110,80,55) }
   if($j[2] -eq 'captain'){ Hat $bmp @(12,18,44) @(64,86,150) }
+  if($j[2] -eq 'butcher'){ Hat $bmp @(60,8,10) @(170,40,40) }
   $bmp.Save("$out\$($j[0]).png",[Drawing.Imaging.ImageFormat]::Png)
   $base.Dispose(); $type.Dispose(); $prof.Dispose(); $bmp.Dispose()
 }

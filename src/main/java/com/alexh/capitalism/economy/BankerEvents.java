@@ -34,7 +34,7 @@ public class BankerEvents {
             return count / per;
         }
 
-        String text() {
+        public String text() {
             return per == 1 ? GoldMoney.format(nuggets) + " each" : GoldMoney.format(nuggets) + " for " + per;
         }
     }
@@ -144,11 +144,25 @@ public class BankerEvents {
         }
         // (the Traveling Merchant is left out on purpose: his 2 cheap diamonds / emeralds a visit would otherwise drag the
         // bank's price down for everyone; the most anyone could make is a few gold every week or two)
+        // cheap-to-craft things never sell for more than what they're made of, whatever a config says (older configs had
+        // the Name Tag at a whole gold: 1 paper + 1 iron nugget, about a nugget's worth, made 9)
+        for (Map.Entry<Item, Price> cap : CRAFTED_CAPS.entrySet()) {
+            Price price = prices.get(cap.getKey());
+            Price most = cap.getValue();
+            if (price != null && (long) price.nuggets() * most.per() > (long) most.nuggets() * price.per()) prices.put(cap.getKey(), most);
+        }
         return prices;
     }
 
-    // every NPC shop: each job's, and the Boat Master's
+    // the most the bank pays for things crafted from cheap parts (nuggets / per):
+    //  - Name Tag: 1 paper (half a nugget of sugar cane) + 1 iron or copper nugget (a third of a nugget): 1 nugget for 2
+    //  - Saddle: 3 Leather (2 each) + 1 Iron Ingot (3) = 9: it pays 7
+    static final Map<Item, Price> CRAFTED_CAPS = Map.of(
+        net.minecraft.world.item.Items.NAME_TAG, new Price(1, 2),
+        net.minecraft.world.item.Items.SADDLE, new Price(7, 1));
+
+    // every NPC shop: each job's, and the Shopkeepers' (the Boat Master, the Butcher)
     private static final java.util.List<String> SHOPS = java.util.stream.Stream.concat(
         java.util.Arrays.stream(com.alexh.capitalism.occupation.Job.values()).map(com.alexh.capitalism.occupation.Job::id),
-        java.util.stream.Stream.of(com.alexh.capitalism.npc.NpcShops.BOAT_MASTER)).toList();
+        com.alexh.capitalism.npc.NpcShops.SHOPKEEPERS.stream()).toList();
 }

@@ -3,7 +3,7 @@
 Every skill book in the game (`Librarian.md` > Skill books has how the tables work; the code is `librarian/Skill`). Each
 book has its own cover. **Keep this matching `Skill` when a book changes.**
 
-## How a book is picked (two steps)
+## How a book is picked (two steps, plus the Blood Moon Books: see below)
 1. **Lesson or trait?** A Rough Book is a trait **1%** of the time, a Delicate Book **12.5%** (it costs a
    Diamond). A Librarian with **Lucky Librarian** on doubles that: **2% / 25%**.
 2. **Which one?** Within lessons, or within traits, by weight:
@@ -70,10 +70,33 @@ isn't used up). Trait books shimmer and have a gold name.
 | Used To Hell | RARE   | Your body never goes above 70°: the heat can't touch you   | 0.04% (1 in 2,600) | 0.48% (1 in 208) | 0.08% (1 in 1,300)      | 0.96% (1 in 104)           |
 | Winter Survival | RARE | The cold can't touch you: rain, snow and icy water never chill you | 0.04% (1 in 2,600) | 0.48% (1 in 208) | 0.08% (1 in 1,300)      | 0.96% (1 in 104)           |
 
+## Blood Moon Books — 5 books (added 2026-11-19)
+For the Blood Moon and its three bosses (`Events.md`). Read one and it lasts **one night** (11,000 ticks, about 9
+minutes: read it at dusk and it lasts till dawn), **the same from a Rough or a Delicate Book** (no level II), not made
+longer by Bookworm or Quick Study. Gone on death. A crimson spine on the cover, "Blood Moon Book: lasts one night" on the
+tooltip and "Blood Moon" in red while reading. The effects are in `librarian/SkillEffects.onBloodMoonDamage` (arrows count
+for whoever shot them).
+
+| Book            | Effect                                              | Rough              | Delicate         | Rough + Lucky Librarian | Delicate + Lucky Librarian |
+|-----------------|-----------------------------------------------------|--------------------|------------------|-------------------------|----------------------------|
+| Revenant's Bane | Hit the Crimson Revenant 75% harder                 | 0.30% (1 in 337)   | 2.80% (1 in 36)  | 0.59% (1 in 170)        | 4.80% (1 in 21)            |
+| Witch's Bane    | Hit the Sanguine Witch 75% harder                   | 0.30% (1 in 337)   | 2.80% (1 in 36)  | 0.59% (1 in 170)        | 4.80% (1 in 21)            |
+| Wolfsbane       | Hit Gorefang 75% harder                             | 0.30% (1 in 337)   | 2.80% (1 in 36)  | 0.59% (1 in 170)        | 4.80% (1 in 21)            |
+| Blood Fury      | Hit monsters 15% harder while a Blood Moon is up    | 0.30% (1 in 337)   | 2.80% (1 in 36)  | 0.59% (1 in 170)        | 4.80% (1 in 21)            |
+| Blood Ward      | Take 10% less damage while a Blood Moon is up (a 5-heart hit takes 4.5) | 0.30% (1 in 337) | 2.80% (1 in 36) | 0.59% (1 in 170) | 4.80% (1 in 21) |
+
+How they're picked: traits are rolled first (so their odds are exactly as before); a book that isn't a trait is then a
+Blood Moon Book **1.5%** of the time from a Rough Book, **16%** from a Delicate Book (times the same multiplier as traits:
+Knowledge Piece quality, Lucky Librarian), which comes to **1.49% / 14%** of all books (2.94% / 24% with Lucky
+Librarian), a little less rare than traits; then one of the five, all alike. The lesson percentages above were worked out
+before these were added: each lesson is now that much less likely (x0.985 Rough, x0.84 Delicate, x0.97 / x0.68 with
+Lucky Librarian).
+
 ## In short
 |                               | Rough            | Delicate        | Rough + Lucky Librarian | Delicate + Lucky Librarian |
 |-------------------------------|------------------|-----------------|-------------------------|----------------------------|
-| Any lesson                    | 99%              | 87.5%           | 98%                     | 75%                        |
+| Any lesson                    | 97.5%            | 73.5%           | 95.1%                   | 51%                        |
+| Any Blood Moon Book           | 1.49% (1 in 67)  | 14% (1 in 7)    | 2.94% (1 in 34)         | 24% (1 in 4)               |
 | Any trait                     | 1% (1 in 100)    | 12.5% (1 in 8)  | 2% (1 in 50)            | 25% (1 in 4)               |
 | Any rare trait                | 0.23% (1 in 433) | 2.88% (1 in 35) | 0.46% (1 in 217)        | 5.77% (1 in 17)            |
 

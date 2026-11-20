@@ -32,6 +32,8 @@ public class ColdStorageBlockEntity extends DesignerBlockEntity {
     // Packed Ice and Blue Ice work too, and last longer (they take 9 of the one before to make)
     public static final int PACKED_ICE_FUEL = 3 * ICE_FUEL;
     public static final int BLUE_ICE_FUEL = 9 * ICE_FUEL;
+    // Butcher Shop Ice is pressed from 4 Ice: 4 times as long
+    public static final int BUTCHER_ICE_FUEL = 4 * ICE_FUEL;
     public static final int SNOWBALL_FUEL = 30 * 20;
 
     public enum Kind {
@@ -51,7 +53,8 @@ public class ColdStorageBlockEntity extends DesignerBlockEntity {
             return switch (this) {
                 case FRIDGE -> stack.is(Items.COAL) || stack.is(Items.CHARCOAL) ? FRIDGE_FUEL : 0;
                 case FREEZER -> stack.is(Items.ICE) ? ICE_FUEL : stack.is(Items.PACKED_ICE) ? PACKED_ICE_FUEL
-                    : stack.is(Items.BLUE_ICE) ? BLUE_ICE_FUEL : stack.is(Items.SNOWBALL) ? SNOWBALL_FUEL : 0;
+                    : stack.is(Items.BLUE_ICE) ? BLUE_ICE_FUEL : stack.is(com.alexh.capitalism.core.ModItems.BUTCHER_SHOP_ICE.get()) ? BUTCHER_ICE_FUEL
+                    : stack.is(Items.SNOWBALL) ? SNOWBALL_FUEL : 0;
             };
         }
     }

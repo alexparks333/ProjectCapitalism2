@@ -37,10 +37,11 @@ import java.util.UUID;
 //  - no player with that job online: its NPC should be standing at the spot;
 //  - a player with that job is online: the NPC stays LEAVE_AFTER_TICKS (10 minutes) from when they came online, then
 //    leaves; it comes back once the last of them logs out. EXCEPT on the days it comes to town anyway: each job's NPC
-//    has its own 20% chance every day (inTownToday) of staying all day, competing with the players.
+//    has its own 35% chance every day (inTownToday) of staying all day, competing with the players.
 // Only spots in loaded chunks are touched (an NPC in an unloaded chunk is dealt with when the chunk loads, and the NPC
 // also checks itself, see JobNpc.tick). Admin commands: /npc setspot <job>, /npc removespot <job>, /npc list.
-// The Boat Master (BoatMaster, Boats.md) uses the same spots and commands (/npc setspot boat_master) but is always there.
+// The Shopkeepers (Shopkeeper: the Boat Master, Boats.md, and the Butcher, NPCs.md) use the same spots and commands
+// (/npc setspot boat_master, /npc setspot butcher) but are always there.
 @EventBusSubscriber(modid = Capitalism.MODID)
 public final class NpcManager {
 
@@ -71,9 +72,9 @@ public final class NpcManager {
         return since == null || server.getTickCount() - since < LEAVE_AFTER_TICKS || inTownToday(server, job);
     }
 
-    // Each job's NPC has its own DAILY_CHANCE (20%) of coming to town for the whole day even while players with its
+    // Each job's NPC has its own DAILY_CHANCE (35%) of coming to town for the whole day even while players with its
     // job are online: a bit of competition for them. The same answer all day (seeded by the world, the day and the job).
-    public static final float DAILY_CHANCE = 0.2F;
+    public static final float DAILY_CHANCE = 0.35F;
 
     public static boolean inTownToday(MinecraftServer server, Job job) {
         long day = com.alexh.capitalism.calendar.Calendar.date(server.overworld()).index();
@@ -85,6 +86,26 @@ public final class NpcManager {
         return new java.util.Random(seed).nextFloat() < DAILY_CHANCE;
     }
 
+    // A seed for today (the Calendar day) and this name: the same all day, different the next
+    public static long dailySeed(MinecraftServer server, String name) {
+        long day = com.alexh.capitalism.calendar.Calendar.date(server.overworld()).index();
+        return dailySeed(server.overworld().getSeed(), day, name);
+    }
+
+    public static long dailySeed(long worldSeed, long day, String name) {
+        return worldSeed ^ (day * 0x9E3779B97F4A7C15L) ^ ((long) name.hashCode() * 0xC2B2AE3D27D4EB4FL);
+    }
+
+    // Is this Shopkeeper in town today? The Boat Master always is; the Butcher comes on DAILY_CHANCE of days, like a job's NPC
+    public static boolean shopkeeperInTown(MinecraftServer server, String key) {
+        if (!NpcShops.BUTCHER.equals(key)) return true;
+        return butcherInTownOn(server.overworld().getSeed(), com.alexh.capitalism.calendar.Calendar.date(server.overworld()).index());
+    }
+
+    public static boolean butcherInTownOn(long worldSeed, long day) {
+        return new java.util.Random(dailySeed(worldSeed, day, NpcShops.BUTCHER)).nextFloat() < DAILY_CHANCE;
+    }
+
     // Asked by each NPC now and then: is it still the one for its job's spot?
     static boolean isCurrent(JobNpc npc) {
         MinecraftServer server = npc.level().getServer();
@@ -94,11 +115,12 @@ public final class NpcManager {
         return spot != null && spot.npc().map(npc.getUUID()::equals).orElse(false) && shouldBePresent(server, job);
     }
 
-    // The Boat Master (BoatMaster): is he the one for his spot? (He's always there while it's set.)
-    static boolean isCurrentBoatMaster(BoatMaster npc) {
+    // A Shopkeeper (the Boat Master, the Butcher): is he the one for his spot? (He's always there while it's set.)
+    static boolean isCurrentShopkeeper(Shopkeeper npc) {
         MinecraftServer server = npc.level().getServer();
         if (server == null) return false;
-        NpcSpots.Spot spot = NpcSpots.get(server).get(NpcShops.BOAT_MASTER);
+        if (!shopkeeperInTown(server, npc.shopKey())) return false;
+        NpcSpots.Spot spot = NpcSpots.get(server).get(npc.shopKey());
         return spot != null && spot.npc().map(npc.getUUID()::equals).orElse(false);
     }
 
@@ -118,8 +140,8 @@ public final class NpcManager {
         }
         NpcSpots spots = NpcSpots.get(server);
         for (NpcSpots.Spot spot : spots.list()) {
-            if (NpcShops.BOAT_MASTER.equals(spot.job())) {
-                checkBoatMaster(server, spots, spot);
+            if (NpcShops.SHOPKEEPERS.contains(spot.job())) {
+                checkShopkeeper(server, spots, spot);
                 continue;
             }
             Job job = Job.byId(spot.job());
@@ -135,22 +157,43 @@ public final class NpcManager {
         }
     }
 
-    // The Boat Master: always at his spot (in a loaded chunk)
-    private static void checkBoatMaster(MinecraftServer server, NpcSpots spots, NpcSpots.Spot spot) {
+    // The entity type of each Shopkeeper (NpcShops.SHOPKEEPERS)
+    private static net.minecraft.world.entity.@Nullable EntityType<? extends Shopkeeper> shopkeeperType(String key) {
+        if (NpcShops.BOAT_MASTER.equals(key)) return ModEntities.BOAT_MASTER.get();
+        if (NpcShops.BUTCHER.equals(key)) return ModEntities.BUTCHER.get();
+        return null;
+    }
+
+    // What /npc calls a Shopkeeper ("Boat Master", "Butcher")
+    private static String shopkeeperTitle(String key) {
+        return NpcShops.BUTCHER.equals(key) ? Butcher.TITLE : BoatMaster.TITLE;
+    }
+
+    // A Shopkeeper: always at his spot (in a loaded chunk)
+    private static void checkShopkeeper(MinecraftServer server, NpcSpots spots, NpcSpots.Spot spot) {
         ServerLevel level = server.getLevel(spot.pos().dimension());
-        if (level == null || !level.isLoaded(spot.pos().pos())) return;
+        var type = shopkeeperType(spot.job());
+        if (type == null || level == null || !level.isLoaded(spot.pos().pos())) return;
         Entity current = spot.npc().map(level::getEntity).orElse(null);
-        if (current instanceof BoatMaster npc && npc.isAlive()) return;
+        if (!shopkeeperInTown(server, spot.job())) {
+            // not his day (the Butcher): gone until he next comes to town
+            if (current instanceof Shopkeeper npc) npc.leave();
+            if (spot.npc().isPresent()) spots.setNpc(spot.job(), null);
+            return;
+        }
+        if (current instanceof Shopkeeper npc && npc.isAlive() && npc.shopKey().equals(spot.job())) return;
         BlockPos pos = spot.pos().pos();
-        for (BoatMaster stray : level.getEntitiesOfClass(BoatMaster.class, new AABB(pos).inflate(8))) stray.discard();
-        BoatMaster npc = ModEntities.BOAT_MASTER.get().create(level, EntitySpawnReason.COMMAND);
+        for (Shopkeeper stray : level.getEntitiesOfClass(Shopkeeper.class, new AABB(pos).inflate(8), s -> s.shopKey().equals(spot.job()))) {
+            stray.discard();
+        }
+        Shopkeeper npc = type.create(level, EntitySpawnReason.COMMAND);
         if (npc == null) return;
         npc.setUp();
         npc.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, spot.yaw(), 0.0F);
         npc.setYHeadRot(spot.yaw());
         npc.setYBodyRot(spot.yaw());
         level.addFreshEntity(npc);
-        spots.setNpc(NpcShops.BOAT_MASTER, npc.getUUID());
+        spots.setNpc(spot.job(), npc.getUUID());
     }
 
     private static void spawn(ServerLevel level, NpcSpots spots, NpcSpots.Spot spot, Job job) {
@@ -176,7 +219,7 @@ public final class NpcManager {
         event.getDispatcher().register(Commands.literal("npc").requires(Commands.hasPermission(OPS))
             .then(Commands.literal("setspot").then(Commands.argument("job", StringArgumentType.word())
                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(
-                    java.util.stream.Stream.concat(Arrays.stream(Job.values()).map(Job::id), java.util.stream.Stream.of(NpcShops.BOAT_MASTER)), builder))
+                    java.util.stream.Stream.concat(Arrays.stream(Job.values()).map(Job::id), NpcShops.SHOPKEEPERS.stream()), builder))
                 .executes(NpcManager::setSpot)))
             .then(Commands.literal("removespot").then(Commands.argument("job", StringArgumentType.word())
                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(
@@ -193,14 +236,15 @@ public final class NpcManager {
 
     // Where you stand, facing the way you face
     private static int setSpot(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        if (NpcShops.BOAT_MASTER.equals(StringArgumentType.getString(context, "job"))) {
+        String key = StringArgumentType.getString(context, "job");
+        if (NpcShops.SHOPKEEPERS.contains(key)) {
             ServerPlayer player = context.getSource().getPlayerOrException();
             MinecraftServer server = context.getSource().getServer();
             NpcSpots spots = NpcSpots.get(server);
-            removeNpc(server, spots.get(NpcShops.BOAT_MASTER));
-            spots.set(NpcShops.BOAT_MASTER, GlobalPos.of(player.level().dimension(), player.blockPosition()), player.getYRot());
+            removeNpc(server, spots.get(key));
+            spots.set(key, GlobalPos.of(player.level().dimension(), player.blockPosition()), player.getYRot());
             checkAll(server);
-            context.getSource().sendSuccess(() -> Component.literal("The Boat Master will stand here (always open).").withStyle(ChatFormatting.GREEN), true);
+            context.getSource().sendSuccess(() -> Component.literal("The " + shopkeeperTitle(key) + (NpcShops.BUTCHER.equals(key) ? " will stand here (on the days he comes to town)." : " will stand here (always open).")).withStyle(ChatFormatting.GREEN), true);
             return 1;
         }
         Job job = jobArgument(context);
@@ -217,15 +261,16 @@ public final class NpcManager {
     }
 
     private static int removeSpot(CommandContext<CommandSourceStack> context) {
-        if (NpcShops.BOAT_MASTER.equals(StringArgumentType.getString(context, "job"))) {
+        String key = StringArgumentType.getString(context, "job");
+        if (NpcShops.SHOPKEEPERS.contains(key)) {
             MinecraftServer server = context.getSource().getServer();
-            NpcSpots.Spot removed = NpcSpots.get(server).remove(NpcShops.BOAT_MASTER);
+            NpcSpots.Spot removed = NpcSpots.get(server).remove(key);
             if (removed == null) {
-                context.getSource().sendFailure(Component.literal("The Boat Master has no spot."));
+                context.getSource().sendFailure(Component.literal("The " + shopkeeperTitle(key) + " has no spot."));
                 return 0;
             }
             removeNpc(server, removed);
-            context.getSource().sendSuccess(() -> Component.literal("Removed the Boat Master and his spot.").withStyle(ChatFormatting.YELLOW), true);
+            context.getSource().sendSuccess(() -> Component.literal("Removed the " + shopkeeperTitle(key) + " and his spot.").withStyle(ChatFormatting.YELLOW), true);
             return 1;
         }
         Job job = jobArgument(context);
@@ -250,9 +295,9 @@ public final class NpcManager {
         }
         for (NpcSpots.Spot spot : all) {
             BlockPos pos = spot.pos().pos();
-            if (NpcShops.BOAT_MASTER.equals(spot.job())) {
-                context.getSource().sendSuccess(() -> Component.literal("Boat Master: " + pos.getX() + " " + pos.getY() + " " + pos.getZ()
-                    + " in " + spot.pos().dimension().identifier() + ", always open"), false);
+            if (NpcShops.SHOPKEEPERS.contains(spot.job())) {
+                context.getSource().sendSuccess(() -> Component.literal(shopkeeperTitle(spot.job()) + ": " + pos.getX() + " " + pos.getY() + " " + pos.getZ()
+                    + " in " + spot.pos().dimension().identifier() + ", " + (!NpcShops.BUTCHER.equals(spot.job()) ? "always open" : shopkeeperInTown(server, spot.job()) ? "in town today" : "away today")), false);
                 continue;
             }
             Job job = Job.byId(spot.job());

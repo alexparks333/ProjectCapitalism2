@@ -52,6 +52,10 @@ public class SmithTableMenu extends AbstractContainerMenu {
     public static final int SOCKET_NONE = 0;
     public static final int SOCKET_READY = 1;
     public static final int SOCKET_NEEDS_XP = 2;
+    // setting a gem in a socket (GEM_XP levels), or breaking one out (free; the gem is destroyed)
+    public static final int GEM_READY = 3;
+    public static final int GEM_NEEDS_XP = 4;
+    public static final int GEM_BREAK = 5;
 
     private final SmithTable kind;
     private final ContainerLevelAccess access;
@@ -173,8 +177,27 @@ public class SmithTableMenu extends AbstractContainerMenu {
     }
 
     private int socketState() {
-        if (this.table == null || !this.isSocketing()) return SOCKET_NONE;
+        if (this.table == null) return SOCKET_NONE;
+        if (this.isSettingGem()) return canAffordGem(this.player) ? GEM_READY : GEM_NEEDS_XP;
+        if (this.isBreakingGem()) return GEM_BREAK;
+        if (!this.isSocketing()) return SOCKET_NONE;
         return canAffordSocket(this.player) ? SOCKET_READY : SOCKET_NEEDS_XP;
+    }
+
+    private static boolean canAffordGem(Player player) {
+        return player.isCreative() || player.experienceLevel >= Socketing.GEM_XP;
+    }
+
+    // the socketed item + a gem that fits it (this table's kind of item). A repair comes first: a damaged diamond axe +
+    // a Diamond is a repair (Forge), not a Diamond gem; repair it, then set the gem.
+    private boolean isSettingGem() {
+        ItemStack big = this.inputs.getItem(BIG), small = this.inputs.getItem(SMALL);
+        return Socketing.canSetGem(this.kind, big, small) && !DentForging.isRepair(this.kind, big, small);
+    }
+
+    // a socketed item holding a gem, alone in the big slot
+    private boolean isBreakingGem() {
+        return Socketing.canBreakGem(this.kind, this.inputs.getItem(BIG), this.inputs.getItem(SMALL));
     }
 
     private static boolean canAffordSocket(Player player) {
@@ -215,6 +238,18 @@ public class SmithTableMenu extends AbstractContainerMenu {
             this.result.setItem(0, enoughLava ? Rerolling.preview(this.inputs.getItem(BIG)) : ItemStack.EMPTY);
             return;
         }
+        // a socketed item + a gem that fits: the same item with the gem set, for GEM_XP levels (no lava)
+        if (this.isSettingGem()) {
+            this.needsLava = false;
+            this.result.setItem(0, canAffordGem(this.player) ? Socketing.withGem(this.inputs.getItem(BIG), this.inputs.getItem(SMALL)) : ItemStack.EMPTY);
+            return;
+        }
+        // a socketed item holding a gem, alone: the same item with an empty socket (the gem is broken out and lost)
+        if (this.isBreakingGem()) {
+            this.needsLava = false;
+            this.result.setItem(0, Socketing.withEmptySocket(this.inputs.getItem(BIG)));
+            return;
+        }
         // a sword / pickaxe / armor piece + a Molten Socket: the same item with an empty socket, for XP levels (no lava)
         if (this.isSocketing()) {
             this.needsLava = false;
@@ -241,9 +276,11 @@ public class SmithTableMenu extends AbstractContainerMenu {
 
     private void craft(Player taker, ItemStack carried) {
         WeaponsmithTableRecipes.Recipe recipe = this.recipe();
-        boolean socketing = this.isSocketing();
-        int lava = socketing ? 0 : this.isReroll() ? Rerolling.REROLL_LAVA : recipe != null ? recipe.lavaCost() : 0;
+        boolean settingGem = this.isSettingGem(), breakingGem = this.isBreakingGem();
+        boolean socketing = !settingGem && !breakingGem && this.isSocketing();
+        int lava = socketing || settingGem || breakingGem ? 0 : this.isReroll() ? Rerolling.REROLL_LAVA : recipe != null ? recipe.lavaCost() : 0;
         if (socketing && !taker.isCreative()) taker.giveExperienceLevels(-Socketing.SOCKET_XP);
+        if (settingGem && !taker.isCreative()) taker.giveExperienceLevels(-Socketing.GEM_XP);
         if (this.table != null) this.table.burn(lava);
         Rerolling.roll(carried, taker);
         this.inputs.removeItem(BIG, 1);

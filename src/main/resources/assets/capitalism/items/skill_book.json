@@ -649,6 +649,41 @@
         }
       },
       {
+        "when": "revenants_bane",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/revenants_bane"
+        }
+      },
+      {
+        "when": "witchs_bane",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/witchs_bane"
+        }
+      },
+      {
+        "when": "wolfsbane",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/wolfsbane"
+        }
+      },
+      {
+        "when": "blood_fury",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/blood_fury"
+        }
+      },
+      {
+        "when": "blood_ward",
+        "model": {
+          "type": "minecraft:model",
+          "model": "capitalism:item/skill_books/blood_ward"
+        }
+      },
+      {
         "when": "fresh_start",
         "model": {
           "type": "minecraft:model",

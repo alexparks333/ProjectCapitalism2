@@ -178,15 +178,17 @@ public class WellnessScreen extends Screen {
         float total = DietData.total(diet);
         float balance = DietData.balance(diet);
         // No buffs or debuffs until the player has eaten enough meals (the head start alone gives nothing).
-        // The diet in effect (server-side: after the 20 meals and the grace period)
-        // (Before the first meals nothing is in effect yet; then just show how the chart looks.)
-        DietData.Tier tier = ClientWellnessData.effectsActive() ? ClientWellnessData.dietTier() : DietData.tier(diet);
+        // The diet as it is right now (matches the % in the donut); the badge adds a countdown while the grace period
+        // keeps the old bonus / penalty in effect (drawDietCard).
+        DietData.Tier tier = ClientWellnessData.effectsActive()
+            ? DietData.Tier.values()[Math.min(ClientWellnessData.raw[WellbeingData.DIET], DietData.Tier.values().length - 1)]
+            : DietData.tier(diet);
 
         drawPurityCard(graphics, l + 8, t + 26, l + 80, t + H - 8);
         this.hoverTooltip = null;
         drawDietCard(graphics, l + 86, t + 26, l + 224, t + H - 8, diet, total, balance, tier, mouseX, mouseY);
         drawGroupsCard(graphics, l + 230, t + 26, l + W - 8, t + 104, diet, total);
-        drawStatusCard(graphics, l + 230, t + 110, l + W - 8, t + 184);
+        drawStatusCard(graphics, l + 230, t + 110, l + W - 8, t + 184, mouseX, mouseY);
         drawTemperatureCard(graphics, l + 230, t + 190, l + W - 8, t + H - 8, mouseX, mouseY);
 
         // Tooltips: the (i) explains everything; hovering a pie slice names it, hovering Temperature explains it.
@@ -231,7 +233,7 @@ public class WellnessScreen extends Screen {
         lines.add(Component.literal("White ticks = where each group should be.").withStyle(ChatFormatting.GRAY));
         lines.add(Component.literal("Hover a food to see its diet points.").withStyle(ChatFormatting.GRAY));
         lines.add(Component.literal("Diet: ").withStyle(ChatFormatting.GREEN)
-            .append(Component.literal("Balanced " + pct(CapitalismConfig.DIET_BALANCED_SCORE, 86) + "%+ = +" + drumsticks(CapitalismConfig.DIET_BALANCED_FOOD_BONUS.get())
+            .append(Component.literal("Balanced " + pct(CapitalismConfig.DIET_BALANCED_SCORE, 90) + "%+ = +" + drumsticks(CapitalismConfig.DIET_BALANCED_FOOD_BONUS.get())
                 + ", Poor " + pct(CapitalismConfig.DIET_POOR_SCORE, 44) + "% or less = -" + drumsticks(CapitalismConfig.DIET_POOR_FOOD_LOSS.get())).withStyle(ChatFormatting.WHITE)));
         lines.add(Component.empty());
         lines.add(Component.literal("Water Purity").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
@@ -610,6 +612,18 @@ public class WellnessScreen extends Screen {
                 color = TEXT_DIM;
             }
         }
+        // Grace period: the badge shows the diet as it is NOW; while the bonus / penalty in effect hasn't caught up
+        // yet, say when it changes (e.g. dropped to Okay: "Bonus ends 42s", not a "Balanced!" that isn't true).
+        int changeIn = ClientWellnessData.changeIn(WellbeingData.DIET);
+        if (changeIn >= 0) {
+            DietData.Tier inEffect = ClientWellnessData.dietTier();
+            detail = switch (tier) {
+                case BALANCED -> "Bonus in " + changeIn + "s";
+                case POOR -> "Penalty in " + changeIn + "s";
+                default -> inEffect == DietData.Tier.BALANCED ? "Bonus ends " + changeIn + "s"
+                    : inEffect == DietData.Tier.POOR ? "Penalty ends " + changeIn + "s" : detail;
+            };
+        }
         // Before the first meals (config dietMealsBeforeEffects) the diet has no effect yet, silently: show the
         // status without promising a drumstick.
         if (!ClientWellnessData.effectsActive()) detail = "";
@@ -650,11 +664,12 @@ public class WellnessScreen extends Screen {
         }
     }
 
-    private void drawStatusCard(GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1) {
+    private void drawStatusCard(GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1, int mouseX, int mouseY) {
         card(graphics, x0, y0, x1, y1);
         graphics.text(this.font, "How you're doing", x0 + 6, y0 + 6, TEXT, true);
         Player player = this.minecraft.player;
         if (player == null) return;
+        drawDrinks(graphics, player, x1 - 6, y0 + 6, mouseX, mouseY);
 
         int rowX = x0 + 8;
         drawHearts(graphics, player, rowX, y0 + 18);
@@ -664,6 +679,25 @@ public class WellnessScreen extends Screen {
             WATER_EMPTY, WATER_FULL, WATER_HALF, WATER_GOLD_FULL, WATER_GOLD_HALF);
 
         drawWellbeing(graphics, x0 + 6, y0 + 52, x1 - 6);
+    }
+
+    // Intoxication (player/Intoxication): a tiny "Drinks 2" in the card's top right, amber when Tipsy, red when Drunk;
+    // hover it for the lines. Hidden until they've had a drink today.
+    private void drawDrinks(GuiGraphicsExtractor graphics, Player player, int right, int y, int mouseX, int mouseY) {
+        int tenths = com.alexh.capitalism.player.Intoxication.today(player);
+        if (tenths <= 0) return;
+        boolean drunk = player.hasEffect(com.alexh.capitalism.core.ModEffects.DRUNK);
+        boolean tipsy = player.hasEffect(com.alexh.capitalism.core.ModEffects.TIPSY);
+        String label = "Drinks " + com.alexh.capitalism.player.Intoxication.drinks(tenths);
+        int w = this.font.width(label);
+        int color = drunk ? 0xFFE0604A : tipsy ? 0xFFE8B04A : TEXT_DIM;
+        graphics.text(this.font, label, right - w, y, color, false);
+        if (inside(mouseX, mouseY, right - w, y - 1, w, 10)) {
+            this.hoverTooltip = List.of(
+                Component.literal("Drinks today: " + com.alexh.capitalism.player.Intoxication.drinks(tenths)
+                    + (drunk ? " (Drunk)" : tipsy ? " (Tipsy)" : "")).withStyle(ChatFormatting.GOLD),
+                Component.literal("3 = Tipsy, 5 = Drunk. Starts over each morning.").withStyle(ChatFormatting.GRAY));
+        }
     }
 
     // Wellbeing: a status line and a bar from the middle (left) to the bonus heart (gold zone, right).

@@ -75,11 +75,14 @@ public final class BountyTask {
         return this.min >= this.max ? this.min : this.min + random.nextInt(this.max - this.min + 1);
     }
 
-    // its gold for this amount (nuggets): in proportion between its two ends
+    // its gold for this amount (nuggets): in proportion between its two ends, plus its tier's bonus
     public long goldFor(int amount) {
         double t = this.max <= this.min ? 0 : (amount - this.min) / (double) (this.max - this.min);
-        return Math.round((this.goldMin + (this.goldMax - this.goldMin) * t) * 9.0);
+        return Math.round((this.goldMin + (this.goldMax - this.goldMin) * t + TIER_BONUS[this.tier.ordinal()]) * 9.0);
     }
+
+    // gold added to every task's pay by tier (Easy, Medium, Hard, Heroic), so bounties are a fair way to earn a little
+    public static final int[] TIER_BONUS = {2, 3, 4, 5};
 
     public boolean availableTo(ServerPlayer player) {
         return this.available.test(player);
@@ -137,13 +140,22 @@ public final class BountyTask {
         t(id, "Mine %s " + what, tier, Kind.MINE, min, max, gMin, gMax, blocks);
     }
 
+    // "Chop %s Oak logs"
+    private static void chop(Tier tier, String id, String wood, int min, int max, int gMin, int gMax, String log) {
+        t(id, "Chop %s " + wood + " logs", tier, Kind.MINE, min, max, gMin, gMax, log);
+    }
+
     private static void deliver(Tier tier, String id, String what, int min, int max, int gMin, int gMax, String item) {
         t(id, "Deliver %s " + what, tier, Kind.DELIVER, min, max, gMin, gMax, item);
     }
 
+    // Every task is about fighting, mining, wood, meat, fish, the Nether or the town's trade. (Niche ones were cut on
+    // 2026-11-19: taming, milking, shearing, breeding, planting, sand / gravel / dirt, mail, villager trades, odd
+    // deliveries; a player still holding one keeps it until their next task.) The gold numbers below are the base:
+    // goldFor() adds the tier's bonus on top (TIER_BONUS).
     static {
         Tier E = Tier.EASY, M = Tier.MEDIUM, H = Tier.HARD, X = Tier.HEROIC;
-        // ── Easy: 3-5 gold ──
+        // ── Easy: 3-5 gold base (5-7 paid) ──
         kill(E, "kill_zombies", "Zombies", 4, 7, 3, 5, "minecraft:zombie");
         kill(E, "kill_skeletons", "Skeletons", 4, 7, 3, 5, "minecraft:skeleton");
         kill(E, "kill_spiders", "Spiders", 4, 7, 3, 5, "minecraft:spider");
@@ -152,169 +164,142 @@ public final class BountyTask {
         kill(E, "kill_husks", "Husks", 4, 7, 3, 5, "minecraft:husk");
         kill(E, "kill_strays", "Strays", 4, 7, 3, 5, "minecraft:stray");
         kill(E, "kill_slimes", "Slimes", 3, 6, 3, 5, "minecraft:slime");
-        kill(E, "kill_silverfish", "Silverfish", 5, 9, 3, 4, "minecraft:silverfish");
-        kill(E, "kill_zombie_villagers", "Zombie Villagers", 2, 4, 3, 5, "minecraft:zombie_villager");
         kill(E, "kill_cave_spiders", "Cave Spiders", 4, 7, 3, 5, "minecraft:cave_spider");
+        t("kill_skeletons_night", "Kill %s Skeletons at night", E, Kind.KILL_AT_NIGHT, 5, 8, 3, 5, "minecraft:skeleton");
         mine(E, "mine_coal", "Coal Ore", 16, 24, 3, 4, "minecraft:coal_ore", "minecraft:deepslate_coal_ore");
         mine(E, "mine_copper", "Copper Ore", 12, 20, 3, 4, "minecraft:copper_ore", "minecraft:deepslate_copper_ore");
-        t("chop_logs", "Chop %s logs", E, Kind.MINE, 24, 40, 3, 4, "#minecraft:logs");
+        mine(E, "mine_iron_few", "Iron Ore", 3, 5, 3, 5, "minecraft:iron_ore", "minecraft:deepslate_iron_ore");
         mine(E, "mine_stone", "Stone", 48, 80, 3, 4, "minecraft:stone");
-        t("dig_sand", "Dig %s Sand", E, Kind.MINE, 24, 48, 3, 4, "minecraft:sand", "minecraft:red_sand");
-        t("dig_clay", "Dig %s Clay", E, Kind.MINE, 12, 20, 3, 4, "minecraft:clay");
-        t("dig_gravel", "Dig %s Gravel", E, Kind.MINE, 12, 24, 3, 4, "minecraft:gravel");
-        t("gather_kelp", "Gather %s Kelp", E, Kind.MINE, 16, 32, 3, 4, "minecraft:kelp", "minecraft:kelp_plant");
-        t("gather_cane", "Gather %s Sugar Cane", E, Kind.MINE, 12, 24, 3, 4, "minecraft:sugar_cane");
+        // wood: any logs, or one kind
+        t("chop_logs", "Chop %s logs", E, Kind.MINE, 24, 40, 3, 4, "#minecraft:logs");
+        chop(E, "chop_oak", "Oak", 24, 40, 3, 4, "minecraft:oak_log");
+        chop(E, "chop_birch", "Birch", 24, 40, 3, 4, "minecraft:birch_log");
+        chop(E, "chop_spruce", "Spruce", 24, 40, 3, 4, "minecraft:spruce_log");
+        // meat: raw, any way you get it (a Farmer gets the full drops; everyone else only 1 a kill, or buys it)
+        deliver(E, "deliver_beef", "Raw Beef", 4, 6, 3, 5, "minecraft:beef");
+        deliver(E, "deliver_porkchops", "Raw Porkchops", 4, 6, 3, 5, "minecraft:porkchop");
+        deliver(E, "deliver_chicken", "Raw Chicken", 4, 6, 3, 5, "minecraft:chicken");
+        deliver(E, "deliver_mutton", "Raw Mutton", 4, 6, 3, 5, "minecraft:mutton");
+        // mob drops
+        deliver(E, "deliver_bones", "Bones", 12, 24, 3, 4, "minecraft:bone");
+        deliver(E, "deliver_string", "String", 24, 40, 3, 4, "minecraft:string");
+        deliver(E, "deliver_leather", "Leather", 6, 10, 3, 5, "minecraft:leather");
+        // farming and fishing
         t("harvest_wheat", "Harvest %s Wheat", E, Kind.HARVEST, 24, 40, 3, 4, "minecraft:wheat");
         t("harvest_carrots", "Harvest %s Carrots", E, Kind.HARVEST, 24, 40, 3, 4, "minecraft:carrots");
         t("harvest_potatoes", "Harvest %s Potatoes", E, Kind.HARVEST, 24, 40, 3, 4, "minecraft:potatoes");
-        t("harvest_pumpkins", "Harvest %s Pumpkins", E, Kind.HARVEST, 8, 12, 3, 5, "minecraft:pumpkin");
-        t("harvest_melons", "Harvest %s Melons", E, Kind.HARVEST, 8, 12, 3, 5, "minecraft:melon");
-        t("plant_saplings", "Plant %s saplings", E, Kind.PLANT, 16, 24, 3, 4, "#minecraft:saplings");
-        t("breed_few", "Breed %s animals", E, Kind.BREED, 3, 5, 3, 5);
-        t("shear_few", "Shear %s sheep", E, Kind.SHEAR, 4, 8, 3, 5);
-        t("milk_cows", "Milk a cow %s times", E, Kind.MILK, 2, 4, 3, 4);
-        deliver(E, "deliver_eggs", "Eggs", 10, 16, 3, 4, "minecraft:egg");
         t("catch_fish", "Catch %s fish", E, Kind.CATCH, 8, 12, 3, 5);
         t("catch_salmon", "Catch %s Salmon", E, Kind.CATCH_ITEM, 4, 6, 3, 5, "minecraft:salmon");
-        deliver(E, "deliver_bread", "Bread", 12, 20, 3, 5, "minecraft:bread");
-        deliver(E, "deliver_torches", "Torches", 24, 48, 3, 4, "minecraft:torch");
-        deliver(E, "deliver_leather", "Leather", 6, 10, 3, 5, "minecraft:leather");
-        deliver(E, "deliver_string", "String", 24, 40, 3, 4, "minecraft:string");
-        deliver(E, "deliver_bones", "Bones", 12, 24, 3, 4, "minecraft:bone");
-        deliver(E, "deliver_wool", "White Wool", 6, 12, 3, 4, "minecraft:white_wool");
-        deliver(E, "deliver_apples", "Apples", 8, 16, 3, 5, "minecraft:apple");
-        t("walk", "Walk %s blocks", E, Kind.WALK, 400, 700, 3, 5);
-        t("row", "Row a boat %s blocks", E, Kind.BOAT, 250, 400, 3, 5);
-        t("send_letter", "Send something by Mailbox", E, Kind.MAIL, 1, 1, 3, 3);
-        t("shop_buy", "Buy anything from a player's Shopfront", E, Kind.SHOP_BUY, 1, 1, 3, 3).needs(p -> ShopIndex.anyOther(p));
-        // more Easy
-        mine(E, "mine_iron_few", "Iron Ore", 3, 5, 3, 5, "minecraft:iron_ore", "minecraft:deepslate_iron_ore");
-        t("dig_dirt", "Dig %s Dirt", E, Kind.MINE, 64, 96, 3, 4, "minecraft:dirt", "minecraft:grass_block");
-        t("quarry_stones", "Quarry %s Andesite, Diorite or Granite", E, Kind.MINE, 32, 64, 3, 4, "minecraft:andesite", "minecraft:diorite", "minecraft:granite");
-        t("harvest_beetroot", "Harvest %s Beetroots", E, Kind.HARVEST, 24, 40, 3, 4, "minecraft:beetroots");
-        t("cut_bamboo", "Cut %s Bamboo", E, Kind.MINE, 24, 48, 3, 4, "minecraft:bamboo");
-        t("cut_cactus", "Cut %s Cactus", E, Kind.MINE, 8, 16, 3, 4, "minecraft:cactus");
         t("catch_cod", "Catch %s Cod", E, Kind.CATCH_ITEM, 6, 10, 3, 5, "minecraft:cod");
-        t("kill_skeletons_night", "Kill %s Skeletons at night", E, Kind.KILL_AT_NIGHT, 5, 8, 3, 5, "minecraft:skeleton");
-        t("smelt_glass", "Smelt %s Glass", E, Kind.SMELT, 16, 32, 3, 4, "minecraft:glass");
-        deliver(E, "deliver_baked_potatoes", "Baked Potatoes", 12, 20, 3, 4, "minecraft:baked_potato");
-        deliver(E, "deliver_feathers", "Feathers", 12, 20, 3, 4, "minecraft:feather");
-        deliver(E, "deliver_charcoal", "Charcoal", 12, 20, 3, 4, "minecraft:charcoal");
-        // ── Medium: 6-12 gold ──
+        // the town's trade
+        t("shop_buy", "Buy anything from a player's Shopfront", E, Kind.SHOP_BUY, 1, 1, 3, 3).needs(p -> ShopIndex.anyOther(p));
+
+        // ── Medium: 6-12 gold base (9-15 paid) ──
         kill(M, "kill_creepers", "Creepers", 8, 12, 7, 10, "minecraft:creeper");
         t("kill_spiders_night", "Kill %s Spiders at night", M, Kind.KILL_AT_NIGHT, 6, 10, 6, 9, "minecraft:spider", "minecraft:cave_spider");
-        kill(M, "kill_witches", "Witches", 2, 4, 8, 12, "minecraft:witch");
+        t("kill_creepers_night", "Kill %s Creepers at night", M, Kind.KILL_AT_NIGHT, 5, 8, 7, 10, "minecraft:creeper");
+        kill(M, "kill_zombies_many", "Zombies", 12, 18, 6, 9, "minecraft:zombie", "minecraft:husk", "minecraft:drowned");
+        kill(M, "kill_skeletons_many", "Skeletons", 12, 18, 6, 9, "minecraft:skeleton", "minecraft:stray", "minecraft:bogged");
         kill(M, "kill_drowned_many", "Drowned", 8, 12, 6, 8, "minecraft:drowned");
+        kill(M, "kill_witches", "Witches", 2, 4, 8, 12, "minecraft:witch");
         kill(M, "kill_pillagers", "Pillagers", 4, 6, 8, 11, "minecraft:pillager");
         kill(M, "kill_phantoms", "Phantoms", 2, 4, 8, 11, "minecraft:phantom");
         kill(M, "kill_guardians", "Guardians", 4, 6, 8, 11, "minecraft:guardian");
-        kill(M, "kill_magma_cubes", "Magma Cubes", 4, 7, 7, 10, "minecraft:magma_cube");
         kill(M, "kill_endermen_few", "Endermen", 2, 4, 7, 10, "minecraft:enderman");
+        // the Nether
+        t("nether_return", "Visit the Nether and come back alive", M, Kind.NETHER_RETURN, 1, 1, 9, 9);
+        kill(M, "kill_magma_cubes", "Magma Cubes", 4, 7, 7, 10, "minecraft:magma_cube");
         kill(M, "kill_zombified_piglins", "Zombified Piglins", 4, 7, 6, 8, "minecraft:zombified_piglin");
         kill(M, "kill_hoglins", "Hoglins", 3, 5, 8, 11, "minecraft:hoglin");
-        kill(M, "kill_bogged", "Bogged", 4, 6, 7, 9, "minecraft:bogged");
+        kill(M, "kill_piglins", "Piglins", 4, 7, 7, 10, "minecraft:piglin");
+        mine(M, "mine_quartz", "Nether Quartz Ore", 20, 32, 6, 9, "minecraft:nether_quartz_ore");
+        mine(M, "mine_glowstone", "Glowstone", 16, 32, 7, 10, "minecraft:glowstone");
+        mine(M, "mine_nether_gold", "Nether Gold Ore", 12, 20, 6, 8, "minecraft:nether_gold_ore");
+        t("chop_crimson", "Chop %s Crimson Stems", M, Kind.MINE, 16, 32, 7, 10, "minecraft:crimson_stem");
+        t("chop_warped", "Chop %s Warped Stems", M, Kind.MINE, 16, 32, 7, 10, "minecraft:warped_stem");
+        // mining
         mine(M, "mine_iron", "Iron Ore", 8, 12, 6, 9, "minecraft:iron_ore", "minecraft:deepslate_iron_ore");
         mine(M, "mine_gold", "Gold Ore", 6, 10, 8, 11, "minecraft:gold_ore", "minecraft:deepslate_gold_ore");
         mine(M, "mine_lapis", "Lapis Ore", 10, 14, 6, 8, "minecraft:lapis_ore", "minecraft:deepslate_lapis_ore");
         mine(M, "mine_redstone", "Redstone Ore", 12, 20, 6, 8, "minecraft:redstone_ore", "minecraft:deepslate_redstone_ore");
-        mine(M, "mine_quartz", "Nether Quartz Ore", 20, 32, 6, 9, "minecraft:nether_quartz_ore");
-        mine(M, "mine_deepslate", "Deepslate", 48, 80, 6, 7, "minecraft:deepslate");
+        mine(M, "mine_copper_many", "Copper Ore", 32, 48, 6, 8, "minecraft:copper_ore", "minecraft:deepslate_copper_ore");
         mine(M, "mine_obsidian", "Obsidian", 8, 12, 8, 11, "minecraft:obsidian");
+        t("reach_depths", "Reach Y -50", M, Kind.REACH_LOW, 1, 1, 7, 7);
         t("smelt_iron", "Smelt %s Iron Ingots", M, Kind.SMELT, 24, 40, 7, 10, "minecraft:iron_ingot");
+        t("smelt_gold", "Smelt %s Gold Ingots", M, Kind.SMELT, 8, 16, 7, 10, "minecraft:gold_ingot");
+        // wood
+        chop(M, "chop_dark_oak", "Dark Oak", 24, 40, 6, 9, "minecraft:dark_oak_log");
+        chop(M, "chop_jungle", "Jungle", 24, 40, 6, 9, "minecraft:jungle_log");
+        chop(M, "chop_acacia", "Acacia", 24, 40, 6, 9, "minecraft:acacia_log");
+        chop(M, "chop_mangrove", "Mangrove", 24, 40, 7, 10, "minecraft:mangrove_log");
+        chop(M, "chop_cherry", "Cherry", 24, 40, 7, 10, "minecraft:cherry_log");
+        // meat
+        deliver(M, "deliver_beef_many", "Raw Beef", 10, 16, 7, 10, "minecraft:beef");
+        deliver(M, "deliver_porkchops_many", "Raw Porkchops", 10, 16, 7, 10, "minecraft:porkchop");
+        deliver(M, "deliver_rabbit", "Raw Rabbit", 4, 6, 7, 10, "minecraft:rabbit");
         t("cook_meat", "Cook %s meat", M, Kind.SMELT, 12, 20, 6, 8, "minecraft:cooked_beef", "minecraft:cooked_porkchop", "minecraft:cooked_chicken",
             "minecraft:cooked_mutton", "minecraft:cooked_rabbit");
-        t("brew", "Brew %s potions", M, Kind.BREW, 3, 3, 8, 8);
-        t("enchant", "Enchant any item", M, Kind.ENCHANT, 1, 1, 7, 7);
-        // the anvil repairs nothing (only smiths do, Smiths.md): this counts a repair bought from a town NPC smith
-        t("repair", "Get something repaired at a town smith NPC", M, Kind.REPAIR, 1, 1, 6, 6);
-        t("tame_wolf", "Tame a Wolf", M, Kind.TAME, 1, 1, 8, 8, "minecraft:wolf");
-        t("tame_cat", "Tame a Cat", M, Kind.TAME, 1, 1, 8, 8, "minecraft:cat");
-        t("tame_horse", "Tame a Horse", M, Kind.TAME, 1, 1, 8, 8, "minecraft:horse");
-        t("tame_parrot", "Tame a Parrot", M, Kind.TAME, 1, 1, 10, 10, "minecraft:parrot");
-        t("breed_many", "Breed %s animals", M, Kind.BREED, 8, 12, 7, 10);
-        t("shear_many", "Shear %s sheep", M, Kind.SHEAR, 16, 24, 7, 10);
+        t("cook_fish", "Cook %s fish", M, Kind.SMELT, 12, 20, 6, 8, "minecraft:cooked_cod", "minecraft:cooked_salmon");
+        // mob drops
+        deliver(M, "deliver_gunpowder", "Gunpowder", 12, 20, 7, 10, "minecraft:gunpowder");
+        deliver(M, "deliver_pearls_few", "Ender Pearls", 3, 5, 7, 10, "minecraft:ender_pearl");
+        deliver(M, "deliver_arrows", "Arrows", 32, 64, 6, 8, "minecraft:arrow");
+        // fishing, travel, the town's trade
         t("catch_fish_many", "Catch %s fish", M, Kind.CATCH, 20, 30, 7, 10);
-        t("catch_puffer_tropical", "Catch a Pufferfish and a Tropical Fish", M, Kind.CATCH_SET, 2, 2, 8, 8, "minecraft:pufferfish", "minecraft:tropical_fish");
         t("fish_treasure", "Fish up %s treasures", M, Kind.TREASURE, 2, 4, 8, 12, "minecraft:enchanted_book", "minecraft:name_tag", "minecraft:saddle",
             "minecraft:nautilus_shell", "minecraft:bow", "minecraft:fishing_rod");
-        deliver(M, "deliver_honey", "Honey Bottles", 4, 8, 7, 10, "minecraft:honey_bottle");
-        deliver(M, "deliver_cakes", "Cakes", 2, 4, 7, 11, "minecraft:cake");
-        deliver(M, "deliver_pearls_few", "Ender Pearls", 3, 5, 7, 10, "minecraft:ender_pearl");
-        deliver(M, "deliver_gunpowder", "Gunpowder", 12, 20, 7, 10, "minecraft:gunpowder");
-        deliver(M, "deliver_glass", "Glass", 24, 40, 6, 8, "minecraft:glass");
-        deliver(M, "deliver_paper", "Paper", 12, 20, 6, 8, "minecraft:paper");
-        deliver(M, "deliver_books", "Books", 6, 10, 7, 10, "minecraft:book");
         t("travel", "Travel %s blocks", M, Kind.TRAVEL, 1500, 2500, 6, 9);
-        t("reach_depths", "Reach Y -50", M, Kind.REACH_LOW, 1, 1, 7, 7);
-        t("reach_heights", "Climb above Y 200", M, Kind.REACH_HIGH, 1, 1, 7, 7);
-        t("ride_horse", "Ride a horse %s blocks", M, Kind.HORSE, 400, 600, 7, 9);
-        t("trade", "Trade with villagers %s times", M, Kind.TRADE, 3, 5, 7, 10);
-        t("visit_biomes", "Visit 4 different biomes in one day", M, Kind.BIOMES, 4, 4, 8, 8);
+        t("enchant", "Enchant any item", M, Kind.ENCHANT, 1, 1, 7, 7);
         t("shop_sell", "Sell something from your Shopfront", M, Kind.SHOP_SELL, 1, 1, 7, 7).needs(ShopIndex::owns);
-        t("feed_pet", "Feed your pet %s times", M, Kind.PET_FEED, 2, 4, 6, 8).needs(BountyEvents::hasPet);
         t("cook_buy", "Buy a meal from a Cook's Shopfront", M, Kind.COOK_BUY, 1, 1, 7, 7).needs(ShopIndex::anyCook);
-        // more Medium
-        kill(M, "kill_zombies_many", "Zombies", 12, 18, 6, 9, "minecraft:zombie", "minecraft:husk", "minecraft:drowned");
-        kill(M, "kill_skeletons_many", "Skeletons", 12, 18, 6, 9, "minecraft:skeleton", "minecraft:stray", "minecraft:bogged");
-        kill(M, "kill_piglins", "Piglins", 4, 7, 7, 10, "minecraft:piglin");
-        t("kill_creepers_night", "Kill %s Creepers at night", M, Kind.KILL_AT_NIGHT, 5, 8, 7, 10, "minecraft:creeper");
-        mine(M, "mine_copper_many", "Copper Ore", 32, 48, 6, 8, "minecraft:copper_ore", "minecraft:deepslate_copper_ore");
-        mine(M, "mine_glowstone", "Glowstone", 16, 32, 7, 10, "minecraft:glowstone");
-        mine(M, "mine_nether_gold", "Nether Gold Ore", 12, 20, 6, 8, "minecraft:nether_gold_ore");
-        t("tame_donkey", "Tame a Donkey or Mule", M, Kind.TAME, 1, 1, 8, 8, "minecraft:donkey", "minecraft:mule");
-        t("tame_llama", "Tame a Llama", M, Kind.TAME, 1, 1, 8, 8, "minecraft:llama", "minecraft:trader_llama");
-        t("smelt_gold", "Smelt %s Gold Ingots", M, Kind.SMELT, 8, 16, 7, 10, "minecraft:gold_ingot");
-        t("cook_fish", "Cook %s fish", M, Kind.SMELT, 12, 20, 6, 8, "minecraft:cooked_cod", "minecraft:cooked_salmon");
-        t("catch_tropical", "Catch %s Tropical Fish", M, Kind.CATCH_ITEM, 2, 3, 7, 10, "minecraft:tropical_fish");
-        deliver(M, "deliver_bricks", "Bricks", 32, 48, 6, 8, "minecraft:brick");
-        deliver(M, "deliver_arrows", "Arrows", 32, 64, 6, 8, "minecraft:arrow");
-        // ── Hard: 10-20 gold ──
+
+        // ── Hard: 10-20 gold base (14-24 paid) ──
         kill(H, "kill_endermen", "Endermen", 12, 18, 14, 19, "minecraft:enderman");
-        kill(H, "kill_blazes", "Blazes", 4, 6, 12, 16, "minecraft:blaze");
-        kill(H, "kill_wither_skeletons", "Wither Skeletons", 4, 6, 13, 17, "minecraft:wither_skeleton");
-        kill(H, "kill_ghasts", "Ghasts", 2, 4, 12, 17, "minecraft:ghast");
-        kill(H, "kill_vindicators", "Vindicators", 2, 4, 12, 16, "minecraft:vindicator");
-        t("kill_ravager", "Kill a Ravager", H, Kind.KILL, 1, 1, 16, 16, "minecraft:ravager");
-        t("kill_evoker", "Kill an Evoker", H, Kind.KILL, 1, 1, 16, 16, "minecraft:evoker");
-        kill(H, "kill_breezes", "Breezes", 2, 4, 12, 16, "minecraft:breeze");
-        kill(H, "kill_brutes", "Piglin Brutes", 3, 5, 14, 19, "minecraft:piglin_brute");
-        kill(H, "kill_shulkers", "Shulkers", 2, 4, 13, 17, "minecraft:shulker");
-        t("blood_monster", "Kill a Blood Moon Level II monster", H, Kind.BLOOD_MONSTER, 1, 1, 12, 12);
-        mine(H, "mine_diamonds", "Diamond Ore", 4, 6, 14, 19, "minecraft:diamond_ore", "minecraft:deepslate_diamond_ore");
-        mine(H, "mine_emeralds", "Emerald Ore", 2, 4, 13, 18, "minecraft:emerald_ore", "minecraft:deepslate_emerald_ore");
-        mine(H, "mine_debris", "Ancient Debris", 2, 3, 16, 20, "minecraft:ancient_debris");
-        deliver(H, "deliver_amethyst", "Amethyst Shards", 12, 20, 10, 13, "minecraft:amethyst_shard");
-        t("loot_shipwreck", "Loot a Shipwreck chest", H, Kind.LOOT_CHEST, 1, 1, 12, 12, "chests/shipwreck");
-        t("loot_temple", "Loot a Desert Temple chest", H, Kind.LOOT_CHEST, 1, 1, 14, 14, "chests/desert_pyramid");
-        t("loot_ruin", "Loot an Ocean Ruin chest", H, Kind.LOOT_CHEST, 1, 1, 12, 12, "chests/underwater_ruin");
-        t("loot_bastion", "Loot a Bastion chest", H, Kind.LOOT_CHEST, 1, 1, 18, 18, "chests/bastion");
-        t("nether_return", "Visit the Nether and come back alive", H, Kind.NETHER_RETURN, 1, 1, 12, 12);
-        t("trial_vault", "Open a Trial Chamber Vault", H, Kind.VAULT, 1, 1, 15, 15);
-        t("rare_fish", "Catch any rare fish", H, Kind.RARE_FISH, 1, 1, 14, 14);
-        t("uncork_bottle", "Uncork a Message in a Bottle", H, Kind.UNCORK, 1, 1, 12, 12);
-        t("crack_chest", "Crack open a Sunken Pirate Chest", H, Kind.CRACK_CHEST, 1, 1, 15, 15);
-        deliver(H, "deliver_blaze_rods", "Blaze Rods", 6, 10, 12, 16, "minecraft:blaze_rod");
-        deliver(H, "deliver_tears", "Ghast Tears", 2, 4, 14, 20, "minecraft:ghast_tear");
-        deliver(H, "deliver_golden_apples", "Golden Apples", 2, 2, 15, 15, "minecraft:golden_apple");
-        deliver(H, "deliver_slime", "Slime Balls", 8, 12, 10, 13, "minecraft:slime_ball");
-        deliver(H, "deliver_nautilus", "Nautilus Shells", 3, 5, 12, 17, "minecraft:nautilus_shell");
-        t("blood_survive", "Survive a whole Blood Moon without dying", H, Kind.BLOOD_SURVIVE, 1, 1, 15, 15);
-        t("blood_kills", "Get %s kills in one Blood Moon", H, Kind.BLOOD_KILLS, 20, 30, 14, 19);
-        // more Hard
         kill(H, "kill_witches_many", "Witches", 5, 8, 12, 16, "minecraft:witch");
         kill(H, "kill_guardians_many", "Guardians", 10, 15, 12, 16, "minecraft:guardian");
         kill(H, "kill_phantoms_many", "Phantoms", 6, 10, 12, 16, "minecraft:phantom");
         kill(H, "kill_pillagers_many", "Pillagers", 10, 15, 12, 16, "minecraft:pillager");
         kill(H, "kill_creepers_many", "Creepers", 20, 30, 12, 16, "minecraft:creeper");
+        kill(H, "kill_vindicators", "Vindicators", 2, 4, 12, 16, "minecraft:vindicator");
+        t("kill_ravager", "Kill a Ravager", H, Kind.KILL, 1, 1, 16, 16, "minecraft:ravager");
+        t("kill_evoker", "Kill an Evoker", H, Kind.KILL, 1, 1, 16, 16, "minecraft:evoker");
+        kill(H, "kill_breezes", "Breezes", 2, 4, 12, 16, "minecraft:breeze");
+        kill(H, "kill_shulkers", "Shulkers", 2, 4, 13, 17, "minecraft:shulker");
+        t("blood_monster", "Kill a Blood Moon Level II monster", H, Kind.BLOOD_MONSTER, 1, 1, 12, 12);
+        t("blood_survive", "Survive a whole Blood Moon without dying", H, Kind.BLOOD_SURVIVE, 1, 1, 15, 15);
+        t("blood_kills", "Get %s kills in one Blood Moon", H, Kind.BLOOD_KILLS, 20, 30, 14, 19);
+        // the Nether
+        kill(H, "kill_blazes", "Blazes", 4, 6, 12, 16, "minecraft:blaze");
+        kill(H, "kill_wither_skeletons", "Wither Skeletons", 4, 6, 13, 17, "minecraft:wither_skeleton");
+        kill(H, "kill_ghasts", "Ghasts", 2, 4, 12, 17, "minecraft:ghast");
+        kill(H, "kill_brutes", "Piglin Brutes", 3, 5, 14, 19, "minecraft:piglin_brute");
+        mine(H, "mine_debris", "Ancient Debris", 2, 3, 16, 20, "minecraft:ancient_debris");
+        t("loot_fortress", "Loot a Nether Fortress chest", H, Kind.LOOT_CHEST, 1, 1, 14, 14, "chests/nether_bridge");
+        t("loot_bastion", "Loot a Bastion chest", H, Kind.LOOT_CHEST, 1, 1, 18, 18, "chests/bastion");
+        deliver(H, "deliver_blaze_rods", "Blaze Rods", 6, 10, 12, 16, "minecraft:blaze_rod");
+        deliver(H, "deliver_tears", "Ghast Tears", 2, 4, 14, 20, "minecraft:ghast_tear");
+        // mining
+        mine(H, "mine_diamonds", "Diamond Ore", 4, 6, 14, 19, "minecraft:diamond_ore", "minecraft:deepslate_diamond_ore");
+        mine(H, "mine_emeralds", "Emerald Ore", 2, 4, 13, 18, "minecraft:emerald_ore", "minecraft:deepslate_emerald_ore");
         mine(H, "mine_gold_many", "Gold Ore", 16, 24, 12, 16, "minecraft:gold_ore", "minecraft:deepslate_gold_ore");
+        deliver(H, "deliver_diamonds", "Diamonds", 2, 3, 14, 20, "minecraft:diamond");
+        deliver(H, "deliver_emeralds", "Emeralds", 2, 3, 12, 18, "minecraft:emerald");
+        // meat and wood in bulk
+        deliver(H, "deliver_beef_bulk", "Raw Beef", 24, 32, 12, 16, "minecraft:beef");
+        deliver(H, "deliver_mutton_bulk", "Raw Mutton", 24, 32, 12, 16, "minecraft:mutton");
+        t("chop_logs_bulk", "Chop %s logs", H, Kind.MINE, 128, 192, 12, 16, "#minecraft:logs");
+        // structures, rare fish
+        t("loot_shipwreck", "Loot a Shipwreck chest", H, Kind.LOOT_CHEST, 1, 1, 12, 12, "chests/shipwreck");
+        t("loot_temple", "Loot a Desert Temple chest", H, Kind.LOOT_CHEST, 1, 1, 14, 14, "chests/desert_pyramid");
+        t("loot_ruin", "Loot an Ocean Ruin chest", H, Kind.LOOT_CHEST, 1, 1, 12, 12, "chests/underwater_ruin");
         t("loot_stronghold", "Loot a Stronghold chest", H, Kind.LOOT_CHEST, 1, 1, 16, 16, "chests/stronghold");
         t("loot_jungle", "Loot a Jungle Temple chest", H, Kind.LOOT_CHEST, 1, 1, 14, 14, "chests/jungle_temple");
         t("loot_mansion", "Loot a Woodland Mansion chest", H, Kind.LOOT_CHEST, 1, 1, 18, 18, "chests/woodland_mansion");
-        t("loot_fortress", "Loot a Nether Fortress chest", H, Kind.LOOT_CHEST, 1, 1, 14, 14, "chests/nether_bridge");
         t("loot_ancient_city", "Loot an Ancient City chest", H, Kind.LOOT_CHEST, 1, 1, 20, 20, "chests/ancient_city");
-        deliver(H, "deliver_diamonds", "Diamonds", 2, 3, 14, 20, "minecraft:diamond");
-        deliver(H, "deliver_emeralds", "Emeralds", 2, 3, 12, 18, "minecraft:emerald");
-        // ── Heroic: 30-50 gold, rare offers ──
+        t("trial_vault", "Open a Trial Chamber Vault", H, Kind.VAULT, 1, 1, 15, 15);
+        t("rare_fish", "Catch any rare fish", H, Kind.RARE_FISH, 1, 1, 14, 14);
+
+        // ── Heroic: 30-50 gold base (40-55 paid), rare offers ──
         t("slay_revenant", "Help slay the Crimson Revenant", X, Kind.HELP_KILL, 1, 1, 45, 45, "capitalism:crimson_revenant");
         t("slay_witch", "Help slay the Sanguine Witch", X, Kind.HELP_KILL, 1, 1, 45, 45, "capitalism:sanguine_witch");
         t("slay_gorefang", "Help slay Gorefang", X, Kind.HELP_KILL, 1, 1, 45, 45, "capitalism:gorefang");
@@ -323,24 +308,20 @@ public final class BountyTask {
         t("slay_warden", "Slay a Warden", X, Kind.HELP_KILL, 1, 1, 50, 50, "minecraft:warden");
         t("slay_elder", "Slay an Elder Guardian", X, Kind.HELP_KILL, 1, 1, 35, 35, "minecraft:elder_guardian");
         t("win_raid", "Win a Raid (Hero of the Village)", X, Kind.RAID_WIN, 1, 1, 40, 40);
-        t("ominous_vault", "Open an Ominous Vault", X, Kind.OMINOUS_VAULT, 1, 1, 35, 35);
-        t("epic_fish", "Catch an Epic or rarer fish", X, Kind.EPIC_FISH, 1, 1, 35, 35);
         t("blood_top", "Top a Blood Moon's kill board", X, Kind.BLOOD_TOP, 1, 1, 40, 40);
-        t("deliver_trident", "Deliver a Trident", X, Kind.DELIVER, 1, 1, 35, 35, "minecraft:trident");
-        t("deliver_totem", "Deliver a Totem of Undying", X, Kind.DELIVER, 1, 1, 40, 40, "minecraft:totem_of_undying");
-        deliver(X, "deliver_skulls", "Wither Skeleton Skulls", 3, 3, 45, 45, "minecraft:wither_skeleton_skull");
-        // more Heroic
         kill(X, "kill_wither_skeleton_army", "Wither Skeletons", 15, 20, 35, 45, "minecraft:wither_skeleton");
         kill(X, "kill_enderman_army", "Endermen", 40, 50, 35, 45, "minecraft:enderman");
         t("kill_ravagers", "Kill 3 Ravagers", X, Kind.KILL, 3, 3, 40, 40, "minecraft:ravager");
         t("kill_evokers", "Kill 3 Evokers", X, Kind.KILL, 3, 3, 40, 40, "minecraft:evoker");
         mine(X, "mine_debris_many", "Ancient Debris", 6, 8, 40, 50, "minecraft:ancient_debris");
+        t("ominous_vault", "Open an Ominous Vault", X, Kind.OMINOUS_VAULT, 1, 1, 35, 35);
+        t("epic_fish", "Catch an Epic or rarer fish", X, Kind.EPIC_FISH, 1, 1, 35, 35);
         t("loot_end_city", "Loot an End City chest", X, Kind.LOOT_CHEST, 1, 1, 40, 40, "chests/end_city_treasure");
+        deliver(X, "deliver_skulls", "Wither Skeleton Skulls", 3, 3, 45, 45, "minecraft:wither_skeleton_skull");
+        t("deliver_trident", "Deliver a Trident", X, Kind.DELIVER, 1, 1, 35, 35, "minecraft:trident");
+        t("deliver_totem", "Deliver a Totem of Undying", X, Kind.DELIVER, 1, 1, 40, 40, "minecraft:totem_of_undying");
         t("deliver_heart_of_sea", "Deliver a Heart of the Sea", X, Kind.DELIVER, 1, 1, 40, 40, "minecraft:heart_of_the_sea");
         deliver(X, "deliver_shulker_shells", "Shulker Shells", 4, 4, 40, 40, "minecraft:shulker_shell");
-        t("deliver_heavy_core", "Deliver a Heavy Core", X, Kind.DELIVER, 1, 1, 45, 45, "minecraft:heavy_core");
         deliver(X, "deliver_echo_shards", "Echo Shards", 4, 6, 35, 45, "minecraft:echo_shard");
-        t("deliver_sniffer_egg", "Deliver a Sniffer Egg", X, Kind.DELIVER, 1, 1, 35, 35, "minecraft:sniffer_egg");
-        t("deliver_pigstep", "Deliver the Pigstep music disc", X, Kind.DELIVER, 1, 1, 40, 40, "minecraft:music_disc_pigstep");
     }
 }

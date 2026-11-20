@@ -97,6 +97,8 @@ public class LibrariansGuideScreen extends JobGuideScreen {
             "Hold right-click to read a Skill Book.", "Most teach you something for a while."));
         list.add(info(READING, new ItemStack(Items.ENCHANTED_BOOK), "Rare Books", List.of(),
             "A shimmering book is Persistent.", "What it teaches stays with you", "until you die."));
+        list.add(info(READING, new ItemStack(Items.REDSTONE), "Blood Moon Books", List.of(),
+            "A book with a crimson spine is a", "Blood Moon Book: read it before", "the moon turns red. It lasts", "one night."));
 
         // ── Information: Player Debuffs (what everyone without the job can't do) ──
         list.add(info(DEBUFFS, table, "No Book Enchanting", List.of(),

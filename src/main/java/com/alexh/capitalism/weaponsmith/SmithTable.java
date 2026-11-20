@@ -47,7 +47,8 @@ public enum SmithTable {
     public boolean repairs(ItemStack stack) {
         return switch (this) {
             case WEAPONSMITH -> WeaponsmithTableRecipes.isWeapon(stack) || stack.is(net.minecraft.world.item.Items.SHIELD);
-            case TOOLSMITH -> stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.SHOVELS) || stack.is(ItemTags.HOES) || stack.is(ItemTags.AXES);
+            case TOOLSMITH -> stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.SHOVELS) || stack.is(ItemTags.HOES) || stack.is(ItemTags.AXES)
+                || stack.getItem() instanceof com.alexh.capitalism.farmer.ScytheItem;   // the Toolsmith makes them for Farmers
             case ARMORSMITH -> stack.is(net.minecraft.world.item.Items.SHIELD) || stack.is(ItemTags.HEAD_ARMOR) || stack.is(ItemTags.CHEST_ARMOR) || stack.is(ItemTags.LEG_ARMOR)
                 || stack.is(ItemTags.FOOT_ARMOR);
         };

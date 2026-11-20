@@ -141,6 +141,10 @@ public class ModBlockEntities {
         BLOCK_ENTITIES.register("mailbox", () ->
             new BlockEntityType<>(com.alexh.capitalism.mail.MailboxBlockEntity::new, ModBlocks.MAILBOX.get(), ModBlocks.TOWN_MAILBOX.get()));
 
+    // The Investment Chest (economy/InvestmentChestBlockEntity): only its lid; the gold is in InvestmentBank
+    public static final Supplier<BlockEntityType<com.alexh.capitalism.economy.InvestmentChestBlockEntity>> INVESTMENT_CHEST =
+        BLOCK_ENTITIES.register("investment_chest", () ->
+            new BlockEntityType<>(com.alexh.capitalism.economy.InvestmentChestBlockEntity::new, ModBlocks.INVESTMENT_CHEST.get()));
     // The Mayoral Chest (town/MayoralChestBlockEntity): 54 slots, the Mayor's and Vice Mayor's
     public static final Supplier<BlockEntityType<com.alexh.capitalism.town.MayoralChestBlockEntity>> MAYORAL_CHEST =
         BLOCK_ENTITIES.register("mayoral_chest", () ->
@@ -171,5 +175,6 @@ public class ModBlockEntities {
                 ModBlocks.GOREFANG_SKULL_TROPHY.get(), ModBlocks.SANGUINE_STAFF_PEDESTAL.get(), ModBlocks.BAT_GARGOYLE.get(),
                 ModBlocks.GRANDFATHER_CLOCK.get(), ModBlocks.CRIMSON_CHANDELIER.get(), ModBlocks.BLOOD_PIPE_ORGAN.get(), ModBlocks.SECRET_BOOKSHELF_DOOR.get(),
                 ModBlocks.HAUNTED_PORTRAIT.get(), ModBlocks.IRON_MAIDEN.get(), ModBlocks.BLOOD_MOON_ALTAR.get(), ModBlocks.BAT_ROOST.get(),
-                ModBlocks.CRIMSON_CANOPY_BED.get(), ModBlocks.BLOOD_CRYSTAL_FIREPLACE.get()));
+                ModBlocks.CRIMSON_CANOPY_BED.get(), ModBlocks.BLOOD_CRYSTAL_FIREPLACE.get(), ModBlocks.GRINNING_JACK_O_LANTERN.get(),
+                ModBlocks.HAUNTED_TOMBSTONE.get(), ModBlocks.POSSESSED_SCARECROW.get()));
 }

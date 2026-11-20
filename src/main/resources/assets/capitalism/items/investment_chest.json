@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "capitalism:item/investment_chest",
+    "model": {
+      "type": "capitalism:investment_chest"
+    }
+  }
+}

@@ -43,7 +43,23 @@ public record GoldenBonus(Supplier<? extends Item> item, int food, int water) {
         new GoldenBonus(ModItems.SANGRIA_PITCHER, 0, 12),
         new GoldenBonus(ModItems.WHITE_WINE_SPRITZER, 0, 12),
         new GoldenBonus(ModItems.TROPICAL_KELP_COOLER, 0, 12),
-        new GoldenBonus(ModItems.BEETROOT_VELVET_SOUR, 0, 12)
+        new GoldenBonus(ModItems.BEETROOT_VELVET_SOUR, 0, 12),
+        new GoldenBonus(ModItems.MARGARITA, 0, 12),
+        new GoldenBonus(ModItems.BERRY_DAIQUIRI, 0, 12),
+        new GoldenBonus(ModItems.COSMOPOLITAN, 0, 12),
+        new GoldenBonus(ModItems.TEQUILA_SUNRISE, 0, 12),
+        new GoldenBonus(ModItems.MOSCOW_MULE, 0, 12),
+        new GoldenBonus(ModItems.RUM_PUNCH, 0, 12),
+        new GoldenBonus(ModItems.ROSE_SPRITZ, 0, 12),
+        new GoldenBonus(ModItems.PUMPKIN_SPICE_FLIP, 0, 12),
+        new GoldenBonus(ModItems.FORGEFIRE_OLD_FASHIONED, 0, 12),
+        new GoldenBonus(ModItems.ANGLERS_SUNRISE, 0, 12),
+        new GoldenBonus(ModItems.BUTCHERS_BLOODY_MARY, 0, 12),
+        new GoldenBonus(ModItems.HOT_TODDY, 0, 12),
+        new GoldenBonus(ModItems.MIDNIGHT_OIL_MARTINI, 0, 12),
+        new GoldenBonus(ModItems.HAGGLERS_HIGHBALL, 0, 12),
+        new GoldenBonus(ModItems.DESERT_ROSE, 0, 12),
+        new GoldenBonus(ModItems.MOONSTALKER_SANGRIA, 0, 12)
     );
 
 

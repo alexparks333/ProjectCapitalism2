@@ -16,9 +16,13 @@ const lessons = {
 };
 const traits = ['iron_stomach', 'nimble', 'night_owl', 'bookworm', 'steady_aim', 'sure_footed', 'light_footed', 'deep_lungs',
   'born_miner', 'lucky_star', 'fast_learner', 'camel', 'used_to_hell', 'winter_survival'];
+// Blood Moon Books: an effect (one night long), but no level numeral (the same from a Rough or a Delicate Book)
+const blood = {
+  revenants_bane: 'Revenant’s Bane', witchs_bane: 'Witch’s Bane', wolfsbane: 'Wolfsbane', blood_fury: 'Blood Fury', blood_ward: 'Blood Ward'
+};
 // instant books: no effect, no level numeral
 const instants = ['fresh_start'];
-const all = [...Object.keys(lessons), ...instants, ...traits];
+const all = [...Object.keys(lessons), ...Object.keys(blood), ...instants, ...traits];
 for (const id of all) w(A + `models/item/skill_books/${id}.json`, { parent: 'minecraft:item/generated', textures: { layer0: `capitalism:item/skill_books/${id}` } });
 for (const id of Object.keys(lessons)) for (const n of ['i', 'ii']) w(A + `models/item/skill_books/${id}_${n}.json`,
   { parent: 'minecraft:item/generated', textures: { layer0: `capitalism:item/skill_books/${id}`, layer1: `capitalism:item/skill_books/numeral_${n}` } });
@@ -37,6 +41,6 @@ w(A + 'items/skill_book.json', {
   }
 });
 const langPath = A + 'lang/en_us.json'; const lang = JSON.parse(fs.readFileSync(langPath, 'utf8'));
-for (const [id, name] of Object.entries(lessons)) lang[`effect.capitalism.book_${id}`] = name;
+for (const [id, name] of Object.entries({ ...lessons, ...blood })) lang[`effect.capitalism.book_${id}`] = name;
 fs.writeFileSync(langPath, JSON.stringify(lang, null, 2) + '\n');
 console.log('ok ' + all.length);

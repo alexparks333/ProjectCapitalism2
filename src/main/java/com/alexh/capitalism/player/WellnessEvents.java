@@ -178,6 +178,8 @@ public class WellnessEvents {
         int neglect = neglect(player, wellbeing);
         int drag = ((neglect & (N_FOOD_GROUP | N_LOW_WATER)) != 0 ? 1 : 0) + ((neglect & (N_FREEZING | N_BURNING)) != 0 ? 1 : 0);
         wellbeing.tickScore(level > 0, drag, min, max);
+        // Comforted (a Comfort Soup): thriving fills the meter twice as fast
+        if (level > 0 && drag == 0 && player.hasEffect(com.alexh.capitalism.core.ModEffects.COMFORTED)) wellbeing.tickScore(true, 0, min, max);
 
         // Diet, purity and hearts only switch after holding for the grace period
         float purity = player.getData(ModAttachments.THIRST.get()).getPurity();

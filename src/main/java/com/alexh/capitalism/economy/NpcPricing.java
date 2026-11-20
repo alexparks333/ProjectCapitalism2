@@ -20,8 +20,12 @@ public final class NpcPricing {
     public static double discount(Player buyer) {
         return Socketing.armorWith(buyer, Socketing.Gem.EMERALD) * Socketing.EMERALD_DISCOUNT_PER_PIECE
             + com.alexh.capitalism.librarian.Skills.level(buyer, com.alexh.capitalism.librarian.Skill.MERCHANTS_LEDGER) * 0.075
-            + com.alexh.capitalism.calendar.Festival.npcDiscount(buyer.level());
+            + com.alexh.capitalism.calendar.Festival.npcDiscount(buyer.level())
+            + (buyer.hasEffect(com.alexh.capitalism.core.ModEffects.SILVER_TONGUE) ? SILVER_TONGUE_DISCOUNT : 0);
     }
+
+    // Silver Tongue (a Haggler's Highball): 10% off
+    public static final double SILVER_TONGUE_DISCOUNT = 0.10;
 
     // What this player pays an NPC for something whose fair (player) price is fairNuggets: the markup, then their
     // discount. In gold nuggets (9 = 1 gold, see GoldMoney). Never below 1 nugget.
@@ -35,7 +39,7 @@ public final class NpcPricing {
     public static double maxDiscount() {
         double festival = 0;
         for (com.alexh.capitalism.calendar.Festival f : com.alexh.capitalism.calendar.Festival.values()) festival = Math.max(festival, f.npcDiscount);
-        return 4 * Socketing.EMERALD_DISCOUNT_PER_PIECE + 2 * 0.075 + festival;
+        return 4 * Socketing.EMERALD_DISCOUNT_PER_PIECE + 2 * 0.075 + festival + SILVER_TONGUE_DISCOUNT;
     }
 
     // The least anyone could ever pay an NPC for this (with every discount at once). The Banker never pays more than this

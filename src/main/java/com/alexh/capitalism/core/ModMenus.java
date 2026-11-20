@@ -53,7 +53,7 @@ public class ModMenus {
         MENUS.register("weaponsmith_table", () -> new MenuType<>(
             (id, inventory) -> new SmithTableMenu(SmithTable.WEAPONSMITH, id, inventory), FeatureFlags.VANILLA_SET));
 
-    // An NPC's shop: the client is told which shop (a job's id, or the Boat Master's) so it can list the offers
+    // An NPC's shop: the client is told which shop (a job's id, or a Shopkeeper's) so it can list the offers
     public static final Supplier<MenuType<NpcShopMenu>> NPC_SHOP =
         MENUS.register("npc_shop", () -> IMenuTypeExtension.create(
             (id, inventory, buf) -> new NpcShopMenu(id, inventory, buf.readUtf(), null)));
@@ -82,6 +82,9 @@ public class ModMenus {
     // the Fisherman (town/FishermanMenu): selling him rare catches, mounting one on a plaque
     public static final Supplier<MenuType<com.alexh.capitalism.town.FishermanMenu>> FISHERMAN =
         MENUS.register("fisherman", () -> new MenuType<>(com.alexh.capitalism.town.FishermanMenu::new, FeatureFlags.VANILLA_SET));
+    // the Investment Chest (economy/InvestmentMenu): your vault, what it pays, COLLECT
+    public static final Supplier<MenuType<com.alexh.capitalism.economy.InvestmentMenu>> INVESTMENT =
+        MENUS.register("investment", () -> new MenuType<>(com.alexh.capitalism.economy.InvestmentMenu::new, FeatureFlags.VANILLA_SET));
     // the Mayoral Chest (town/MayoralChestMenu): its six rows, in the town's colours
     public static final Supplier<MenuType<com.alexh.capitalism.town.MayoralChestMenu>> MAYORAL_CHEST =
         MENUS.register("mayoral_chest", () -> new MenuType<>(com.alexh.capitalism.town.MayoralChestMenu::new, FeatureFlags.VANILLA_SET));

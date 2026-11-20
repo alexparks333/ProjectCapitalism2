@@ -10,9 +10,9 @@ up again.
 |---|---|---|
 | Christmas | Winter 5 to 28 | Grand Christmas Tree, String Light Hooks and Candy Cane Poles (and their lights), Present Pile, Candy Canes, Christmas Frost, Icicles |
 | Halloween | Fall 18 to 28 (up to Spooky Night) | Spooky Scarecrow, Witch's Cauldron, Rounded Gravestone, Cross Gravestone, Old Tombstone, Pile of Bones, Ground Fog |
-| The harvest | Fall 1 to 28 | Big Pumpkin Pile, Leaf Pile, Autumn Maple, Autumn Birch, Fallen Leaves |
-| Summer | Summer 1 to 28 | Beach Towel, Beach Ball, Beach Umbrella, Beach Chair |
-| Spring | Spring 1 to 28 | Egg Basket, Giant Painted Egg, Spring Bunny, Tulip Bed |
+| The harvest | Fall 8 to 21 (around the Harvest Festival) | Big Pumpkin Pile, Leaf Pile, Autumn Maple, Autumn Birch, Fallen Leaves |
+| Summer | Summer 15 to 28 (up to the Beach Festival) | Beach Towel, Beach Ball, Beach Umbrella, Beach Chair |
+| Spring | Spring 10 to 21 (around the Blossom Festival) | Egg Basket, Giant Painted Egg, Spring Bunny, Tulip Bed |
 
 - **The calendar:** see `Calendar.md`.
 - **`/decorations`:** what's up now, by holiday.
@@ -219,6 +219,24 @@ piece's front, and back, and up:
   back to normal for anyone within 10 blocks, a 21x21x21 area (`BodyTemperature.FIREPLACE_RANGE`, `Wellness.md`), and anyone standing **in front of it** (within 3 blocks of the hearth) for 5 seconds gets
   **Regeneration I** for as long as they stay.
 
+### The Halloween ones (the Blood Merchant's Spooky tab, `client/SpookyDecorModels`)
+Sold only in the Halloween weeks (`Town.md` > The Blood Merchant > Spooky), but placed and kept like any Blood Moon
+decoration: always there, anyone can break one (it drops itself). Not the town's seasonal Halloween decorations (the
+Spooky Scarecrow, the gravestones): those are op-placed and packed away out of season.
+- **Grinning Jack-o'-Lantern**: a big ribbed pumpkin, a curly stem and a leaf, a wide carved grin glowing gold and
+  flickering (light 15), smoke and sparks out of the top. **At night**, someone within 4 blocks sets it **cackling**
+  (a witch's laugh, a puff of flame) and **3 bats** fly out, gone in a puff of smoke 8 seconds later; then it rests 30
+  seconds (`BloodDecorBlockEntity.haunt`, tagged bats).
+- **Haunted Tombstone**: a weathered grey headstone, rounded top, on a plinth, moss, a crack, a carved skull over the
+  epitaph. **A named Name Tag** used on it carves its name (used up; up to 60 letters, three lines at most), drawn on
+  its face in dark letters (`BloodDecorRenderer.carve`, synced to the client); right-click reads it out. **At night** a
+  ghostly wisp bobs and turns over it, soul wisps rise off it, and now and then a faint moan.
+- **Possessed Scarecrow** (2 tall): on a grey post and crossbar, a ragged charcoal coat in tatters, a burlap belt and
+  patch, straw bursting from the cuffs and collar, a **burlap sack head** with a stitched grin and **glowing green
+  eyes** under a floppy pointed hat, a crow on its arm looking about. **Its head turns to follow the nearest player**
+  (within 16 blocks, up to about 70 degrees either way: `BloodDecorExtras`). At night crows (dark specks) circle over
+  it; it croaks when someone comes within 5 blocks.
+
 ### Testing (Blood Moon decorations)
 `decor/BloodDecorTests` (`blood_decorations`) checks: a big piece needs its whole footprint free, fills it with solid
 part blocks and breaks whole from any part, dropping one item; the iron maiden keeps and drops its items, opens while
@@ -228,5 +246,8 @@ altar's cost ladder (150, then 300), the Monday reset, refunds at dusk (out of t
 an absent player) and no offerings by night; the fountain gives no blood without a Blood Moon and takes tossed gold
 nuggets; the Bottle of Blood's effects taken after its night but a potion's left; the coffin usable by day and only
 open; the bookshelf door's owner; the chandelier's light and its ceiling.
+`spooky_stall` checks the Halloween stall: its 5 things and prices, none food or drink; open on Fall 20, shut (nothing
+sold) on Fall 10; the tombstone's epitaph carved, synced and cut short; the jack-o'-lantern's 3 bats at night and its rest;
+the broom's rise and longer slow fall; the ghost sheet worn.
 `gradlew runPhoto -Pphoto=blooddecor` photographs them all (and `-Pphoto=blooditems` their 3D items, `bloodbanner` the
 banner close up in the dark).

@@ -12,7 +12,7 @@ Keep those notes matching the code when things change.
   anywhere else. Player-run Shopfronts are not NPCs. (The Whisperer, `Town.md`, is different on purpose: he sells
   Knowledge Pieces for emeralds. So is the Blood Merchant: Blood Moon decorations and a Wishing Star for Blood Shards
   and crest pieces. The Traveling Merchant (`Town.md`) is an NPC: his prices DO go through `npcPrice`. Not-A-Scam Insurance's quotes are flat company prices from the server config, not NPC prices
-  (`Insurance.md`), like the Bounty fee. The Fisherman only BUYS (`Fishing.md`); his plaque mounting does go through `npcPrice`. The Bounty Clerk's 2-nugget task fee is a flat fee, not a shop price (`Bounties.md`).)
+  (`Insurance.md`), like the Bounty fee. The Fisherman only BUYS (`Fishing.md`); his plaque mounting does go through `npcPrice`. The Bounty Clerk's task fee is a flat fee, not a shop price (`Bounties.md`). The Butcher (`NPCs.md`) is an NPC: his cut prices DO go through `npcPrice`.)
 - **NPC shops never sell anything with effects** (meals or drinks that give an effect when eaten / drunk, like Miner's
   Casserole or any Specialty drink). Only real Cooks and Bartenders make those, so players still need each other.
 - Overrides of vanilla recipes in `data/minecraft/recipe/` only work because `neoforge.mods.toml` loads this mod AFTER
@@ -23,9 +23,9 @@ Keep those notes matching the code when things change.
   Well add a slot, a Changing Star lets them change (`JobData`, `Jobs.md`).
 - Textures are drawn with PowerShell (System.Drawing); the smith table menu is drawn by `tools/make_smith_gui.ps1`.
 - Game tests: `gradlew runGameTestServer` (headless, own world in runs/gameTestServer) runs the mod's tests
-  (`gametest/GameTests` registers them: `librarian/SkillBookTests`, `player/FoodDrinkTests`, `town/TownTests` (incl. town hall, job picking), `town/FishermanTests`, `town/MayoralChestTests`, `deathtax/DeathTaxTests` (death tax, Purgatory, `/pay death`, insurance, the Purge), `pets/PetTests`, `designer/DesignerTests`, `farmer/FarmerTests`, `realestate/RealEstateTests`, `boats/BoatTests`, `calendar/CalendarTests`, `decor/DecorTests`, `decor/BloodDecorTests`, `fishing/FishingTests`, `weaponsmith/SocketTests` (Molten Socket gems), `bounty/BountyTests`, `craving/CravingTests`; see `Librarian.md` > Testing). Run it
+  (`gametest/GameTests` registers them: `librarian/SkillBookTests`, `player/FoodDrinkTests`, `town/TownTests` (incl. town hall, job picking), `town/FishermanTests`, `town/MayoralChestTests`, `deathtax/DeathTaxTests` (death tax, Purgatory, `/pay death`, insurance, the Purge), `economy/InvestmentTests` (the Investment Chest: net worth, `/pay`, mornings), `core/AdminPanelTests` (`/admin panel` settings and Banker prices, the Banker list upgrade), `pets/PetTests`, `designer/DesignerTests`, `farmer/FarmerTests`, `realestate/RealEstateTests`, `boats/BoatTests`, `calendar/CalendarTests`, `decor/DecorTests`, `decor/BloodDecorTests`, `fishing/FishingTests`, `weaponsmith/SocketTests` (Molten Socket gems), `bounty/BountyTests`, `craving/CravingTests`; see `Librarian.md` > Testing). Run it
   after changing skill books, meals or drinks; add a check when you add one. `/devpanel` shows debug info in game.
 - Seeing how things LOOK: `gradlew runPhoto` (DEV ONLY, `client/PhotoShoot`, runs/photo, its own fresh flat world)
   builds a scene, takes scripted screenshots (runs/photo/screenshots) and quits. Add shots there for new visuals.
-  `-Pphoto=mobs|well|mail|signs|bloodmoon|merchant|traveler|blooddecor|blooditems|bloodbanner|fish|bounty|insurance|guide|perf` runs just those shots; `perf` is a frame-time benchmark with a Flight Recorder profile
+  `-Pphoto=mobs|well|mail|signs|bloodmoon|merchant|traveler|blooddecor|blooditems|bloodbanner|spooky|invest|admin|fish|bounty|insurance|guide|perf` runs just those shots; `perf` is a frame-time benchmark with a Flight Recorder profile
   (runs/photo/perf.jfr: `jfr view hot-methods`, `jfr view gc-pauses`).

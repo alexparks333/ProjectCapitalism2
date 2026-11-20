@@ -13,8 +13,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-// Server-wide passive debuff: ordinary (non-Gourmet) food only fills 1/2 as much, rounded up to the nearest
-// hunger point (half a drumstick). Saturation shrinks by the same amount. Gourmet food made by a Cook will carry its
+// Server-wide passive debuff: ordinary (non-Gourmet) food only fills 1/2 as much. Meat and fish (raw or cooked) round UP
+// to the nearest hunger point; everything else (vegetables, fruit, bread, stews, snacks) rounds DOWN, never below 1, so
+// buying a pile of carrots or potatoes off a Farmer is no match for a Cook's meal (1 hunger point = half a drumstick).
+// Saturation shrinks by the same amount. Gourmet food made by a Cook will carry its
 // own full-strength food values, so it isn't affected; so does vanilla food a Cook makes (CookMadeFood, fullFood()).
 //
 // Every vanilla food and its new hunger points are listed here (vanilla values are in net.minecraft.world.food.Foods);
@@ -26,12 +28,12 @@ public class FoodNerf {
     private static Map<Item, int[]> table() {
         Map<Item, int[]> t = new LinkedHashMap<>();
         t.put(Items.APPLE, new int[]{4, 2});
-        t.put(Items.BAKED_POTATO, new int[]{5, 3});
+        t.put(Items.BAKED_POTATO, new int[]{5, 2});
         t.put(Items.BEEF, new int[]{3, 2});
         t.put(Items.BEETROOT, new int[]{1, 1});
         t.put(Items.BEETROOT_SOUP, new int[]{6, 3});
-        t.put(Items.BREAD, new int[]{5, 3});
-        t.put(Items.CARROT, new int[]{3, 2});
+        t.put(Items.BREAD, new int[]{5, 2});
+        t.put(Items.CARROT, new int[]{3, 1});
         t.put(Items.CHICKEN, new int[]{2, 1});
         t.put(Items.CHORUS_FRUIT, new int[]{4, 2});
         t.put(Items.COD, new int[]{2, 1});

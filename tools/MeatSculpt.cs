@@ -352,7 +352,8 @@ public static class MeatSculpt {
         }
 
         StringBuilder json = new StringBuilder();
-        json.Append("{\n  \"parent\": \"minecraft:block/block\",\n  \"textures\": {\n");
+        // meat_slab_base: block/block plus a bigger "ground" size, so a dropped slab looks like a big cut of meat
+        json.Append("{\n  \"parent\": \"capitalism:block/meat_slab_base\",\n  \"textures\": {\n");
         json.Append("    \"particle\": \"").Append(texPrefix).Append("meat\"");
         for (int m = 1; m < 7; m++) {
             if (!used[m]) continue;

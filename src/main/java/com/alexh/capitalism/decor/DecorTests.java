@@ -32,7 +32,7 @@ public final class DecorTests {
         c.check(Decorations.shouldBeUp(level, DecorKind.CHRISTMAS_TREE) && Decorations.shouldBeUp(level, DecorKind.STRING_LIGHTS)
             && !Decorations.shouldBeUp(level, DecorKind.SCARECROW) && !Decorations.shouldBeUp(level, DecorKind.PUMPKIN_PILE),
             "in winter the Christmas decorations are up, the fall ones packed away");
-        Calendar.setDate(level, 1, Season.FALL, 5);
+        Calendar.setDate(level, 1, Season.FALL, 10);
         c.check(Decorations.shouldBeUp(level, DecorKind.PUMPKIN_PILE) && Decorations.shouldBeUp(level, DecorKind.LEAF_PILE)
             && !Decorations.shouldBeUp(level, DecorKind.SCARECROW) && !Decorations.shouldBeUp(level, DecorKind.CHRISTMAS_TREE),
             "early fall: the harvest decorations, not Halloween's yet");
@@ -41,18 +41,27 @@ public final class DecorTests {
             && Decorations.shouldBeUp(level, DecorKind.AUTUMN_MAPLE) && Decorations.shouldBeUp(level, DecorKind.FALLEN_LEAVES);
         Calendar.setDate(level, 1, Season.FALL, 18);
         c.check(day17 && Decorations.shouldBeUp(level, DecorKind.SCARECROW) && Decorations.shouldBeUp(level, DecorKind.AUTUMN_MAPLE),
-            "Halloween's go up on Fall 18; the fall ones are up all fall");
+            "Halloween's go up on Fall 18; the harvest ones are still up");
         Calendar.setDate(level, 1, Season.FALL, 20);
         c.check(Decorations.shouldBeUp(level, DecorKind.SCARECROW) && Decorations.shouldBeUp(level, DecorKind.WITCHS_CAULDRON)
             && Decorations.shouldBeUp(level, DecorKind.PUMPKIN_PILE), "late fall: Halloween's too");
         c.check(Decorations.shouldBeUp(level, DecorKind.GRAVESTONE_TOMB) && Decorations.shouldBeUp(level, DecorKind.GROUND_FOG)
             && Decorations.shouldBeUp(level, DecorKind.BONE_PILE) && Decorations.shouldBeUp(level, DecorKind.AUTUMN_MAPLE),
             "...gravestones, bones and fog, beside the autumn trees");
-        Calendar.setDate(level, 1, Season.SUMMER, 10);
+        Calendar.setDate(level, 1, Season.SUMMER, 20);
         boolean onlyBeach = true;
         for (DecorKind k : DecorKind.values()) onlyBeach &= Decorations.shouldBeUp(level, k) == (k.holiday == DecorKind.Holiday.SUMMER);
-        c.check(onlyBeach && Decorations.shouldBeUp(level, DecorKind.BEACH_UMBRELLA), "in summer only the beach things are up");
-        Calendar.setDate(level, 1, Season.SPRING, 10);
+        c.check(onlyBeach && Decorations.shouldBeUp(level, DecorKind.BEACH_UMBRELLA), "in late summer only the beach things are up");
+        // the town is bare between the windows: early spring, early summer, early fall, the last days of fall
+        boolean bare = true;
+        int[][] bareDays = {{0, 5}, {0, 25}, {1, 10}, {2, 3}, {2, 25}};
+        for (int[] d : bareDays) {
+            Calendar.setDate(level, 1, Season.values()[d[0]], d[1]);
+            boolean halloween = d[0] == 2 && d[1] == 25;
+            for (DecorKind k : DecorKind.values()) bare &= Decorations.shouldBeUp(level, k) == (halloween && k.holiday == DecorKind.Holiday.HALLOWEEN);
+        }
+        c.check(bare, "no decorations on Spring 5, Spring 25, Summer 10 or Fall 3; on Fall 25 only Halloween's");
+        Calendar.setDate(level, 1, Season.SPRING, 15);
         boolean onlySpring = true;
         for (DecorKind k : DecorKind.values()) onlySpring &= Decorations.shouldBeUp(level, k) == (k.holiday == DecorKind.Holiday.SPRING);
         c.check(onlySpring && Decorations.shouldBeUp(level, DecorKind.GIANT_EGG), "in spring only the spring things are up");
@@ -196,7 +205,7 @@ public final class DecorTests {
             && d2.stash().get(0).kind() == DecorKind.PUMPKIN_PILE;
         c.check(winter.is(ModBlocks.CHRISTMAS_FROST.get()) && winter.getValue(SeasonalDecorBlock.UP) && pileKept,
             "in winter the frost is back, up, and the pumpkin pile is kept");
-        Calendar.setDate(level, 2, Season.FALL, 5);
+        Calendar.setDate(level, 2, Season.FALL, 10);
         step(level, spot);
         BlockState fall = level.getBlockState(spot);
         boolean frostKept = level.getBlockEntity(spot) instanceof SeasonalDecorBlockEntity d3 && d3.stash().size() == 1

@@ -264,6 +264,23 @@ public class BloodDecorBlock extends BaseEntityBlock implements BloodDecorKind.H
                     return InteractionResult.SUCCESS;
                 }
             }
+            case HAUNTED_TOMBSTONE -> {
+                // a named Name Tag carves its name as the epitaph (the tag is used up)
+                if (!stack.is(Items.NAME_TAG)) break;
+                Component name = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+                if (name == null || name.getString().isBlank()) {
+                    if (!level.isClientSide()) player.sendOverlayMessage(Component.literal("Name the Name Tag at an anvil first: that's what gets carved.").withStyle(ChatFormatting.GRAY));
+                    return InteractionResult.SUCCESS;
+                }
+                if (level instanceof ServerLevel server && level.getBlockEntity(pos) instanceof BloodDecorBlockEntity stone) {
+                    stone.setEpitaph(name.getString().strip());
+                    stack.consume(1, player);
+                    server.playSound(null, pos, SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1.0F, 0.6F);
+                    server.playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.6F, 0.7F);
+                    player.sendOverlayMessage(Component.literal("Carved: \"" + stone.epitaph() + "\"").withStyle(ChatFormatting.GRAY));
+                }
+                return InteractionResult.SUCCESS;
+            }
             case BLOOD_CRYSTAL_FIREPLACE -> {
                 int fuel = stack.is(ItemTags.LOGS) ? LOG_FUEL : stack.is(ItemTags.PLANKS) ? PLANK_FUEL : 0;
                 if (fuel == 0) break;
@@ -320,6 +337,14 @@ public class BloodDecorBlock extends BaseEntityBlock implements BloodDecorKind.H
                         setLit(server, pos, state, !state.getValue(LIT));
                         player.sendOverlayMessage(Component.literal("🔥 Fuel: " + minutes(fire.fuel())).withStyle(ChatFormatting.GOLD));
                     }
+                }
+                return InteractionResult.SUCCESS;
+            }
+            case HAUNTED_TOMBSTONE -> {
+                if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BloodDecorBlockEntity stone) {
+                    player.sendOverlayMessage(stone.epitaph().isEmpty()
+                        ? Component.literal("Nothing is carved yet. A named Name Tag carves its name.").withStyle(ChatFormatting.GRAY)
+                        : Component.literal("Here lies: " + stone.epitaph()).withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -450,7 +475,8 @@ public class BloodDecorBlock extends BaseEntityBlock implements BloodDecorKind.H
         if (type != com.alexh.capitalism.core.ModBlockEntities.BLOOD_DECOR.get()) return null;
         if (level.isClientSide()) return (l, pos, s, be) -> this.ambient(s, l, pos, l.getRandom());
         return switch (this.kind) {
-            case BLOOD_PIPE_ORGAN, GRANDFATHER_CLOCK, HAUNTED_PORTRAIT, BLOOD_CRYSTAL_FIREPLACE, CRIMSON_CHANDELIER, IRON_MAIDEN, BLOOD_FOUNTAIN ->
+            case BLOOD_PIPE_ORGAN, GRANDFATHER_CLOCK, HAUNTED_PORTRAIT, BLOOD_CRYSTAL_FIREPLACE, CRIMSON_CHANDELIER, IRON_MAIDEN, BLOOD_FOUNTAIN,
+                 GRINNING_JACK_O_LANTERN ->
                 (l, pos, s, be) -> BloodDecorBlockEntity.serverTick((ServerLevel) l, pos, s, (BloodDecorBlockEntity) be);
             default -> null;
         };
@@ -556,6 +582,29 @@ public class BloodDecorBlock extends BaseEntityBlock implements BloodDecorKind.H
                     double a = random.nextDouble() * Math.PI * 2;
                     level.addParticle(new DustParticleOptions(0xE01828, 0.5F), x + Math.cos(a) * 0.3, y + 1.1 + random.nextDouble() * 0.5,
                         z + Math.sin(a) * 0.3, 0.0, 0.012, 0.0);
+                }
+            }
+            case GRINNING_JACK_O_LANTERN -> {
+                // the candle's flicker: a spark or a wisp of smoke out of the top now and then
+                if (random.nextFloat() < 0.04F) level.addParticle(ParticleTypes.SMOKE, x + (random.nextDouble() - 0.5) * 0.15, y + 0.85, z + (random.nextDouble() - 0.5) * 0.15, 0.0, 0.015, 0.0);
+                if (random.nextFloat() < 0.015F) level.addParticle(ParticleTypes.SMALL_FLAME, x + (random.nextDouble() - 0.5) * 0.3, y + 0.35, z + (random.nextDouble() - 0.5) * 0.3, 0.0, 0.005, 0.0);
+            }
+            case HAUNTED_TOMBSTONE -> {
+                // at night: ghostly wisps rising off it, and now and then a faint moan
+                if (!BloodDecorBlockEntity.isNight(level)) break;
+                if (random.nextFloat() < 0.08F) level.addParticle(ParticleTypes.SOUL, x + (random.nextDouble() - 0.5) * 0.6, y + 0.9 + random.nextDouble() * 0.3, z + (random.nextDouble() - 0.5) * 0.6, 0.0, 0.02, 0.0);
+                if (random.nextFloat() < 0.003F) level.playLocalSound(x, y + 1.0, z, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS, 1.2F, 0.5F + random.nextFloat() * 0.2F, false);
+                if (random.nextFloat() < 0.0015F) level.playLocalSound(x, y + 1.0, z, SoundEvents.AMBIENT_SOUL_SAND_VALLEY_MOOD.value(), SoundSource.BLOCKS, 0.4F, 0.8F, false);
+            }
+            case POSSESSED_SCARECROW -> {
+                // crows circling it at night; a croak when someone comes close
+                if (BloodDecorBlockEntity.isNight(level) && random.nextFloat() < 0.25F) {
+                    double a = (level.getGameTime() * 0.05 + random.nextInt(3) * 2.1) % (Math.PI * 2), r = 1.6 + random.nextDouble() * 0.3;
+                    level.addParticle(new DustParticleOptions(0x141016, 1.4F), x + Math.cos(a) * r, y + 3.0 + random.nextDouble() * 0.4, z + Math.sin(a) * r, 0.0, 0.0, 0.0);
+                }
+                Player near = level.getNearestPlayer(x, y + 1.0, z, 5.0, false);
+                if (near != null && random.nextFloat() < 0.006F) {
+                    level.playLocalSound(x, y + 1.8, z, SoundEvents.PARROT_AMBIENT, SoundSource.BLOCKS, 0.9F, 0.55F + random.nextFloat() * 0.1F, false);
                 }
             }
             case BLOOD_MOON_LANTERN -> {

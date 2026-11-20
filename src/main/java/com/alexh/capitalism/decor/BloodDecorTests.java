@@ -44,6 +44,7 @@ public final class BloodDecorTests {
 
     static {
         GameTests.register("blood_decorations", BloodDecorTests::bloodDecorations);
+        GameTests.register("spooky_stall", BloodDecorTests::spookyStall);
     }
 
     private BloodDecorTests() {
@@ -63,6 +64,76 @@ public final class BloodDecorTests {
 
     private static void clear(ServerLevel level, BlockPos from, BlockPos to) {
         for (BlockPos p : BlockPos.betweenClosed(from, to)) level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+    }
+
+    // The Blood Merchant's Halloween stall (BloodMerchantShop.SPOOKY): open only in the Halloween weeks, bought for Blood
+    // Shards; the tombstone's epitaph, the lantern's bats, the broom's ride, the ghost sheet
+    private static void spookyStall(GameTests.Checks c) {
+        ServerLevel level = c.level();
+        ServerPlayer player = c.player();
+        long before = Calendar.clock(level);
+        var shop = com.alexh.capitalism.town.BloodMerchantShop.SPOOKY;
+        int[] prices = {40, 60, 90, 120, 1500};
+        boolean priced = shop.size() == prices.length;
+        for (int i = 0; priced && i < prices.length; i++) priced = shop.get(i).exists() && shop.get(i).shards() == prices[i];
+        c.check(priced, "the Spooky stall: 5 things, 40 to 1500 Blood Shards");
+        c.check(shop.stream().noneMatch(o -> new ItemStack(o.item()).has(net.minecraft.core.component.DataComponents.FOOD)),
+            "...none of them food or drink (NPCs never sell effects to eat or drink)");
+        Calendar.setDate(level, 1, Calendar.Season.FALL, 20);
+        boolean inSeason = com.alexh.capitalism.town.BloodMerchantShop.spookyOpen(level);
+        var menu = new com.alexh.capitalism.town.BloodMerchantMenu(1, player.getInventory(), com.alexh.capitalism.town.BloodMerchantMenu.liveData(player), null);
+        player.getInventory().add(new ItemStack(ModItems.BLOOD_SHARD.get(), 50));
+        menu.clickMenuButton(player, com.alexh.capitalism.town.BloodMerchantMenu.SPOOKY);
+        boolean bought = com.alexh.capitalism.town.BloodMerchantShop.count(player, ModItems.GRINNING_JACK_O_LANTERN.get()) == 1
+            && com.alexh.capitalism.town.BloodMerchantShop.shards(player) == 10;
+        c.check(inSeason && menu.spookyOpen() && bought, "Fall 20: the tab is open; a Grinning Jack-o'-Lantern for 40 of 50 shards");
+        Calendar.setDate(level, 1, Calendar.Season.FALL, 10);
+        player.getInventory().add(new ItemStack(ModItems.BLOOD_SHARD.get(), 100));
+        menu.clickMenuButton(player, com.alexh.capitalism.town.BloodMerchantMenu.SPOOKY + 1);
+        c.check(!com.alexh.capitalism.town.BloodMerchantShop.spookyOpen(level) && !menu.spookyOpen()
+                && com.alexh.capitalism.town.BloodMerchantShop.shards(player) == 110
+                && com.alexh.capitalism.town.BloodMerchantShop.count(player, ModItems.HAUNTED_TOMBSTONE.get()) == 0,
+            "Fall 10: the tab is shut and nothing can be bought");
+        player.getInventory().clearContent();
+
+        // the tombstone: a Name Tag's name is carved (and sent to the client), cut to EPITAPH_MAX
+        BlockPos stonePos = BlockPos.containing(c.at(1, 2, 1));
+        level.setBlock(stonePos, ModBlocks.HAUNTED_TOMBSTONE.get().defaultBlockState(), 3);
+        if (level.getBlockEntity(stonePos) instanceof BloodDecorBlockEntity stone) {
+            stone.setEpitaph("Old Bob, who fed the pigs");
+            boolean carved = stone.epitaph().equals("Old Bob, who fed the pigs")
+                && stone.getUpdateTag(level.registryAccess()).getStringOr("epitaph", "").equals("Old Bob, who fed the pigs");
+            stone.setEpitaph("x".repeat(200));
+            c.check(carved && stone.epitaph().length() == BloodDecorBlockEntity.EPITAPH_MAX, "the tombstone: its epitaph is carved, synced, and kept short");
+        } else c.check(false, "the tombstone has its block entity");
+        level.setBlock(stonePos, Blocks.AIR.defaultBlockState(), 3);
+
+        // the jack-o'-lantern: at night, with someone close, it cackles and three bats fly out (gone after a while)
+        BlockPos jackPos = BlockPos.containing(c.at(3, 2, 3));
+        level.setBlock(jackPos, ModBlocks.GRINNING_JACK_O_LANTERN.get().defaultBlockState(), 3);
+        Calendar.setClock(level, 30L * Calendar.DAY_TICKS + 18000L);    // midnight
+        player.snapTo(jackPos.getX() + 2.5, jackPos.getY(), jackPos.getZ() + 0.5, 0.0F, 0.0F);
+        if (level.getBlockEntity(jackPos) instanceof BloodDecorBlockEntity jack) {
+            jack.haunt(level, jackPos);
+            var bats = level.getEntitiesOfClass(net.minecraft.world.entity.ambient.Bat.class, new AABB(jackPos).inflate(4),
+                b -> b.entityTags().contains(BloodDecorBlockEntity.BAT_TAG));
+            int first = bats.size();
+            jack.haunt(level, jackPos);
+            int again = level.getEntitiesOfClass(net.minecraft.world.entity.ambient.Bat.class, new AABB(jackPos).inflate(4),
+                b -> b.entityTags().contains(BloodDecorBlockEntity.BAT_TAG)).size();
+            c.check(first == 3 && again == 3, "the jack-o'-lantern: at night it lets out 3 bats, then rests a while (" + first + ", " + again + ")");
+            bats.forEach(net.minecraft.world.entity.Entity::discard);
+        } else c.check(false, "the jack-o'-lantern has its block entity");
+        level.setBlock(jackPos, Blocks.AIR.defaultBlockState(), 3);
+
+        // the broom: up for a moment, then a long slow fall; the ghost sheet: worn on the head
+        com.alexh.capitalism.player.WitchsBroomItem.ride(player);
+        MobEffectInstance up = player.getEffect(MobEffects.LEVITATION), down = player.getEffect(MobEffects.SLOW_FALLING);
+        c.check(up != null && down != null && down.getDuration() > up.getDuration(), "the broom: levitation, then slow falling that lasts longer");
+        player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, new ItemStack(ModItems.GHOST_SHEET.get()));
+        c.check(com.alexh.capitalism.player.SpookyGear.wearingSheet(player) && com.alexh.capitalism.player.SpookyGear.SHEET_VISIBILITY == 0.75,
+            "the ghost sheet: worn on the head, monsters see you from 75% as far");
+        Calendar.setClock(level, before);
     }
 
     private static void bloodDecorations(GameTests.Checks c) {

@@ -537,6 +537,111 @@ public final class PhotoShoot {
             command(c, "damage @e[tag=photo_b,limit=1] 18");
         }, 8));
         SHOTS.add(new Shot("mob_after", c -> { }, 40));
+        // the Blood Merchant's Halloween stall (-Pphoto=spooky): its three decorations by day and night (the scarecrow's
+        // head turned to the camera, an epitaph carved), the Ghost Sheet worn, the Spooky tab
+        SHOTS.add(new Shot("spooky_row_day", c -> {
+            day(c);
+            c.server.execute(() -> spookyScene(c.level));
+            stand(c, 113.5, DY + 1.0, 70.5, 118.5, DY + 1.0, 70.5);
+        }, 80));
+        SHOTS.add(new Shot("spooky_side", c -> stand(c, 115.0, DY + 1.6, 66.0, 118.5, DY + 1.2, 70.5), 30));
+        SHOTS.add(new Shot("spooky_tombstone", c -> stand(c, 116.2, DY + 0.0, 70.5, 118.5, DY + 0.5, 70.5), 30));
+        SHOTS.add(new Shot("spooky_tombstone_short", c -> stand(c, 116.2, DY + 0.3, 66.5, 118.5, DY + 0.5, 66.5), 30));
+        SHOTS.add(new Shot("spooky_row_night", c -> {
+            night(c);
+            stand(c, 113.5, DY + 1.0, 70.5, 118.5, DY + 1.0, 70.5);
+        }, 60));
+        SHOTS.add(new Shot("spooky_sheet", c -> {
+            day(c);
+            c.server.execute(() -> c.player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,
+                new net.minecraft.world.item.ItemStack(com.alexh.capitalism.core.ModItems.GHOST_SHEET.get())));
+            stand(c, 112.5, DY, 62.5, 106.5, DY + 1.0, 62.5);
+            look(c, 90.0F, 10.0F, CameraType.THIRD_PERSON_FRONT);
+        }, 30));
+        // nodding and looking aside: the hood goes with the head
+        SHOTS.add(new Shot("spooky_sheet_nod", c -> look(c, 90.0F, 45.0F, CameraType.THIRD_PERSON_FRONT), 20));
+        SHOTS.add(new Shot("spooky_tab", c -> {
+            night(c);
+            command(c, "gamemode creative @a");
+            c.server.execute(() -> {
+                com.alexh.capitalism.decor.Decorations.get(c.server).setMode(com.alexh.capitalism.decor.Decorations.Mode.UP);
+                var m = new com.alexh.capitalism.town.BloodMerchant(com.alexh.capitalism.core.ModEntities.BLOOD_MERCHANT.get(), c.level);
+                m.snapTo(110.5, DY, 76.5, 180.0F, 0.0F);
+                c.level.addFreshEntity(m);
+                c.player.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, who) -> new com.alexh.capitalism.town.BloodMerchantMenu(id, inv,
+                    com.alexh.capitalism.town.BloodMerchantMenu.liveData(c.player), m), net.minecraft.network.chat.Component.literal("The Blood Merchant")));
+            });
+        }, 20));
+        SHOTS.add(new Shot("spooky_tab_open", c -> c.mc.execute(() -> {
+            if (c.mc.gui.screen() instanceof BloodMerchantScreen s) s.showTab(2);
+        }), 20));
+        // the Investment Chest (-Pphoto=invest, Economy.md > The Investment Chest): from the front and the side (its sign),
+        // open (its screen with gold in and returns waiting), the lid up, the item in a slot
+        SHOTS.add(new Shot("invest_chest", c -> {
+            day(c);
+            c.mc.execute(() -> c.mc.gui.setScreen(null));
+            c.hud = false;
+            c.server.execute(() -> {
+                c.player.closeContainer();
+                for (int x = 104; x <= 118; x++) for (int z = 70; z <= 84; z++) {
+                    c.level.setBlock(new BlockPos(x, DY - 1, z), Blocks.POLISHED_ANDESITE.defaultBlockState(), 2);
+                    for (int y = DY; y < DY + 4; y++) c.level.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+                }
+                c.level.setBlock(new BlockPos(112, DY, 76), com.alexh.capitalism.core.ModBlocks.INVESTMENT_CHEST.get().defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING, net.minecraft.core.Direction.WEST), 3);
+            });
+            stand(c, 109.0, DY + 1.4, 76.5, 112.5, DY + 1.0, 76.5);
+        }, 50));
+        SHOTS.add(new Shot("invest_side", c -> stand(c, 109.4, DY + 1.6, 73.6, 112.5, DY + 1.2, 76.5), 25));
+        SHOTS.add(new Shot("invest_sign", c -> stand(c, 110.2, DY + 2.0, 76.5, 112.5, DY + 1.8, 76.5), 25));
+        SHOTS.add(new Shot("invest_menu", c -> {
+            c.hud = true;
+            c.server.execute(() -> {
+                var bank = com.alexh.capitalism.economy.InvestmentBank.get(c.server);
+                var account = bank.account(c.player.getUUID());
+                account.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 64));
+                account.setItem(1, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 36));
+                c.player.getInventory().setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 30));
+                // a morning's returns already waiting
+                bank.payEveryone(c.server, 0);
+                account.setItem(1, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 36));
+                bank.payEveryone(c.server, 1);
+                if (c.level.getBlockEntity(new BlockPos(112, DY, 76)) instanceof com.alexh.capitalism.economy.InvestmentChestBlockEntity be) {
+                    com.alexh.capitalism.economy.InvestmentChestBlock.open(c.player, be);
+                }
+            });
+        }, 30));
+        SHOTS.add(new Shot("invest_lid", c -> {
+            c.hud = false;
+            c.mc.execute(() -> c.mc.gui.setScreen(null));
+            stand(c, 110.0, DY + 1.8, 74.4, 112.5, DY + 0.6, 76.5);
+        }, 40));
+        SHOTS.add(new Shot("invest_icon", c -> {
+            c.hud = true;
+            c.server.execute(() -> {
+                c.player.closeContainer();
+                c.player.getInventory().setItem(1, new net.minecraft.world.item.ItemStack(com.alexh.capitalism.core.ModItems.INVESTMENT_CHEST.get()));
+            });
+            c.mc.execute(() -> c.mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(c.mc.player)));
+        }, 25));
+        // the admin panel (-Pphoto=admin, core/AdminPanel): each tab, a search
+        SHOTS.add(new Shot("admin_settings", c -> {
+            c.hud = true;
+            c.server.execute(() -> com.alexh.capitalism.core.AdminPanel.open(c.player, true));
+        }, 25));
+        SHOTS.add(new Shot("admin_banker", c -> c.mc.execute(() -> {
+            if (c.mc.gui.screen() instanceof AdminPanelScreen s) s.showTab(1, "");
+        }), 15));
+        SHOTS.add(new Shot("admin_banker_search", c -> c.mc.execute(() -> {
+            if (c.mc.gui.screen() instanceof AdminPanelScreen s) s.showTab(1, "emerald");
+        }), 15));
+        SHOTS.add(new Shot("admin_commands", c -> c.mc.execute(() -> {
+            if (c.mc.gui.screen() instanceof AdminPanelScreen s) s.showTab(2, "");
+        }), 15));
+        SHOTS.add(new Shot("admin_invest", c -> c.mc.execute(() -> {
+            AdminPanelScreen.showSection("economy");
+            if (c.mc.gui.screen() instanceof AdminPanelScreen s) s.showTab(0, "");
+        }), 15));
         // the Blood Moon decorations (-Pphoto=blooddecor): all eleven in a row on their own square (bloodDecorScene), by
         // day and night, close up in threes, the coffin opened, from the side
         SHOTS.add(new Shot("blood_row_day", c -> {
@@ -1253,6 +1358,9 @@ public final class PhotoShoot {
         else if (MODE != null && MODE.contains("bloodmoon")) SHOTS.removeIf(s -> !s.name().startsWith("bm_"));
         else if (MODE != null && MODE.contains("blooditems")) SHOTS.removeIf(s -> !s.name().startsWith("blood_items_"));
         else if (MODE != null && MODE.contains("blooddecor")) SHOTS.removeIf(s -> !s.name().startsWith("blood_"));
+        else if (MODE != null && MODE.contains("spooky")) SHOTS.removeIf(s -> !s.name().startsWith("spooky_"));
+        else if (MODE != null && MODE.contains("invest")) SHOTS.removeIf(s -> !s.name().startsWith("invest_"));
+        else if (MODE != null && MODE.contains("admin")) SHOTS.removeIf(s -> !s.name().startsWith("admin_"));
         else if (MODE != null && MODE.contains("bloodbanner")) SHOTS.removeIf(s -> !s.name().startsWith("bannertest_"));
         else if (MODE != null && MODE.contains("traveler")) SHOTS.removeIf(s -> !s.name().startsWith("trav_"));
         else if (MODE != null && MODE.contains("merchant")) SHOTS.removeIf(s -> !s.name().startsWith("merch_"));
@@ -1661,6 +1769,30 @@ public final class PhotoShoot {
 
     static double bloodZ(int index) {
         return (index < 11 ? -15 + index * 3 : 22 + (index - 11) * 3) + 0.5;
+    }
+
+    // the Halloween stall's three decorations in a row facing west (toward the camera): lantern, tombstone (carved), scarecrow
+    private static void spookyScene(ServerLevel level) {
+        for (int x = 108; x <= 124; x++) for (int z = 62; z <= 80; z++) {
+            level.setBlock(new BlockPos(x, DY - 1, z), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+            for (int y = DY; y < DY + 5; y++) level.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+        }
+        var west = net.minecraft.core.Direction.WEST;
+        var blocks = java.util.List.of(com.alexh.capitalism.core.ModBlocks.GRINNING_JACK_O_LANTERN.get(),
+            com.alexh.capitalism.core.ModBlocks.HAUNTED_TOMBSTONE.get(), com.alexh.capitalism.core.ModBlocks.POSSESSED_SCARECROW.get());
+        for (int i = 0; i < blocks.size(); i++) {
+            BlockPos at = new BlockPos(118, DY, 68 + i * 2);
+            level.setBlock(at, blocks.get(i).defaultBlockState().setValue(com.alexh.capitalism.decor.BloodDecorBlock.FACING, west), 3);
+            var kind = ((com.alexh.capitalism.decor.BloodDecorKind.Holder) blocks.get(i)).kind();
+            if (kind.multiBlock()) com.alexh.capitalism.decor.BloodDecorBlock.placeParts(level, at, west, kind, at);
+            if (level.getBlockEntity(at) instanceof com.alexh.capitalism.decor.BloodDecorBlockEntity be && kind == com.alexh.capitalism.decor.BloodDecorKind.HAUNTED_TOMBSTONE) {
+                be.setEpitaph("Here lies Old Bob, who fed the pigs");
+            }
+        }
+        // a second tombstone with a short name, like most players carve
+        BlockPos second = new BlockPos(118, DY, 66);
+        level.setBlock(second, com.alexh.capitalism.core.ModBlocks.HAUNTED_TOMBSTONE.get().defaultBlockState().setValue(com.alexh.capitalism.decor.BloodDecorBlock.FACING, west), 3);
+        if (level.getBlockEntity(second) instanceof com.alexh.capitalism.decor.BloodDecorBlockEntity be) be.setEpitaph("Justin");
     }
 
     private static void bloodDecorScene(ServerLevel level) {

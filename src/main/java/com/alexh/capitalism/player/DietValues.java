@@ -94,6 +94,22 @@ public final class DietValues {
         t.put(ModItems.SCHOLARS_BRAIN_STEW.get(), new float[]{0, 0, 0.6f, 0.4f});
         t.put(ModItems.CAMPFIRE_CHILI.get(), new float[]{0.35f, 0, 0.55f, 0.1f});
         t.put(ModItems.FROSTY_MELON_SORBET.get(), new float[]{0, 0.75f, 0, 0.25f});
+        t.put(ModItems.PULLED_PORK_SANDWICH.get(), new float[]{0.1f, 0, 0.55f, 0.35f});
+        t.put(ModItems.BRISKET_AND_POTATOES.get(), new float[]{0.15f, 0, 0.5f, 0.35f});
+        t.put(ModItems.SHEPHERDS_PIE.get(), new float[]{0.2f, 0, 0.45f, 0.35f});
+        t.put(ModItems.HAM_AND_EGG_BREAKFAST.get(), new float[]{0, 0, 0.65f, 0.35f});
+        t.put(ModItems.HUNTERS_RABBIT_PIE.get(), new float[]{0.3f, 0, 0.4f, 0.3f});
+        t.put(ModItems.FISH_TACOS.get(), new float[]{0.15f, 0.15f, 0.4f, 0.3f});
+        t.put(ModItems.MUSHROOM_RISOTTO.get(), new float[]{0.35f, 0, 0.1f, 0.55f});
+        t.put(ModItems.APPLE_CRUMBLE.get(), new float[]{0, 0.55f, 0.05f, 0.4f});
+        t.put(ModItems.IRONWORKERS_STEW.get(), new float[]{0.2f, 0, 0.5f, 0.3f});
+        t.put(ModItems.LUMBERJACK_FLAPJACKS.get(), new float[]{0, 0, 0.15f, 0.85f});
+        t.put(ModItems.BRICK_OVEN_PIZZA.get(), new float[]{0.25f, 0, 0.35f, 0.4f});
+        t.put(ModItems.PRIME_RIB_DINNER.get(), new float[]{0.2f, 0, 0.55f, 0.25f});
+        t.put(ModItems.ANGLERS_FISH_PIE.get(), new float[]{0.05f, 0, 0.55f, 0.4f});
+        t.put(ModItems.COMFORT_SOUP.get(), new float[]{0.3f, 0, 0.4f, 0.3f});
+        t.put(ModItems.TRAIL_MIX_BAR.get(), new float[]{0, 0.4f, 0, 0.6f});
+        t.put(ModItems.NIGHT_WATCH_HOTPOT.get(), new float[]{0.25f, 0, 0.4f, 0.35f});
 
         // Mixed meals
         t.put(Items.PUMPKIN_PIE, new float[]{0, 0.5f, 0, 0.5f});

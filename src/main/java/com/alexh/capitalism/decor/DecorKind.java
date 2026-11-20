@@ -24,18 +24,18 @@ public enum DecorKind {
     GRAVESTONE_TOMB("Old Tombstone", Holiday.HALLOWEEN),
     BONE_PILE("Pile of Bones", Holiday.HALLOWEEN),
     GROUND_FOG("Ground Fog", Holiday.HALLOWEEN),
-    // the harvest: all fall
+    // the harvest: Fall 8 to 21 (around the Harvest Festival, Fall 15; into the first Halloween days)
     PUMPKIN_PILE("Big Pumpkin Pile", Holiday.HARVEST),
     LEAF_PILE("Leaf Pile", Holiday.HARVEST),
     AUTUMN_MAPLE("Autumn Maple", Holiday.HARVEST),
     AUTUMN_BIRCH("Autumn Birch", Holiday.HARVEST),
     FALLEN_LEAVES("Fallen Leaves", Holiday.HARVEST),
-    // summer: all summer
+    // summer: Summer 15 to 28 (up to the Beach Festival)
     BEACH_TOWEL("Beach Towel", Holiday.SUMMER),
     BEACH_BALL("Beach Ball", Holiday.SUMMER),
     BEACH_UMBRELLA("Beach Umbrella", Holiday.SUMMER),
     BEACH_CHAIR("Beach Chair", Holiday.SUMMER),
-    // spring: all spring
+    // spring: Spring 10 to 21 (around the Blossom Festival, Spring 14)
     EGG_BASKET("Egg Basket", Holiday.SPRING),
     GIANT_EGG("Giant Painted Egg", Holiday.SPRING),
     SPRING_BUNNY("Spring Bunny", Holiday.SPRING),
@@ -77,9 +77,9 @@ public enum DecorKind {
     public enum Holiday {
         CHRISTMAS("Christmas", Season.WINTER, 5, 28),
         HALLOWEEN("Halloween", Season.FALL, 18, 28),
-        HARVEST("the harvest", Season.FALL, 1, 28),
-        SUMMER("summer", Season.SUMMER, 1, 28),
-        SPRING("spring", Season.SPRING, 1, 28);
+        HARVEST("the harvest", Season.FALL, 8, 21),
+        SUMMER("summer", Season.SUMMER, 15, 28),
+        SPRING("spring", Season.SPRING, 10, 21);
 
         public final String title;
         public final Season season;

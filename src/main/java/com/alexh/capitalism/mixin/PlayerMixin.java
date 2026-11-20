@@ -16,6 +16,8 @@ public abstract class PlayerMixin {
     private float capitalism$trailRations(float amount) {
         Player self = (Player) (Object) this;
         if (!self.isSprinting()) return amount;
+        // Second Wind (a Trail Mix Bar): sprinting costs no hunger at all
+        if (self.hasEffect(com.alexh.capitalism.core.ModEffects.SECOND_WIND)) return 0.0F;
         int level = Skills.level(self, Skill.TRAIL_RATIONS);
         return level > 0 ? amount * (1.0F - 0.3F * level) : amount;
     }

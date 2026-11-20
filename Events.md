@@ -84,6 +84,9 @@ A rare night with no laws. It runs **dusk to dawn of one night** (13000 to 23000
 - Thrown, it stays down until that event is over, then springs back up, ready again (checks every 5 s): no spamming. If another event is on or coming it says so and stays up.
 
 ## The bosses (`event/BloodMoonBoss` and one class each; models in `client/`)
+
+The Librarian's **Blood Moon Books** (`LibrarianBooks.md`) help here for one night: a bane for each boss (+75% damage to
+it), Blood Fury (+15% to monsters during a Blood Moon) and Blood Ward (10% less damage taken during one).
 Each Blood Moon one of three is picked at random (`/event bloodmoon start <revenant|gorefang|witch>` picks it).
 What they all share (`BloodMoonBoss`):
 - **Hidden:** it appears as the Blood Moon starts, **150 to 400 blocks out from the town's middle** in a random

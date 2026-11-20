@@ -68,7 +68,7 @@ import java.util.UUID;
 // The special parts of the Bartender's cocktails (the plain potion effects come from the drink itself, ModItems):
 //  - Glowberry Gold Rush: Luminescent Aura, an invisible light block that follows your head.
 //  - Nether Fireball Shot: Magma Trail, flames where you walked (5 s) that burn hostile mobs and other players.
-//  - Ender Tele-Tini: Phase Step, back to where you stood 10 seconds ago.
+//  - Ender Tele-Tini: Phase Step, back to where you stood 5 seconds ago.
 //  - Pirate's High Seas Grog: Treasure Sight, buried-treasure / shipwreck chests within 48 blocks glow (found while
 //    still unopened, then tagged so they keep glowing after opening, until broken)
 //    through walls (the glow itself is client/TreasureSightClient).
@@ -86,7 +86,7 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Capitalism.MODID)
 public final class DrinkEffects {
 
-    private static final int PHASE_STEP_SECONDS = 10;
+    private static final int PHASE_STEP_SECONDS = 5;
     private static final int TRAIL_TICKS = 100;
     private static final double TRAIL_SPACING = 0.7;
     private static final float TRAIL_DAMAGE = 1.0F;
@@ -103,7 +103,7 @@ public final class DrinkEffects {
     private record Ember(Vec3 pos, long until) {
     }
 
-    // where each player stood, once a second, for the last 10 seconds (oldest first)
+    // where each player stood, once a second, for the last 5 seconds (oldest first)
     private static final Map<UUID, Deque<Spot>> HISTORY = new HashMap<>();
     private static final Map<UUID, Light> LIGHTS = new HashMap<>();
     private static final Map<UUID, Deque<Ember>> TRAILS = new HashMap<>();
@@ -161,6 +161,18 @@ public final class DrinkEffects {
             aboveGroundTicksBroken = true;
             LogUtils.getLogger().warn("[{}] Can't stop Dolphin's Grace fly kicks: {}", Capitalism.MODID, broken.toString());
         }
+    }
+
+    // ── Moonstalker (Moonstalker Sangria): +15% damage to hostile mobs at night, and to Blood Moon bosses any time ──
+    public static final float MOONSTALKER_BONUS = 1.15F;
+
+    @SubscribeEvent
+    public static void onMoonstalkerHit(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
+        // the player who struck (an arrow counts for whoever shot it)
+        if (!(event.getSource().getEntity() instanceof ServerPlayer attacker) || !attacker.hasEffect(ModEffects.MOONSTALKER)) return;
+        LivingEntity target = event.getEntity();
+        boolean boss = target instanceof com.alexh.capitalism.event.BloodMoonBoss;
+        if (boss || (target instanceof Enemy && target.level().isDarkOutside())) event.setAmount(event.getAmount() * MOONSTALKER_BONUS);
     }
 
     // ── What happens the moment you finish a drink ─────────────────────────

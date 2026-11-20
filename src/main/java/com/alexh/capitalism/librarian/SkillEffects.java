@@ -77,6 +77,25 @@ public final class SkillEffects {
         }
     }
 
+    // ── Blood Moon Books: the bosses' banes (+75% against that boss), Blood Fury (+15% against monsters while a Blood Moon
+    // is up), Blood Ward (10% less damage taken while a Blood Moon is up). Arrows count for whoever shot them. ──
+    public static final float BANE = 1.75F, BLOOD_FURY = 1.15F, BLOOD_WARD = 0.90F;
+
+    @SubscribeEvent
+    public static void onBloodMoonDamage(LivingIncomingDamageEvent event) {
+        net.minecraft.world.entity.LivingEntity target = event.getEntity();
+        if (event.getSource().getEntity() instanceof Player attacker) {
+            Skill bane = target instanceof com.alexh.capitalism.event.CrimsonRevenant ? Skill.REVENANTS_BANE
+                : target instanceof com.alexh.capitalism.event.SanguineWitch ? Skill.WITCHS_BANE
+                : target instanceof com.alexh.capitalism.event.Gorefang ? Skill.WOLFSBANE : null;
+            if (bane != null && Skills.level(attacker, bane) > 0) event.setAmount(event.getAmount() * BANE);
+            if (target instanceof net.minecraft.world.entity.monster.Enemy && Skills.level(attacker, Skill.BLOOD_FURY) > 0
+                && com.alexh.capitalism.event.BloodMoon.isActive(target.level())) event.setAmount(event.getAmount() * BLOOD_FURY);
+        }
+        if (target instanceof Player player && Skills.level(player, Skill.BLOOD_WARD) > 0
+            && com.alexh.capitalism.event.BloodMoon.isActive(player.level())) event.setAmount(event.getAmount() * BLOOD_WARD);
+    }
+
     // ── Archery Drills: your arrows hit harder (not a thrown trident) ──
     @SubscribeEvent
     public static void onDamage(LivingIncomingDamageEvent event) {

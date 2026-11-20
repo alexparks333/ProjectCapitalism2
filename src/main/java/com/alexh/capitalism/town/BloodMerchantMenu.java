@@ -34,6 +34,8 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
     public static final int MEND = 100;
     // a building block (1 shard each) bought by the stack: BULK + which offer
     public static final int BULK = 1000;
+    // a Spooky offer (BloodMerchantShop.SPOOKY): SPOOKY + which one
+    public static final int SPOOKY = 2000;
     // where the piece slots sit (in the screen's broken crest: BloodMerchantScreen.CREST_X/Y + each piece's middle)
     public static final int[][] PIECE_SLOTS = {{41, 69}, {77, 69}, {59, 100}};
     public static final int INV_X = 44;
@@ -46,13 +48,13 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
     public int tab;
 
     public BloodMerchantMenu(int containerId, Inventory inventory) {
-        this(containerId, inventory, new SimpleContainerData(1), null);
+        this(containerId, inventory, new SimpleContainerData(2), null);
         this.tab = 0;
     }
 
     public BloodMerchantMenu(int containerId, Inventory inventory, ContainerData data, @Nullable BloodMerchant merchant) {
         super(ModMenus.BLOOD_MERCHANT.get(), containerId);
-        checkContainerDataCount(data, 1);
+        checkContainerDataCount(data, 2);
         this.data = data;
         this.merchant = merchant;
         this.tab = 1;
@@ -91,6 +93,7 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
         return new ContainerData() {
             @Override
             public int get(int index) {
+                if (index == 1) return BloodMerchantShop.spookyOpen(player.level()) ? 1 : 0;
                 return BloodMerchantShop.StarBuyers.get(player.level().getServer()).has(player.getUUID()) ? 1 : 0;
             }
 
@@ -100,13 +103,18 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
 
             @Override
             public int getCount() {
-                return 1;
+                return 2;
             }
         };
     }
 
     public boolean hadStar() {
         return this.data.get(0) == 1;
+    }
+
+    // the Spooky tab is open (the Halloween weeks)
+    public boolean spookyOpen() {
+        return this.data.get(1) == 1;
     }
 
     public boolean piecePlaced(int i) {
@@ -133,6 +141,7 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         if (!(player instanceof ServerPlayer buyer)) return true;
         if (id == MEND) return this.mend(buyer);
+        if (id >= SPOOKY) return this.buySpooky(buyer, id - SPOOKY);
         if (id >= BULK) return this.buyStack(buyer, id - BULK);
         if (id < 0 || id >= BloodMerchantShop.OFFERS.size()) return false;
         BloodMerchantShop.Offer offer = BloodMerchantShop.OFFERS.get(id);
@@ -173,6 +182,27 @@ public class BloodMerchantMenu extends AbstractContainerMenu {
         give(buyer, new ItemStack(offer.item()));
         buyer.level().playSound(null, buyer.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.NEUTRAL, 0.9F, 0.6F);
         say(buyer, "\"Exquisite, isn't it? There is no other like it.\"");
+        return true;
+    }
+
+    // something from his Halloween stall, while it's open
+    private boolean buySpooky(ServerPlayer buyer, int index) {
+        if (index < 0 || index >= BloodMerchantShop.SPOOKY.size()) return false;
+        if (!BloodMerchantShop.spookyOpen(buyer.level())) {
+            say(buyer, "\"Those are only for the Halloween nights.\"");
+            return false;
+        }
+        BloodMerchantShop.Offer offer = BloodMerchantShop.SPOOKY.get(index);
+        if (!offer.exists()) return false;
+        boolean free = buyer.isCreative();
+        if (!free && BloodMerchantShop.shards(buyer) < offer.shards()) {
+            say(buyer, "\"That one is " + offer.shards() + " Blood Shards.\"");
+            return false;
+        }
+        if (!free) BloodMerchantShop.take(buyer, ModItems.BLOOD_SHARD.get(), offer.shards());
+        give(buyer, new ItemStack(offer.item()));
+        buyer.level().playSound(null, buyer.blockPosition(), SoundEvents.WITCH_CELEBRATE, SoundSource.NEUTRAL, 0.7F, 0.8F);
+        say(buyer, "\"A little something for the season... boo.\"");
         return true;
     }
 

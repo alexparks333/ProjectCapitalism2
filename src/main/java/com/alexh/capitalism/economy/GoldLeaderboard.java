@@ -80,6 +80,9 @@ public class GoldLeaderboard {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             ledger.setPlayer(player.getUUID(), player.getGameProfile().name(), GoldMoney.personalNetWorth(player));
         }
+        // every Investment Chest account (online or not: it lives with the world), in this same tick as the inventories
+        InvestmentBank bank = InvestmentBank.get(server);
+        for (java.util.UUID id : bank.investors()) ledger.setInvestment(id, bank.worth(id));
 
         for (GlobalPos pos : ledger.containerPositions()) {
             ServerLevel level = server.getLevel(pos.dimension());

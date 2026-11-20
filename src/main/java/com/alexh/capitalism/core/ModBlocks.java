@@ -83,6 +83,18 @@ public class ModBlocks {
             .noOcclusion()
             .pushReaction(PushReaction.POPPED));
 
+    // Butcher Shop Ice (4 Ice, Farmer.md > Freshness): ice that never melts (no random ticks, unlike vanilla Ice: light and
+    // warm biomes can't touch it) and drops itself. In #minecraft:ice, so a Meat Slab set on it keeps cold like on any
+    // ice (MeatSlabBlockEntity); 4 Ice worth of Freezer fuel (ColdStorageBlockEntity).
+    public static final DeferredBlock<net.minecraft.world.level.block.HalfTransparentBlock> BUTCHER_SHOP_ICE = BLOCKS.registerBlock("butcher_shop_ice",
+        net.minecraft.world.level.block.HalfTransparentBlock::new, props -> props
+            .mapColor(MapColor.ICE)
+            .friction(0.98F)
+            .strength(0.5F)
+            .sound(SoundType.GLASS)
+            .noOcclusion()
+            .isRedstoneConductor((state, level, pos) -> false));
+
     // Sink: washes Dirty Plates
     public static final DeferredBlock<SinkBlock> SINK = BLOCKS.registerBlock("sink",
         SinkBlock::new, props -> props
@@ -308,6 +320,11 @@ public class ModBlocks {
         com.alexh.capitalism.town.MayoralChestBlock::new,
         props -> props.mapColor(MapColor.COLOR_RED).strength(-1.0F, 3600000.0F).sound(SoundType.WOOD).noOcclusion().noLootTable()
             .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
+    // the Investment Chest (economy/InvestmentChestBlock): every player's own investments, in the bank; only an op in creative places or breaks it
+    public static final DeferredBlock<com.alexh.capitalism.economy.InvestmentChestBlock> INVESTMENT_CHEST = BLOCKS.registerBlock("investment_chest",
+        com.alexh.capitalism.economy.InvestmentChestBlock::new,
+        props -> props.mapColor(MapColor.GOLD).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).noOcclusion().noLootTable()
+            .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE));
     // the Grill (farmer/GrillBlock): Cooks sear fine cuts on it
     public static final DeferredBlock<com.alexh.capitalism.farmer.GrillBlock> GRILL = BLOCKS.registerBlock("grill",
         com.alexh.capitalism.farmer.GrillBlock::new, props -> props
@@ -494,6 +511,13 @@ public class ModBlocks {
         bloodBed(com.alexh.capitalism.decor.BloodDecorKind.CRIMSON_CANOPY_BED, SoundType.WOOD, MapColor.COLOR_RED);
     public static final DeferredBlock<com.alexh.capitalism.decor.BloodDecorBlock> BLOOD_CRYSTAL_FIREPLACE =
         bloodDecor(com.alexh.capitalism.decor.BloodDecorKind.BLOOD_CRYSTAL_FIREPLACE, SoundType.STONE, MapColor.STONE);
+    // the Halloween ones (the Blood Merchant's Spooky tab)
+    public static final DeferredBlock<com.alexh.capitalism.decor.BloodDecorBlock> GRINNING_JACK_O_LANTERN =
+        bloodDecor(com.alexh.capitalism.decor.BloodDecorKind.GRINNING_JACK_O_LANTERN, SoundType.WOOD, MapColor.COLOR_ORANGE);
+    public static final DeferredBlock<com.alexh.capitalism.decor.BloodDecorBlock> HAUNTED_TOMBSTONE =
+        bloodDecor(com.alexh.capitalism.decor.BloodDecorKind.HAUNTED_TOMBSTONE, SoundType.STONE, MapColor.STONE);
+    public static final DeferredBlock<com.alexh.capitalism.decor.BloodDecorBlock> POSSESSED_SCARECROW =
+        bloodDecor(com.alexh.capitalism.decor.BloodDecorKind.POSSESSED_SCARECROW, SoundType.WOOD, MapColor.COLOR_PURPLE);
     // A mounted rare catch on a wall (fishing/FishPlaqueBlock, Fishing.md > Plaques): 1 to 3 blocks wide
     public static final DeferredBlock<com.alexh.capitalism.fishing.FishPlaqueBlock> FISH_PLAQUE = BLOCKS.registerBlock("fish_plaque",
         com.alexh.capitalism.fishing.FishPlaqueBlock::new, props -> props.mapColor(MapColor.WOOD).strength(1.0F, 3.0F).sound(SoundType.WOOD)

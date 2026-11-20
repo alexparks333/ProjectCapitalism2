@@ -59,7 +59,7 @@ corners are inclusive, either order). Code: `town/` (`Town` = the areas).
 - **Only at night** (dusk 13000 to dawn 23000 on the clock): at dusk he appears in a swirl of smoke, red mist and the
   flutter of bats; at dawn he leaves the same way. By day he's not there at all: invisible, nothing to click or hit
   (his menu closes if it's open at dawn).
-- **Talking to him** (right-click; he faces you), three tabs, your inventory along the bottom, your Blood Shards by the tabs:
+- **Talking to him** (right-click; he faces you), two tabs (three in the Halloween weeks), your inventory along the bottom, your Blood Shards by the tabs:
   - **Curios:** click a card to pick it (gold outline), then **Buy** in the bar under the cards. First two **building
     blocks** at **1 Blood Shard each** (with a **Buy 64** button too): **Bloodstone Bricks** (big chiselled bricks of polished black
     stone, blood glowing at full brightness in the seams and cracks) and the **Blood Crystal Block** (see-through glowing blood crystal,
@@ -76,6 +76,21 @@ corners are inclusive, either order). Code: `town/` (`Town` = the areas).
     `Decorations.md` > Blood Moon decorations.
     Last, the **Essential Wishing Star** for a **Blood Moon Crest**: **once per player, ever** (saved with the world:
     `blood_merchant_stars`); after that its card is crossed out.
+    Ops can change who's had it: **`/admin stock refill <player>`** lets them buy it again, **`/admin stock drain
+    <player>`** stops them (counted as having had it) (`core/AdminCommands`).
+  - **Spooky** (only in the **Halloween weeks, Fall 18 to 28**, the seasonal decorations' window; also while an op has
+    put the decorations up with `/decorations up`, for trying it out: `BloodMerchantShop.spookyOpen`): his Halloween
+    stall on pumpkin-and-purple cards, picked and bought like the Curios, as many as you like
+    (`BloodMerchantShop.SPOOKY`). Out of season the tab is gone and nothing on it can be bought. None of it is food or
+    drink (the NPC rule). Bought things keep working all year.
+
+    | Item | Blood Shards | What it does |
+    |---|---|---|
+    | **Grinning Jack-o'-Lantern** (decoration) | 40 | Light 15, its carved face flickering. At night, when someone comes within 4 blocks, it cackles and lets out 3 bats (they vanish after 8 seconds); then it rests 30 seconds |
+    | **Haunted Tombstone** (decoration) | 60 | Use a **named Name Tag** on it and its name is carved on the stone (the tag is used up; up to 60 letters); right-click to read it. At night a ghostly wisp bobs over it, soul wisps rise and it moans now and then |
+    | **Possessed Scarecrow** (decoration, 2 tall) | 90 | A sack-headed scarecrow with glowing green eyes whose **head turns to follow the nearest player** (within 16 blocks). Crows circle it at night; it croaks when you come close |
+    | **Ghost Sheet** (worn on the head) | 120 | A cosmetic bedsheet ghost over you; **hostile mobs spot you from 75% as far** (`player/SpookyGear`); a faint trail of wisps behind you at night |
+    | **Witch's Broom** (held) | 1500 | Right-click: you float up for 4 seconds, then drift down slowly (Slow Falling 12 s more); 60 seconds to recharge (`player/WitchsBroomItem`) |
   - **Mend the Crest:** the Blood Moon Crest drawn big and dim, broken in three, with a glowing socket where each piece
     goes (each takes only its own piece). Each piece you put in shows in its place, so the crest comes together; with
     all three in, **Mend the Crest** (50 Blood Shards) joins them into a Blood Moon Crest (it flares). Pieces left in
@@ -151,7 +166,7 @@ corners are inclusive, either order). Code: `town/` (`Town` = the areas).
   - **Hand Warmer**: in your offhand, the cold can't reach you (`BodyTemperature`, after fires / Blaze sockets so it
     doesn't burn when something else already warms you). Burns down one second at a time while it works: 20 minutes in
     all, then "Your Hand Warmer has burnt out."
-  - **Smith's Chisel**: right-click a socketed item with it (in your inventory, like a gem): the Molten Socket pops back
+  - **Smith's Chisel**: right-click a socketed item with it (in your inventory): the Molten Socket pops back
     out as an item (any gem in it comes back too), ready for a smith to set into something else. Used up
     (`Socketing.onStackedOn`).
   - **Phoenix Feather**: in your offhand when you die: no death tax that time (even in The Purge), and it burns away

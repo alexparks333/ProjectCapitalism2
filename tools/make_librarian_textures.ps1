@@ -128,6 +128,11 @@ $covers = [ordered]@{
   reaching_further    = @(0x9A6AD0, $false, @('..#..','...#.','#####','...#.','..#..'))
   ice_in_the_pants    = @(0x8FD8F0, $false, @('#.#.#','.#.#.','#####','#.#.#','#.#.#'))
   hot_pepper          = @(0xD8361E, $false, @('...#.','..#..','.###.','.###.','..#..'))
+  revenants_bane      = @(0x9A1020, 'blood', @('#.#.#','#####','.#.#.','.###.','.#.#.'))
+  witchs_bane         = @(0x8A2A6A, 'blood', @('..#..','.###.','#####','..#..','.#.#.'))
+  wolfsbane           = @(0x6A1818, 'blood', @('#...#','##.##','#####','.#.#.','..#..'))
+  blood_fury          = @(0xC8202A, 'blood', @('..#..','..#..','.###.','#####','.###.'))
+  blood_ward          = @(0x5A2A3A, 'blood', @('#####','#.#.#','#####','.###.','..#..'))
   fresh_start         = @(0x7FD87F, $false, @('.###.','#...#','#.#.#','#...#','.###.'))
   iron_stomach        = @(0x8A9098, $true,  @('.###.','#...#','#.#.#','#...#','.###.'))
   nimble              = @(0x70D0A0, $true,  @('####.','...#.','.###.','.#...','.####'))
@@ -144,9 +149,10 @@ $covers = [ordered]@{
   used_to_hell        = @(0x8A1A10, $true,  @('#.#.#','#####','.###.','.###.','..#..'))
   winter_survival     = @(0xB8E0F0, $true,  @('#.#.#','.###.','##.##','.###.','#.#.#'))
 }
-function Cover([int]$v,[bool]$trait,[string[]]$emblem,[int]$size,[int]$off){
+# $trait: $true = a trait (gold spine), $false = a lesson, 'blood' = a Blood Moon Book (a deep crimson spine)
+function Cover([int]$v,[object]$trait,[string[]]$emblem,[int]$size,[int]$off){
   $base = @((($v -shr 16) -band 255), (($v -shr 8) -band 255), ($v -band 255))
-  $spine = if($trait){ { param($b,$x,$y) P $b $x $y 240 200 80 } } else { { param($b,$x,$y) if((($x + $y) % 2) -eq 0){ P $b $x $y 236 228 210 } } }
+  $spine = if($trait -is [string]){ { param($b,$x,$y) P $b $x $y 200 20 40 } } elseif($trait -eq $true){ { param($b,$x,$y) P $b $x $y 240 200 80 } } else { { param($b,$x,$y) if((($x + $y) % 2) -eq 0){ P $b $x $y 236 228 210 } } }
   $bmp = Book $base $cream $spine $size $off
   $lum = 0.3*$base[0] + 0.59*$base[1] + 0.11*$base[2]
   $ink = if($lum -gt 150){ @(52,36,24) } else { @(250,242,214) }
@@ -154,7 +160,7 @@ function Cover([int]$v,[bool]$trait,[string[]]$emblem,[int]$size,[int]$off){
   return $bmp }
 foreach($k in $covers.Keys){ $d = $covers[$k]
   Save (Cover $d[0] $d[1] $d[2] 16 0) "item\skill_books\$k.png"
-  if(-not $d[1] -and $k -ne 'fresh_start'){ Save (Cover $d[0] $d[1] $d[2] 18 1) "mob_effect\book_$k.png" } }
+  if(($d[1] -is [string] -or $d[1] -eq $false) -and $k -ne 'fresh_start'){ Save (Cover $d[0] $d[1] $d[2] 18 1) "mob_effect\book_$k.png" } }
 $vbook.Dispose()
 
 # the Stitching Needle (only drawn on the Stitching Table while it sews): silver, an eye at the top, red thread

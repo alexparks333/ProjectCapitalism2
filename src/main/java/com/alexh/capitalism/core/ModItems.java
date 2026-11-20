@@ -197,6 +197,49 @@ public class ModItems {
     public static final DeferredItem<Item> FISH_SKEWER = gourmet("fish_skewer", 10, 0.7F, Items.STICK, List::of);
     // Not baked: made straight at the Cooking Table, already Gourmet.
     public static final DeferredItem<Item> FRUIT_SALAD = gourmet("fruit_salad", 8, 0.5F);
+    // The second round of Oven meals; most need a Farmer's fine cut (textures: tools/make_meals.ps1)
+    public static final DeferredItem<Item> UNCOOKED_PULLED_PORK_SANDWICH = ITEMS.registerSimpleItem("uncooked_pulled_pork_sandwich", props -> props);
+    public static final DeferredItem<Item> PULLED_PORK_SANDWICH = gourmet("pulled_pork_sandwich", 12, 0.75F);
+    public static final DeferredItem<Item> UNCOOKED_BRISKET_AND_POTATOES = ITEMS.registerSimpleItem("uncooked_brisket_and_potatoes", props -> props);
+    public static final DeferredItem<Item> BRISKET_AND_POTATOES = gourmet("brisket_and_potatoes", 14, 0.8F);
+    public static final DeferredItem<Item> UNCOOKED_SHEPHERDS_PIE = ITEMS.registerSimpleItem("uncooked_shepherds_pie", props -> props);
+    public static final DeferredItem<Item> SHEPHERDS_PIE = gourmet("shepherds_pie", 14, 0.8F, Items.BOWL, List::of);
+    public static final DeferredItem<Item> UNCOOKED_HAM_AND_EGG_BREAKFAST = ITEMS.registerSimpleItem("uncooked_ham_and_egg_breakfast", props -> props);
+    public static final DeferredItem<Item> HAM_AND_EGG_BREAKFAST = gourmet("ham_and_egg_breakfast", 12, 0.7F);
+    public static final DeferredItem<Item> UNCOOKED_HUNTERS_RABBIT_PIE = ITEMS.registerSimpleItem("uncooked_hunters_rabbit_pie", props -> props);
+    public static final DeferredItem<Item> HUNTERS_RABBIT_PIE = gourmet("hunters_rabbit_pie", 13, 0.8F);
+    public static final DeferredItem<Item> UNCOOKED_FISH_TACOS = ITEMS.registerSimpleItem("uncooked_fish_tacos", props -> props);
+    public static final DeferredItem<Item> FISH_TACOS = gourmet("fish_tacos", 10, 0.7F);
+    public static final DeferredItem<Item> UNCOOKED_MUSHROOM_RISOTTO = ITEMS.registerSimpleItem("uncooked_mushroom_risotto", props -> props);
+    public static final DeferredItem<Item> MUSHROOM_RISOTTO = gourmet("mushroom_risotto", 11, 0.7F, Items.BOWL, List::of);
+    public static final DeferredItem<Item> UNCOOKED_APPLE_CRUMBLE = ITEMS.registerSimpleItem("uncooked_apple_crumble", props -> props);
+    public static final DeferredItem<Item> APPLE_CRUMBLE = gourmet("apple_crumble", 9, 0.5F);
+    // The second round of Specialty meals: each helps a job (ModEffects; the extras are in player/MealEffects)
+    public static final DeferredItem<Item> UNCOOKED_IRONWORKERS_STEW = ITEMS.registerSimpleItem("uncooked_ironworkers_stew", props -> props);
+    public static final DeferredItem<Item> IRONWORKERS_STEW = gourmet("ironworkers_stew", 14, 0.8F, Items.BOWL, () -> List.of(
+        new MobEffectInstance(ModEffects.TEMPERED, 5 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_LUMBERJACK_FLAPJACKS = ITEMS.registerSimpleItem("uncooked_lumberjack_flapjacks", props -> props);
+    public static final DeferredItem<Item> LUMBERJACK_FLAPJACKS = gourmet("lumberjack_flapjacks", 10, 0.6F, null, () -> List.of(
+        new MobEffectInstance(ModEffects.TIMBER, 5 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_BRICK_OVEN_PIZZA = ITEMS.registerSimpleItem("uncooked_brick_oven_pizza", props -> props);
+    public static final DeferredItem<Item> BRICK_OVEN_PIZZA = gourmet("brick_oven_pizza", 12, 0.7F, null, () -> List.of(
+        new MobEffectInstance(ModEffects.LONG_REACH, 5 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_PRIME_RIB_DINNER = ITEMS.registerSimpleItem("uncooked_prime_rib_dinner", props -> props);
+    public static final DeferredItem<Item> PRIME_RIB_DINNER = gourmet("prime_rib_dinner", 16, 0.9F, Items.BOWL, () -> List.of(
+        new MobEffectInstance(ModEffects.HEARTY, 5 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_ANGLERS_FISH_PIE = ITEMS.registerSimpleItem("uncooked_anglers_fish_pie", props -> props);
+    public static final DeferredItem<Item> ANGLERS_FISH_PIE = gourmet("anglers_fish_pie", 12, 0.7F, null, () -> List.of(
+        new MobEffectInstance(ModEffects.QUICK_BITE, 3 * 60 * 20)));
+    // also cures Hunger and warms you back up to normal (player/MealEffects)
+    public static final DeferredItem<Item> UNCOOKED_COMFORT_SOUP = ITEMS.registerSimpleItem("uncooked_comfort_soup", props -> props);
+    public static final DeferredItem<Item> COMFORT_SOUP = gourmet("comfort_soup", 10, 0.7F, Items.BOWL, () -> List.of(
+        new MobEffectInstance(ModEffects.COMFORTED, 3 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_TRAIL_MIX_BAR = ITEMS.registerSimpleItem("uncooked_trail_mix_bar", props -> props);
+    public static final DeferredItem<Item> TRAIL_MIX_BAR = gourmet("trail_mix_bar", 6, 0.5F, null, () -> List.of(
+        new MobEffectInstance(ModEffects.SECOND_WIND, 5 * 60 * 20)));
+    public static final DeferredItem<Item> UNCOOKED_NIGHT_WATCH_HOTPOT = ITEMS.registerSimpleItem("uncooked_night_watch_hotpot", props -> props);
+    public static final DeferredItem<Item> NIGHT_WATCH_HOTPOT = gourmet("night_watch_hotpot", 12, 0.7F, Items.BOWL, () -> List.of(
+        new MobEffectInstance(ModEffects.NIGHT_WATCH, 5 * 60 * 20)));
 
     // What an overcooked Gourmet meal turns into if it's left in the Oven too long. Edible in a pinch: half a drumstick,
     // and no diet points (it isn't in DietValues, so it doesn't change your diet at all).
@@ -213,6 +256,8 @@ public class ModItems {
     public static final DeferredItem<Item> DIRTY_SILVER_PLATE = ITEMS.registerSimpleItem("dirty_silver_plate", props -> props);
     public static final DeferredItem<Item> DIRTY_GOLDEN_PLATE = ITEMS.registerSimpleItem("dirty_golden_plate", props -> props);
     public static final DeferredItem<BlockItem> SINK = ITEMS.registerSimpleBlockItem(ModBlocks.SINK);
+    // Butcher Shop Ice: ice that never melts, to show meat on (Farmer.md)
+    public static final DeferredItem<BlockItem> BUTCHER_SHOP_ICE = ITEMS.registerSimpleBlockItem(ModBlocks.BUTCHER_SHOP_ICE);
 
     // The Cook's kitchen
     public static final DeferredItem<BlockItem> SUSHI_TABLE = ITEMS.registerSimpleBlockItem(ModBlocks.SUSHI_TABLE);
@@ -265,6 +310,11 @@ public class ModItems {
     public static final DeferredItem<Item> WIZARDS_HAT = cosmeticHat("wizards_hat");
     public static final DeferredItem<Item> FARMERS_HAT = cosmeticHat("farmers_hat");
     public static final DeferredItem<Item> TRAVELERS_PIPE = cosmeticHat("travelers_pipe");
+    // the Blood Merchant's Ghost Sheet (Halloween): a cosmetic like these, but hostile mobs spot you from 25% less far (player/SpookyGear)
+    public static final DeferredItem<Item> GHOST_SHEET = cosmeticHat("ghost_sheet");
+    // the Blood Merchant's Witch's Broom (Halloween): right-click to float up for a moment, then drift down (player/SpookyGear)
+    public static final DeferredItem<Item> WITCHS_BROOM = ITEMS.registerItem("witchs_broom", com.alexh.capitalism.player.WitchsBroomItem::new,
+        props -> props.stacksTo(1).rarity(Rarity.RARE));
 
     private static DeferredItem<Item> cosmeticHat(String id) {
         return ITEMS.registerSimpleItem(id, props -> props.stacksTo(1).rarity(Rarity.RARE)
@@ -309,6 +359,8 @@ public class ModItems {
         props -> new BlockItem(ModBlocks.TOWN_MAILBOX.get(), props), props -> props.stacksTo(1).rarity(Rarity.RARE).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> MAYORAL_CHEST = ITEMS.registerItem("mayoral_chest",
         props -> new BlockItem(ModBlocks.MAYORAL_CHEST.get(), props), props -> props.stacksTo(1).rarity(Rarity.EPIC).useBlockDescriptionPrefix());
+    public static final DeferredItem<BlockItem> INVESTMENT_CHEST = ITEMS.registerItem("investment_chest",
+        props -> new BlockItem(ModBlocks.INVESTMENT_CHEST.get(), props), props -> props.stacksTo(1).rarity(Rarity.EPIC).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> ENCHANTERS_TABLE = ITEMS.registerSimpleBlockItem(ModBlocks.ENCHANTERS_TABLE);
     // Made at the Enchanter's Table (Book + Blaze Rod); used there to burn one enchantment off an item (enchanter/EnchantRemoval)
     public static final DeferredItem<Item> ENCH_REMOVAL = ITEMS.registerSimpleItem("ench_removal", props -> props.stacksTo(16).fireResistant());
@@ -398,9 +450,11 @@ public class ModItems {
     public static final DeferredItem<com.alexh.capitalism.farmer.FertilizerItem> FAST_FERTILIZER = ITEMS.registerItem("fast_fertilizer",
         props -> new com.alexh.capitalism.farmer.FertilizerItem(props, com.alexh.capitalism.farmer.FertilizerItem.Kind.FAST));
     public static final DeferredItem<com.alexh.capitalism.farmer.ScytheItem> SCYTHE = ITEMS.registerItem("scythe",
-        com.alexh.capitalism.farmer.ScytheItem::iron, props -> props.durability(com.alexh.capitalism.farmer.ScytheItem.USES));
+        com.alexh.capitalism.farmer.ScytheItem::iron, props -> props.durability(com.alexh.capitalism.farmer.ScytheItem.USES)
+            .repairable(net.minecraft.tags.ItemTags.IRON_TOOL_MATERIALS));   // repaired at the Toolsmith Table only
     public static final DeferredItem<com.alexh.capitalism.farmer.ScytheItem> DIAMOND_SCYTHE = ITEMS.registerItem("diamond_scythe",
-        com.alexh.capitalism.farmer.ScytheItem::diamond, props -> props.durability(com.alexh.capitalism.farmer.ScytheItem.DIAMOND_USES));
+        com.alexh.capitalism.farmer.ScytheItem::diamond, props -> props.durability(com.alexh.capitalism.farmer.ScytheItem.DIAMOND_USES)
+            .repairable(net.minecraft.tags.ItemTags.DIAMOND_TOOL_MATERIALS));
     // what meat turns into when its time is up (farmer/Freshness): pet food and fertilizer, not people food
     public static final DeferredItem<Item> ROTTEN_MEAT = ITEMS.registerSimpleItem("rotten_meat");
     // Real Estate (realestate/): the Survey Stake (ops mark out lots) and the signs
@@ -491,6 +545,10 @@ public class ModItems {
     public static final DeferredItem<BlockItem> BAT_ROOST = ITEMS.registerSimpleBlockItem(ModBlocks.BAT_ROOST, props -> props.rarity(Rarity.RARE));
     public static final DeferredItem<BlockItem> CRIMSON_CANOPY_BED = ITEMS.registerSimpleBlockItem(ModBlocks.CRIMSON_CANOPY_BED, props -> props.rarity(Rarity.EPIC).stacksTo(1));
     public static final DeferredItem<BlockItem> BLOOD_CRYSTAL_FIREPLACE = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOD_CRYSTAL_FIREPLACE, props -> props.rarity(Rarity.EPIC));
+    // the Halloween ones (the Blood Merchant's Spooky tab, Town.md), and the two spooky things to wear and ride
+    public static final DeferredItem<BlockItem> GRINNING_JACK_O_LANTERN = ITEMS.registerSimpleBlockItem(ModBlocks.GRINNING_JACK_O_LANTERN, props -> props.rarity(Rarity.RARE));
+    public static final DeferredItem<BlockItem> HAUNTED_TOMBSTONE = ITEMS.registerSimpleBlockItem(ModBlocks.HAUNTED_TOMBSTONE, props -> props.rarity(Rarity.RARE));
+    public static final DeferredItem<BlockItem> POSSESSED_SCARECROW = ITEMS.registerSimpleBlockItem(ModBlocks.POSSESSED_SCARECROW, props -> props.rarity(Rarity.RARE));
     // Blood Moon building blocks (the Blood Merchant sells them for 1 Blood Shard each)
     public static final DeferredItem<BlockItem> BLOODSTONE_BRICKS = ITEMS.registerSimpleBlockItem(ModBlocks.BLOODSTONE_BRICKS);
     public static final DeferredItem<BlockItem> BLOOD_CRYSTAL_BLOCK = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOD_CRYSTAL_BLOCK);
@@ -696,6 +754,25 @@ public class ModItems {
         new MobEffectInstance(ModEffects.BERSERKERS_RAGE, 60 * 20), new MobEffectInstance(MobEffects.STRENGTH, 60 * 20, 1),
         new MobEffectInstance(MobEffects.NAUSEA, 60 * 20)));
 
+    // The second round of Specialty cocktails: each helps a job (ModEffects; textures: tools/make_cocktails.ps1)
+    public static final DeferredItem<Item> FORGEFIRE_OLD_FASHIONED = cocktail("forgefire_old_fashioned", () -> List.of(
+        new MobEffectInstance(ModEffects.STEADY_FORGE, 5 * 60 * 20)));
+    public static final DeferredItem<Item> ANGLERS_SUNRISE = cocktail("anglers_sunrise", () -> List.of(
+        new MobEffectInstance(ModEffects.LUCKY_LINE, 5 * 60 * 20)));
+    public static final DeferredItem<Item> BUTCHERS_BLOODY_MARY = cocktail("butchers_bloody_mary", () -> List.of(
+        new MobEffectInstance(ModEffects.STEADY_HANDS, 5 * 60 * 20)));
+    // Warmed Up for 8 minutes (Campfire Chili gives 5): the cold can't reach you
+    public static final DeferredItem<Item> HOT_TODDY = cocktail("hot_toddy", () -> List.of(
+        new MobEffectInstance(ModEffects.WARMED_UP, 8 * 60 * 20)));
+    public static final DeferredItem<Item> MIDNIGHT_OIL_MARTINI = cocktail("midnight_oil_martini", () -> List.of(
+        new MobEffectInstance(ModEffects.QUICK_STUDY, 3 * 60 * 20)));
+    public static final DeferredItem<Item> HAGGLERS_HIGHBALL = cocktail("hagglers_highball", () -> List.of(
+        new MobEffectInstance(ModEffects.SILVER_TONGUE, 5 * 60 * 20)));
+    public static final DeferredItem<Item> DESERT_ROSE = cocktail("desert_rose", () -> List.of(
+        new MobEffectInstance(ModEffects.QUENCHED, 4 * 60 * 20)));
+    public static final DeferredItem<Item> MOONSTALKER_SANGRIA = cocktail("moonstalker_sangria", () -> List.of(
+        new MobEffectInstance(ModEffects.MOONSTALKER, 5 * 60 * 20)));
+
     // ── Classic cocktails: no effects, just water (and gold water) like every cocktail ──
     public static final DeferredItem<Item> CLASSIC_OLD_FASHIONED = cocktail("classic_old_fashioned", List::of);
     public static final DeferredItem<Item> WHISKEY_SOUR = cocktail("whiskey_sour", List::of);
@@ -704,10 +781,22 @@ public class ModItems {
     public static final DeferredItem<Item> WHITE_WINE_SPRITZER = cocktail("white_wine_spritzer", List::of);
     public static final DeferredItem<Item> TROPICAL_KELP_COOLER = cocktail("tropical_kelp_cooler", List::of);
     public static final DeferredItem<Item> BEETROOT_VELVET_SOUR = cocktail("beetroot_velvet_sour", List::of);
+    // the second round of classics (textures: tools/make_cocktails.ps1)
+    public static final DeferredItem<Item> MARGARITA = cocktail("margarita", List::of);
+    public static final DeferredItem<Item> BERRY_DAIQUIRI = cocktail("berry_daiquiri", List::of);
+    public static final DeferredItem<Item> COSMOPOLITAN = cocktail("cosmopolitan", List::of);
+    public static final DeferredItem<Item> TEQUILA_SUNRISE = cocktail("tequila_sunrise", List::of);
+    public static final DeferredItem<Item> MOSCOW_MULE = cocktail("moscow_mule", List::of);
+    public static final DeferredItem<Item> RUM_PUNCH = cocktail("rum_punch", List::of);
+    public static final DeferredItem<Item> ROSE_SPRITZ = cocktail("rose_spritz", List::of);
+    public static final DeferredItem<Item> PUMPKIN_SPICE_FLIP = cocktail("pumpkin_spice_flip", List::of);
 
     public static final List<DeferredItem<Item>> COCKTAILS = List.of(GLOWBERRY_GOLD_RUSH, NETHER_FIREBALL_SHOT, ENDER_TELE_TINI,
         PIRATES_HIGH_SEAS_GROG, MINERS_MOONSHINE, VAMPIRIC_MULLED_WINE, OVERWORLD_MOJITO, PHANTOMS_NIGHTCAP, ZOMBIES_HANGOVER_CURE, ENDER_TWILIGHT_FIZZ, DRUNKEN_BRAWLERS_STOUT,
-        CLASSIC_OLD_FASHIONED, WHISKEY_SOUR, WATERMELON_BREEZE, SANGRIA_PITCHER, WHITE_WINE_SPRITZER, TROPICAL_KELP_COOLER, BEETROOT_VELVET_SOUR);
+        CLASSIC_OLD_FASHIONED, WHISKEY_SOUR, WATERMELON_BREEZE, SANGRIA_PITCHER, WHITE_WINE_SPRITZER, TROPICAL_KELP_COOLER, BEETROOT_VELVET_SOUR,
+        MARGARITA, BERRY_DAIQUIRI, COSMOPOLITAN, TEQUILA_SUNRISE, MOSCOW_MULE, RUM_PUNCH, ROSE_SPRITZ, PUMPKIN_SPICE_FLIP,
+        FORGEFIRE_OLD_FASHIONED, ANGLERS_SUNRISE, BUTCHERS_BLOODY_MARY, HOT_TODDY, MIDNIGHT_OIL_MARTINI, HAGGLERS_HIGHBALL, DESERT_ROSE,
+        MOONSTALKER_SANGRIA);
 
     private static Consumable drinkWith(List<MobEffectInstance> effects) {
         Consumable.Builder drink = Consumables.defaultDrink();
@@ -763,7 +852,10 @@ public class ModItems {
             for (DeferredItem<Item> meal : List.of(CHICKEN_POT_PIE, LOADED_BAKED_POTATO, CHICKEN_AND_RICE, LAMB_CHOPS, SEAFOOD_PASTA, SQUID_INK_PASTA, FRUIT_SALAD,
                 SEAFOOD_CHOWDER, FIERY_MUSHROOM_BOWL, SWEET_BERRY_TART, STUFFED_PUMPKIN, GOLDEN_GLAZED_FEAST, MINERS_CASSEROLE, GARDEN_VEGGIE_CALZONE,
                 NETHER_DRAGON_POT_PIE, HONEY_GLAZED_WING_ROAST, BEEF_SKEWER, CHICKEN_SKEWER, LAMB_SKEWER, FISH_SKEWER,
-                SUGAR_RUSH_BERRY_CREPE, FARMERS_HARVEST_LOAF, SCHOLARS_BRAIN_STEW, CAMPFIRE_CHILI, FROSTY_MELON_SORBET)) {
+                SUGAR_RUSH_BERRY_CREPE, FARMERS_HARVEST_LOAF, SCHOLARS_BRAIN_STEW, CAMPFIRE_CHILI, FROSTY_MELON_SORBET,
+                PULLED_PORK_SANDWICH, BRISKET_AND_POTATOES, SHEPHERDS_PIE, HAM_AND_EGG_BREAKFAST, HUNTERS_RABBIT_PIE, FISH_TACOS,
+                MUSHROOM_RISOTTO, APPLE_CRUMBLE, IRONWORKERS_STEW, LUMBERJACK_FLAPJACKS, BRICK_OVEN_PIZZA, PRIME_RIB_DINNER,
+                ANGLERS_FISH_PIE, COMFORT_SOUP, TRAIL_MIX_BAR, NIGHT_WATCH_HOTPOT)) {
                 event.accept(meal);
             }
         } else if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
@@ -776,7 +868,11 @@ public class ModItems {
                 UNCOOKED_SEAFOOD_CHOWDER, UNCOOKED_FIERY_MUSHROOM_BOWL, UNCOOKED_SWEET_BERRY_TART, UNCOOKED_STUFFED_PUMPKIN, UNCOOKED_GOLDEN_GLAZED_FEAST,
                 UNCOOKED_MINERS_CASSEROLE, UNCOOKED_GARDEN_VEGGIE_CALZONE,
                 UNCOOKED_NETHER_DRAGON_POT_PIE, UNCOOKED_HONEY_GLAZED_WING_ROAST, UNCOOKED_BEEF_SKEWER, UNCOOKED_CHICKEN_SKEWER, UNCOOKED_LAMB_SKEWER, UNCOOKED_FISH_SKEWER,
-                UNCOOKED_SUGAR_RUSH_BERRY_CREPE, UNCOOKED_FARMERS_HARVEST_LOAF, UNCOOKED_SCHOLARS_BRAIN_STEW, UNCOOKED_CAMPFIRE_CHILI)) {
+                UNCOOKED_SUGAR_RUSH_BERRY_CREPE, UNCOOKED_FARMERS_HARVEST_LOAF, UNCOOKED_SCHOLARS_BRAIN_STEW, UNCOOKED_CAMPFIRE_CHILI,
+                UNCOOKED_PULLED_PORK_SANDWICH, UNCOOKED_BRISKET_AND_POTATOES, UNCOOKED_SHEPHERDS_PIE, UNCOOKED_HAM_AND_EGG_BREAKFAST,
+                UNCOOKED_HUNTERS_RABBIT_PIE, UNCOOKED_FISH_TACOS, UNCOOKED_MUSHROOM_RISOTTO, UNCOOKED_APPLE_CRUMBLE,
+                UNCOOKED_IRONWORKERS_STEW, UNCOOKED_LUMBERJACK_FLAPJACKS, UNCOOKED_BRICK_OVEN_PIZZA, UNCOOKED_PRIME_RIB_DINNER,
+                UNCOOKED_ANGLERS_FISH_PIE, UNCOOKED_COMFORT_SOUP, UNCOOKED_TRAIL_MIX_BAR, UNCOOKED_NIGHT_WATCH_HOTPOT)) {
                 event.accept(dish);
             }
             event.accept(BURNT_FOOD);
@@ -806,6 +902,7 @@ public class ModItems {
             event.accept(SILVER_PLATE);
             event.accept(GOLDEN_PLATE);
             event.accept(SINK);
+            event.accept(BUTCHER_SHOP_ICE);
             event.accept(WEAPONSMITH_TABLE);
             event.accept(WHETSTONE);
             event.accept(LAVA_CREATOR);
@@ -823,6 +920,7 @@ public class ModItems {
             event.accept(MAILBOX);
             event.accept(TOWN_MAILBOX);
             event.accept(MAYORAL_CHEST);
+            event.accept(INVESTMENT_CHEST);
             event.accept(TOWN_HALL_SIGN);
             event.accept(BANK_SIGN);
             event.accept(BOAT_SHOP_SIGN);
@@ -834,7 +932,9 @@ public class ModItems {
             for (var bloodDecor : List.of(BLOOD_MOON_LANTERN, CRIMSON_CANDELABRA, CRIMSON_THRONE, VAMPIRE_COFFIN, BLOOD_FOUNTAIN, BLOOD_MOON_BANNER,
                 CRIMSON_RUG, REVENANT_GREATSWORD_STATUE, GOREFANG_SKULL_TROPHY, SANGUINE_STAFF_PEDESTAL, BAT_GARGOYLE, GRANDFATHER_CLOCK,
                 CRIMSON_CHANDELIER, BLOOD_PIPE_ORGAN, SECRET_BOOKSHELF_DOOR, HAUNTED_PORTRAIT, IRON_MAIDEN, BLOOD_MOON_ALTAR, BAT_ROOST,
-                CRIMSON_CANOPY_BED, BLOOD_CRYSTAL_FIREPLACE)) event.accept(bloodDecor);
+                CRIMSON_CANOPY_BED, BLOOD_CRYSTAL_FIREPLACE, GRINNING_JACK_O_LANTERN, HAUNTED_TOMBSTONE, POSSESSED_SCARECROW)) event.accept(bloodDecor);
+            event.accept(GHOST_SHEET);
+            event.accept(WITCHS_BROOM);
             event.accept(BOTTLE_OF_BLOOD);
             // the rare fishing catches (Fishing.md), and what comes of them
             for (var rare : RARE_CATCHES.values()) event.accept(rare.get());

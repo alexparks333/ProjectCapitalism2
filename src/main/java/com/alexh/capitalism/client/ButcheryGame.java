@@ -94,6 +94,9 @@ final class ButcheryGame {
     private long stepAt;
     private long trimStarted = -1;
     private long scanUsed;
+    // Steady Hands (Butcher's Bloody Mary): the scanner lasts 50% longer, trimming may lose 8% of the meat (not 5%)
+    private final long scanTime;
+    private final float meatLimit;
     private long lastTick;
     private long lastFrame;
     private long lastSound;
@@ -126,6 +129,10 @@ final class ButcheryGame {
 
     // lean: the slab's lean % (Freshness): the leaner, the less fat there is to trim
     ButcheryGame(MeatCut cut, int count, int lean) {
+        boolean steady = net.minecraft.client.Minecraft.getInstance().player != null
+            && net.minecraft.client.Minecraft.getInstance().player.hasEffect(com.alexh.capitalism.core.ModEffects.STEADY_HANDS);
+        this.scanTime = steady ? SCAN_TIME * 3 / 2 : SCAN_TIME;
+        this.meatLimit = steady ? 0.08F : MEAT_LIMIT;
         this.cut = cut;
         this.count = count;
         this.slab = new ItemStack(cut.slab());
@@ -622,8 +629,8 @@ final class ButcheryGame {
                 if (this.held) {
                     this.scanUsed += dt;
                     this.scan(gx, gy, now);
-                    if (this.scanUsed >= SCAN_TIME) {
-                        this.scanUsed = SCAN_TIME;
+                    if (this.scanUsed >= this.scanTime) {
+                        this.scanUsed = this.scanTime;
                         this.next(Step.CUT);
                         this.say("The scanner's battery ran out");
                     }
@@ -683,7 +690,7 @@ final class ButcheryGame {
             this.lastSound = now;
             play(SoundEvents.SHEEP_SHEAR, 1.3F + this.random.nextFloat() * 0.3F, 0.35F);
         }
-        if (this.meatLost > this.meatTotal * MEAT_LIMIT) {
+        if (this.meatLost > this.meatTotal * this.meatLimit) {
             this.finish(false, "You cut off too much good meat.");
         } else if (this.fatLeft <= 0) {
             this.next(Step.SCAN);
@@ -1002,7 +1009,7 @@ final class ButcheryGame {
         if (this.step == Step.DONE) return;
         if (this.step == Step.SCAN) {
             int r = Math.round(LENS * CELL);
-            boolean on = this.held && !this.intro(now) && this.scanUsed < SCAN_TIME;
+            boolean on = this.held && !this.intro(now) && this.scanUsed < this.scanTime;
             for (int dy = -r; dy <= r; dy++) {
                 int half = (int) Math.sqrt(r * r - dy * dy);
                 if (on) graphics.fill(mx - half, my + dy, mx + half + 1, my + dy + 1, 0x2858C8FF);
@@ -1066,8 +1073,8 @@ final class ButcheryGame {
         int barX1 = bx0 + bw - 12;
         int barY = by0 + 21;
         float left = switch (this.step) {
-            case TRIM -> 1 - this.meatLost / (this.meatTotal * MEAT_LIMIT);
-            case SCAN -> 1 - this.scanUsed / (float) SCAN_TIME;
+            case TRIM -> 1 - this.meatLost / (this.meatTotal * this.meatLimit);
+            case SCAN -> 1 - this.scanUsed / (float) this.scanTime;
             case CUT -> this.intro(now) ? 1 : 1 - (now - this.stepAt - INTRO) / (float) CUT_TIME;
             default -> 0;
         };
@@ -1110,11 +1117,11 @@ final class ButcheryGame {
             case TRIM -> {
                 int fat = Math.max(0, this.fatLeft) == 0 ? 0 : Math.max(1, Math.round(100F * this.fatLeft / this.fatTotal));
                 int kept = 100 - Math.round(100F * this.meatLost / this.meatTotal);
-                stats = "Fat left: " + fat + "%   Accuracy: " + kept + "% (min " + Math.round(100 - MEAT_LIMIT * 100) + "%)";
+                stats = "Fat left: " + fat + "%   Accuracy: " + kept + "% (min " + Math.round(100 - this.meatLimit * 100) + "%)";
                 hint = "Get every bit of fat. Spare the meat!";
             }
             case SCAN -> {
-                stats = String.format("Scanner: %.1fs    Pins: %d/%d", (SCAN_TIME - this.scanUsed) / 1000.0F, this.pins.size(), MAX_PINS);
+                stats = String.format("Scanner: %.1fs    Pins: %d/%d", (this.scanTime - this.scanUsed) / 1000.0F, this.pins.size(), MAX_PINS);
                 hint = "Hold to scan. Right-click: pin. Space: done";
             }
             case CUT -> {

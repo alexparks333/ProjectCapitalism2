@@ -73,6 +73,8 @@ public final class GameTests {
         com.alexh.capitalism.craving.CravingTests.init();
         com.alexh.capitalism.town.MayoralChestTests.init();
         com.alexh.capitalism.deathtax.DeathTaxTests.init();
+        com.alexh.capitalism.economy.InvestmentTests.init();
+        com.alexh.capitalism.core.AdminPanelTests.init();
     }
 
     public static void register(String name, Consumer<Checks> body) {

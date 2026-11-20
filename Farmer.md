@@ -1,7 +1,7 @@
 # Farmer (Fun job)
 
 Only a Farmer gets the full harvest from crops; everyone else gets just enough to keep a field going. Farmers also
-rot Fertilizers down in the **Decomposter**, fertilize farmland for bigger harvests or faster growth, make **Scythes** (iron and diamond),
+rot Fertilizers down in the **Decomposter**, fertilize farmland for bigger harvests or faster growth, use **Scythes** (iron and diamond, bought from a Toolsmith),
 and get **Meat Slabs** from animals to cut up at the **Butcher's Table**; the meat rots (**Freshness**), so Farmers
 and Cooks keep it in **Fridges** and **Freezers**. (Cooks sear the cuts on the **Grill**: `Cook.md`.)
 Code: `farmer/`:
@@ -27,13 +27,13 @@ still works, it just can't be undone.
 | Item | Recipe |
 |---|---|
 | **Decomposter** | Planks, Iron Ingot, Planks / Planks, Composter, Planks / 3 Planks |
-| **Scythe** | 3 Iron Ingots across the top, 2 Sticks down the right (400 uses) |
-| **Diamond Scythe** | 3 Diamonds across the top, 2 Sticks down the right (1600 uses) |
+| **Scythe** (Toolsmiths only; Farmers buy them, the Toolsmith NPC sells the iron one for 6 gold) | 3 Iron Ingots across the top, 2 Sticks down the right (400 uses) |
+| **Diamond Scythe** (Toolsmiths only) | 3 Diamonds across the top, 2 Sticks down the right (1600 uses) |
 | **Yield Fertilizer** x2 | Bone Meal, Rotten Flesh, Dirt in the Decomposter |
 | **Super Yield Fertilizer** x1 | Bone Meal, Redstone, Redstone in the Decomposter |
 | **Fast Fertilizer** x2 | Bone Meal, Sugar, Dirt in the Decomposter |
 | **Butcher's Table** | Iron Ingot top left / 3 Wooden Slabs / Log, gap, Log |
-| **Iron / Diamond Butcher Knife** | Farmers and Toolsmiths make them: _ I I / _ I _ / Stick _ _ (Diamond: 2 Diamonds on top) |
+| **Iron / Diamond Butcher Knife** | Only Toolsmiths make them (Farmers buy them; the Toolsmith NPC sells the iron one, 4 gold, `NPCs.md`): _ I I / _ I _ / Stick _ _ (Diamond: 2 Diamonds on top) |
 | **Fridge** | Farmers and Cooks: 3 Iron Ingots / Iron, Chest, Iron / Iron, Redstone, Iron |
 | **Freezer** | Farmers and Cooks: 3 Iron Ingots / Iron, Chest, Iron / Iron, Packed Ice, Iron |
 
@@ -86,9 +86,10 @@ output has room. A **Recipes** panel on the menu's right shows all three recipes
 Break a **ripe** crop with one and every ripe crop in a patch comes down too: the **Scythe** cuts **5 wide and 3
 deep** (the crop you hit and the two beyond it (the way you face), and two either side of each); the **Diamond
 Scythe** cuts the same patch and lasts 1600 uses (400 for the iron one). Unripe crops are left standing. The harvest is
-the same as by hand (full for a Farmer). One durability per swing. Only Farmers can make one; **anyone can use it**.
+the same as by hand (full for a Farmer). One durability per swing. Only **Toolsmiths** make them (Farmers buy them; the Toolsmith NPC sells the iron one) and repair them at the Toolsmith Table; **anyone can use one**.
 
 ## Butchering (`MeatCut`, `ButchersTableMenu`, `client/ButcheryGame`)
+A Meat Slab dropped on the ground shows big, a bit bigger than a steak (`models/block/meat_slab_base.json`, the parent of every slab model: its "ground" size).
 **Meat Slabs:** when a **Farmer** kills a **grown** cow, mooshroom, pig, hoglin, sheep, chicken or rabbit with a
 **diamond or netherite sword or axe** (item tag `#capitalism:butchering_blades`), and only then, there's a **15%**
 chance (`SLAB_CHANCE`) it drops a Meat Slab **as well as** its usual drops. A **Bone** set in the sword's Molten
@@ -119,7 +120,7 @@ the table's knife slot (top left of the board) and **stays there** between uses 
 the table drops it); every slab cut up uses **one cut** of its sharpness (`KNIFE_CUTS`
 component): **Iron 4, Diamond 10**. It's sharpness, not durability: the bar under it shows what's left, and a
 **Tool Whetstone** (the Toolsmith's, `WhetstoneBlock` kind PICKAXE) sharpens it back to full. Use the last cut
-and the knife is spent: it breaks on that slab. Farmers and Toolsmiths can both make them.
+and the knife is spent: it breaks on that slab. Only Toolsmiths make them (and their Tool Whetstones that sharpen them), so Farmers buy both from a Toolsmith.
 
 **The Butcher's Table** (only Farmers): put a slab in, and a Butcher Knife with sharpness left, and press **Cut
 Slab**. The slab and one cut of the knife are used up right away and the **butchery game** starts. Done cleanly it gives **yield x the fine cut** (Raw Beef Rib...: eaten like the plain
@@ -147,9 +148,12 @@ Meat Slabs and the fine cuts **rot**. Plain (botched) meat doesn't.
   Freezers and on placed slabs; anything in a closed container (a chest...) the moment it's opened (`FreshnessEvents`).
   Rotten Meat is plain (no timer), so it all stacks to 64.
   Meat with no timer yet (from the creative menu) gets one the first time it's checked.
-- **Placed slabs on ice** (the block under it in `#minecraft:ice`: Ice, Packed, Blue or Frosted Ice) rot like in a
+- **Placed slabs on ice** (the block under it in `#minecraft:ice`: Ice, Packed, Blue or Frosted Ice, or **Butcher Shop Ice**) rot like in a
   Freezer, **6x slower** (`ICE_SLOWER`): going onto the ice it notes when and how long it had left, and runs down from
   those (exact, unloaded too; the client only hears of it going on or off the ice). Off the ice it carries on as normal.
+- **Butcher Shop Ice** (`ModBlocks.BUTCHER_SHOP_ICE`, texture `tools/make_butcher_ice.ps1`): **4 Ice in a 2x2** at a
+  crafting table (anyone can make it) = 1 block. Ice that **never melts** (no light or warm biome can touch it) and drops
+  itself when broken, so a shop can show its meat on ice anywhere. Slippery like ice; it keeps slabs cold like any ice.
 - **Looking at a placed slab** (`client/MeatSlabHud`, the block entity is synced): a small card under the crosshair with
   its name, lean, and "Fresh for 12:34" (+ "Set it on ice to keep it longer"), or on ice "❄ On ice: rotting 6x
   slower", "Keeps 1:14:00 here", "(12:20 off the ice)", or "Rotten".
@@ -163,7 +167,7 @@ Meat Slabs and the fine cuts **rot**. Plain (botched) meat doesn't.
 - **Fridge and Freezer** (`ColdStorageBlock`): chests (27 slots) with a fuel slot; **anyone** can use one, Farmers
   and Cooks make them. While fuel burns, meat in them rots **2x slower (Fridge)** or **6x slower (Freezer)**:
   - Fridge fuel: **Coal or Charcoal**, 5 minutes each (`FRIDGE_FUEL`). Freezer fuel: an **Ice** block, 5 minutes
-    (`ICE_FUEL`), **Packed Ice** 15 minutes (`PACKED_ICE_FUEL`), **Blue Ice** 45 minutes (`BLUE_ICE_FUEL`), or a
+    (`ICE_FUEL`), **Packed Ice** 15 minutes (`PACKED_ICE_FUEL`), **Blue Ice** 45 minutes (`BLUE_ICE_FUEL`), **Butcher Shop Ice** 20 minutes (`BUTCHER_ICE_FUEL`, 4 Ice), or a
     **Snowball**, only 30 seconds (`SNOWBALL_FUEL`).
   - **The tooltip in there** (`Chill`, `ModComponents.CHILL`, put on by the running Fridge / Freezer, taken off as soon
     as the meat is out or the fuel runs out): "❄ Chilled: rotting 2x slower" (Freezer: "❄ Frozen: ... 6x"), "Keeps

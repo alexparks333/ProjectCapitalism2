@@ -89,7 +89,9 @@ public final class CalendarTests {
         c.check(!com.alexh.capitalism.decor.ChristmasPresentItem.contents(level.getRandom()).isEmpty(), "...and a present has things in it");
         level.setBlock(treePos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
         // each festival does what it should and no more
-        c.check(Festival.NEW_YEAR.fireworks && Festival.NEW_YEAR.gift().isEmpty(), "New Year's Day: fireworks over the town, no gift");
+        c.check(Festival.NEW_YEAR.fireworks && Festival.NEW_YEAR.gift().isEmpty() && Festival.NEW_YEAR.season == Calendar.Season.WINTER && Festival.NEW_YEAR.day == 28
+            && Festival.on(Calendar.date(Calendar.startOf(1, Calendar.Season.SPRING, 1))) == null,
+            "New Year's Eve (Winter 28): fireworks over the town at midnight, no gift; nothing on Spring 1 any more");
         c.check(!Festival.HARVEST_FESTIVAL.cropBoost && Festival.HARVEST_FESTIVAL.xp == 1.5 && Festival.BLOSSOM_FESTIVAL.cropBoost,
             "the Harvest Festival is +50% XP; the Blossom Festival grows crops faster");
         c.check(Festival.CHRISTMAS.npcDiscount == 0 && Festival.CHRISTMAS.day == 8 && Festival.WINTER_FEST.day == 25,

@@ -323,7 +323,7 @@ public final class TownTests {
         }
     }
 
-    // Job NPCs come to town on their own 20% of days even with players of their job online (npc/NpcManager.inTownToday)
+    // Job NPCs come to town on their own 35% of days even with players of their job online (npc/NpcManager.inTownToday)
     private static void npcTownDays(GameTests.Checks c) {
         long seed = c.level().getSeed();
         int days = 2000, cook = 0, both = 0, farmer = 0;
@@ -334,9 +334,9 @@ public final class TownTests {
             if (b) farmer++;
             if (a && b) both++;
         }
-        c.near(cook / (double) days, 0.2, 0.03, "the Cook NPC is in town about 20% of days");
-        c.near(farmer / (double) days, 0.2, 0.03, "the Farmer NPC too");
-        c.near(both / (double) days, 0.04, 0.02, "each job rolls on its own (both on the same day about 4%)");
+        c.near(cook / (double) days, 0.35, 0.03, "the Cook NPC is in town about 35% of days");
+        c.near(farmer / (double) days, 0.35, 0.03, "the Farmer NPC too");
+        c.near(both / (double) days, 0.1225, 0.03, "each job rolls on its own (both on the same day about 12%)");
         c.check(com.alexh.capitalism.npc.NpcManager.inTownOn(seed, 7, com.alexh.capitalism.occupation.Job.COOK)
             == com.alexh.capitalism.npc.NpcManager.inTownOn(seed, 7, com.alexh.capitalism.occupation.Job.COOK), "the same answer all day");
     }
@@ -558,11 +558,31 @@ public final class TownTests {
         p.setData(key, new com.alexh.capitalism.occupation.JobData());
         com.alexh.capitalism.occupation.Job cook = com.alexh.capitalism.occupation.Job.COOK;
         com.alexh.capitalism.occupation.Job smith = com.alexh.capitalism.occupation.Job.WEAPONSMITH;
-        com.alexh.capitalism.occupation.Job farmer = com.alexh.capitalism.occupation.Job.FARMER;
+        com.alexh.capitalism.occupation.Job bartender = com.alexh.capitalism.occupation.Job.BARTENDER;
         c.check(p.getData(key).jobs().isEmpty(), "a new player has no jobs");
         com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
-        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, farmer.ordinal());
-        c.check(p.getData(key).has(cook) && p.getData(key).has(farmer), "/pick: one Essential job and one Fun job");
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, bartender.ordinal());
+        c.check(p.getData(key).has(cook) && p.getData(key).has(bartender), "/pick: one Essential job and one Fun job");
+        // a Cook can never be a Farmer (and the other way round), even with a second Fun slot
+        {
+            var clash = new com.alexh.capitalism.occupation.JobData();
+            clash.addSlot(com.alexh.capitalism.occupation.Job.Category.FUN);
+            p.setData(key, clash);
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, com.alexh.capitalism.occupation.Job.FARMER.ordinal());
+            boolean cookNoFarmer = p.getData(key).has(cook) && !p.getData(key).has(com.alexh.capitalism.occupation.Job.FARMER);
+            clash = new com.alexh.capitalism.occupation.JobData();
+            clash.addSlot(com.alexh.capitalism.occupation.Job.Category.ESSENTIAL);
+            p.setData(key, clash);
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, com.alexh.capitalism.occupation.Job.FARMER.ordinal());
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+            c.check(cookNoFarmer && p.getData(key).has(com.alexh.capitalism.occupation.Job.FARMER) && !p.getData(key).has(cook),
+                "a Cook can't pick Farmer and a Farmer can't pick Cook (even with a free slot)");
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, bartender.ordinal());
+            p.setData(key, new com.alexh.capitalism.occupation.JobData());
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+            com.alexh.capitalism.occupation.JobCommands.togglePicked(p, bartender.ordinal());
+        }
         com.alexh.capitalism.occupation.JobCommands.togglePicked(p, smith.ordinal());
         c.check(!p.getData(key).has(smith), "...not a second Essential job (no free slot)");
         com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
@@ -585,10 +605,48 @@ public final class TownTests {
         com.alexh.capitalism.occupation.JobCommands.togglePicked(p, com.alexh.capitalism.occupation.Job.ENCHANTER.ordinal());
         c.check(dropped && p.getData(key).has(com.alexh.capitalism.occupation.Job.ENCHANTER) && !p.getData(key).changing(),
             "a Changing Star lets them drop a job and pick another; once every slot is full the change is over");
-        // /admin jobs reset: no jobs, pick again; Wishing Star slots kept
-        com.alexh.capitalism.core.AdminCommands.resetJobs(p);
+        // /admin jobs clear: no jobs, pick again; Wishing Star slots kept
+        com.alexh.capitalism.core.AdminCommands.clearJobs(p);
         c.check(p.getData(key).jobs().isEmpty() && p.getData(key).slots(com.alexh.capitalism.occupation.Job.Category.ESSENTIAL) == 2 && !p.getData(key).changing(),
-            "/admin jobs reset: their jobs are cleared to pick again, their extra slot kept");
+            "/admin jobs clear: their jobs are cleared to pick again, their extra slot kept");
+        // /admin jobs reset: back to the start, the extra slot gone too
+        p.getData(key).setSlots(com.alexh.capitalism.occupation.Job.Category.FUN, 2);
+        com.alexh.capitalism.core.AdminCommands.resetJobs(p);
+        c.check(p.getData(key).jobs().isEmpty() && p.getData(key).slots(com.alexh.capitalism.occupation.Job.Category.ESSENTIAL) == 1
+                && p.getData(key).slots(com.alexh.capitalism.occupation.Job.Category.FUN) == 1 && p.getData(key).freePick(),
+            "/admin jobs reset: no jobs and back to one Essential and one Fun slot");
+        // the job drafts: on the list = wait for the start; then your turn; the other kind's draft is separate
+        p.setData(key, new com.alexh.capitalism.occupation.JobData());
+        var server = p.level().getServer();
+        var ess = com.alexh.capitalism.occupation.Job.Category.ESSENTIAL;
+        var fun = com.alexh.capitalism.occupation.Job.Category.FUN;
+        com.alexh.capitalism.occupation.JobDraft.reset();
+        com.alexh.capitalism.occupation.JobDraft.add(server, ess, p);
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+        c.check(!p.getData(key).has(cook), "job draft: on the Essential list, no Essential pick before it starts");
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, bartender.ordinal());
+        c.check(p.getData(key).has(bartender), "job draft: the Fun jobs aren't held up by the Essential draft");
+        c.check(com.alexh.capitalism.occupation.JobDraft.add(server, ess, p) != null, "job draft: nobody is on a list twice");
+        com.alexh.capitalism.occupation.JobDraft.start(server, ess);
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+        c.check(p.getData(key).has(cook) && !com.alexh.capitalism.occupation.JobDraft.active(ess),
+            "job draft: on their turn the pick goes through; the last on the list ends the draft");
+        p.setData(key, new com.alexh.capitalism.occupation.JobData());
+        com.alexh.capitalism.occupation.JobDraft.add(server, fun, p);
+        com.alexh.capitalism.occupation.JobDraft.start(server, fun);
+        com.alexh.capitalism.occupation.JobDraft.skip(server, fun);
+        c.check(!com.alexh.capitalism.occupation.JobDraft.active(fun), "job draft: skipping the last player ends it too");
+        // /admin jobs reset: they pick both kinds again straight away, even with both drafts waiting; the drafts
+        // apply again once their slots are full
+        p.setData(key, new com.alexh.capitalism.occupation.JobData());
+        com.alexh.capitalism.occupation.JobDraft.add(server, ess, p);
+        com.alexh.capitalism.occupation.JobDraft.add(server, fun, p);
+        com.alexh.capitalism.core.AdminCommands.resetJobs(p);
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, cook.ordinal());
+        com.alexh.capitalism.occupation.JobCommands.togglePicked(p, bartender.ordinal());
+        c.check(p.getData(key).has(cook) && p.getData(key).has(bartender) && !p.getData(key).freePick(),
+            "/admin jobs reset: picks both jobs again with no draft in the way; after that the drafts apply as usual");
+        com.alexh.capitalism.occupation.JobDraft.reset();
         p.setData(key, new com.alexh.capitalism.occupation.JobData());
     }
 }

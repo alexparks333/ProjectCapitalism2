@@ -38,8 +38,8 @@ import java.util.List;
 //  - Each new morning, everyone is told the date ("Good morning! Tuesday, Spring 2, Year 1.") in chat and on a small card
 //    bottom right (a new season names itself there), a festival day says what it brings, the day before gives a heads-up.
 //  - Festivals (calendar/Festival): sales (economy/NpcPricing reads them), crops growing twice as fast (a crop's
-//    growth check always passes), Luck all day, +50% XP, fireworks after dark (8 pm to midnight, round each player in
-//    the overworld), no monsters spawning after dark, monsters in pumpkin masks, and a gift for everyone once that day.
+//    growth check always passes), Luck all day, +50% XP, New Year's Eve fireworks (from exactly midnight to 1 am, over
+//    the town), no monsters spawning after dark, monsters in pumpkin masks, and a gift for everyone once that day.
 //  - /calendar: the date, the time, today's festival and the next one; /calendar festivals: the year's festivals;
 //    /calendar set <season> <day> [year] (operators): moves the clock to that date, keeping the time of day.
 @EventBusSubscriber(modid = Capitalism.MODID)
@@ -47,6 +47,9 @@ public final class CalendarEvents {
 
     // the day last announced (-1: not yet, this run)
     private static long lastDay = -1;
+    // New Year's Eve fireworks: from exactly midnight (time of day 18000) to 1 am, and the day the new year was last rung in
+    public static final long FIREWORKS_FROM = 18000, FIREWORKS_UNTIL = 19000;
+    private static long lastNewYear = -1;
     private static final String GIFT_KEY = "capitalism_festival_gift";
     // in winter, the chance each minute of clear weather that it starts snowing
     static final float WINTER_SNOW_CHANCE = 0.15F;
@@ -87,9 +90,16 @@ public final class CalendarEvents {
                 player.addEffect(new MobEffectInstance(MobEffects.LUCK, 60, festival.luck - 1, true, false, true));
             }
         }
-        // a celebration over the town: fireworks all over it, 8 pm to midnight (while someone's there to see them)
-        if (festival.fireworks && timeOfDay >= 14000 && timeOfDay < 18000) {
-            int rockets = 3 + overworld.getRandom().nextInt(4);
+        // New Year's Eve: at exactly midnight the new year is rung in, then fireworks all over the town until 1 am
+        // (while someone's there to see them). The first few seconds are the biggest.
+        if (festival.fireworks && timeOfDay >= FIREWORKS_FROM && timeOfDay < FIREWORKS_UNTIL) {
+            if (lastNewYear != date.index()) {
+                lastNewYear = date.index();
+                server.getPlayerList().broadcastSystemMessage(Component.literal("🎆 Happy New Year! Welcome to Year " + (date.year() + 1) + "!")
+                    .withStyle(s -> s.withColor(TextColor.fromRgb(festival.color & 0xFFFFFF)).withBold(true)), false);
+            }
+            boolean opening = timeOfDay < FIREWORKS_FROM + 200;
+            int rockets = (opening ? 8 : 3) + overworld.getRandom().nextInt(4);
             for (int i = 0; i < rockets; i++) launchOverTown(overworld);
         }
     }
@@ -203,6 +213,9 @@ public final class CalendarEvents {
                 .executes(c -> jump(c.getSource(), Calendar.date(source(c)).index() + 1, 1000)))
             .then(Commands.literal("night").requires(Commands.hasPermission(new net.minecraft.server.permissions.PermissionCheck.Require(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)))
                 .executes(c -> jump(c.getSource(), Calendar.date(source(c)).index(), 14000)))
+            // testing: half a minute before midnight tonight (New Year's Eve fireworks start at 12:00)
+            .then(Commands.literal("midnight").requires(Commands.hasPermission(new net.minecraft.server.permissions.PermissionCheck.Require(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)))
+                .executes(c -> jump(c.getSource(), Calendar.date(source(c)).index(), (int) FIREWORKS_FROM - 600)))
             .then(Commands.literal("set").requires(Commands.hasPermission(new net.minecraft.server.permissions.PermissionCheck.Require(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)))
                 .then(Commands.argument("season", StringArgumentType.word())
                     .suggests((c, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(List.of("spring", "summer", "fall", "winter"), b))
@@ -252,7 +265,10 @@ public final class CalendarEvents {
     }
 
     private static int festivals(CommandSourceStack source) {
-        for (Festival f : Festival.values()) {
+        // in calendar order (New Year's Eve, Winter 28, last)
+        List<Festival> inOrder = new java.util.ArrayList<>(List.of(Festival.values()));
+        inOrder.sort(java.util.Comparator.comparingInt((Festival f) -> f.season.ordinal()).thenComparingInt(f -> f.day));
+        for (Festival f : inOrder) {
             source.sendSuccess(() -> Component.literal(f.season.title + " " + f.day + ": ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(f.title).withStyle(s -> s.withColor(TextColor.fromRgb(f.color & 0xFFFFFF))))
                 .append(Component.literal(" - " + f.description).withStyle(ChatFormatting.DARK_GRAY)), false);

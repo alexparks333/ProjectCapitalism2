@@ -228,11 +228,18 @@ public class ClientModEvents {
         event.setSwingHand(!salt);
     }
 
+    // "an Armorsmith" -> "An Armorsmith"
+    private static String capitalized(String text) {
+        return text.isEmpty() ? text : Character.toUpperCase(text.charAt(0)) + text.substring(1);
+    }
+
     // Foods show their diet points, e.g. "Diet: +2 Fruit (~1% of your diet)".
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         // the Blood Moon Crest and its pieces (Events.md > Trophies)
         var held = event.getItemStack();
+        // Specialty drinks and meals: one line on what they do
+        SpecialtyTips.add(held, event.getToolTip());
         if (held.is(ModItems.REVENANT_CREST.get()) || held.is(ModItems.SANGUINE_CREST.get()) || held.is(ModItems.GOREFANG_CREST.get())) {
             event.getToolTip().add(Component.literal("A broken third of the Blood Moon Crest.").withStyle(s -> s.withColor(0xE04050).withItalic(true)));
             event.getToolTip().add(Component.literal("The Blood Merchant mends all three into one.").withStyle(ChatFormatting.GRAY));
@@ -273,6 +280,8 @@ public class ClientModEvents {
                 tip.add(Component.literal(book.delicate() ? "Delicate Book" : "Rough Book").withStyle(ChatFormatting.GRAY));
                 if (skill.trait) {
                     tip.add(Component.literal(skill.rare ? "Persistent (rare)" : "Persistent").withStyle(ChatFormatting.GOLD));
+                } else if (skill.bloodMoon()) {
+                    tip.add(Component.literal("Blood Moon Book: lasts one night").withStyle(s -> s.withColor(0xE04050)));
                 } else if (skill.instant) {
                     tip.add(Component.literal(skill.rare ? "Instant (rare): once, when you read it" : "Instant: once, when you read it").withStyle(ChatFormatting.AQUA));
                 } else {
@@ -455,16 +464,27 @@ public class ClientModEvents {
             event.getToolTip().add(Component.literal(travelerTip).withStyle(ChatFormatting.GRAY));
             event.getToolTip().add(Component.literal("Only from the Traveling Merchant.").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
         }
+        // the Blood Merchant's Halloween things (Town.md > The Blood Merchant > Spooky)
+        String spookyTip = null;
+        if (event.getItemStack().is(ModItems.GRINNING_JACK_O_LANTERN.get())) spookyTip = "Glows bright. At night it cackles at passers-by and lets out bats.";
+        else if (event.getItemStack().is(ModItems.HAUNTED_TOMBSTONE.get())) spookyTip = "Use a named Name Tag on it to carve an epitaph. Wisps rise from it at night.";
+        else if (event.getItemStack().is(ModItems.POSSESSED_SCARECROW.get())) spookyTip = "Its head follows whoever is nearest. Crows circle it at night.";
+        else if (event.getItemStack().is(ModItems.GHOST_SHEET.get())) spookyTip = "Wear it on your head. Monsters spot you from a little less far.";
+        else if (event.getItemStack().is(ModItems.WITCHS_BROOM.get())) spookyTip = "Right-click to float up for a moment, then drift down. Recharges in 30 seconds.";
+        if (spookyTip != null) {
+            event.getToolTip().add(Component.literal(spookyTip).withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.literal("From the Blood Merchant, only at Halloween.").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        }
         // A socketed sword / pickaxe / armor piece: what's in the socket and how to change it
         if (Socketing.hasSocket(event.getItemStack())) {
             ItemStack socketed = event.getItemStack();
             Socketing.Gem gem = Socketing.gem(socketed);
             if (gem == null) {
                 event.getToolTip().add(Component.literal("◇ Empty Socket").withStyle(ChatFormatting.GOLD));
-                event.getToolTip().add(Component.literal("  Right-click it with a gem (in your inventory): " + Socketing.gemsFor(socketed)).withStyle(ChatFormatting.DARK_GRAY));
+                event.getToolTip().add(Component.literal("  " + capitalized(Socketing.smithFor(socketed)) + " can set a gem: " + Socketing.gemsFor(socketed)).withStyle(ChatFormatting.DARK_GRAY));
             } else {
                 event.getToolTip().add(Component.literal("◆ " + gem.title + " Socket: " + Socketing.effect(gem, socketed)).withStyle(gem.color));
-                event.getToolTip().add(Component.literal("  Right-click it with an empty hand (in your inventory) to take it out").withStyle(ChatFormatting.DARK_GRAY));
+                event.getToolTip().add(Component.literal("  " + capitalized(Socketing.smithFor(socketed)) + " can break it out (the gem is lost)").withStyle(ChatFormatting.DARK_GRAY));
             }
         }
         // Reroll Tokens: what they're for (weaponsmith/Rerolling)
@@ -505,7 +525,7 @@ public class ClientModEvents {
             line.append(Component.literal("+" + amount + " " + DietData.NAMES[i]).withStyle(style -> style.withColor(color)));
             first = false;
         }
-        double window = 130;
+        double window = 200;
         try {
             window = CapitalismConfig.DIET_WINDOW_POINTS.get();
         } catch (IllegalStateException notLoaded) {
@@ -557,6 +577,7 @@ public class ClientModEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.WISHING_WELL.get(), WishingWellRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.MAILBOX.get(), MailboxRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.MAYORAL_CHEST.get(), MayoralChestRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.INVESTMENT_CHEST.get(), InvestmentChestRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.KNOWLEDGE_CREATOR.get(), KnowledgeCreatorRenderer::new);
         event.registerEntityRenderer(ModEntities.JOB_NPC.get(), JobNpcRenderer::new);
         event.registerEntityRenderer(ModEntities.CRIMSON_REVENANT.get(), CrimsonRevenantRenderer::new);
@@ -571,6 +592,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.BOUNTY_CLERK.get(), BountyClerkRenderer::new);
         // the Boat Master looks like the job NPCs (his own skin); the Pirate Ship
         event.registerEntityRenderer(ModEntities.BOAT_MASTER.get(), JobNpcRenderer::new);
+        event.registerEntityRenderer(ModEntities.BUTCHER.get(), JobNpcRenderer::new);
         event.registerEntityRenderer(ModEntities.PIRATE_SHIP.get(), c -> new PremiumBoatRenderer(c, "pirate_ship", PirateShipModel.LAYER, PirateShipModel::new, 1.4F, 3.6, 5.3));
         event.registerEntityRenderer(ModEntities.GHOST_SHIP.get(), c -> new PremiumBoatRenderer(c, "ghost_ship", GhostShipModel.LAYER, GhostShipModel::new, 1.4F, 3.6, 5.3));
         event.registerEntityRenderer(ModEntities.SPEEDBOAT.get(), c -> new PremiumBoatRenderer(c, "speedboat", SpeedboatModel.LAYER, SpeedboatModel::new, 1.0F, 1.6, 1.4));
@@ -628,6 +650,9 @@ public class ClientModEvents {
         event.registerLayerDefinition(BloodDecorModels2.BatRoost.LAYER, BloodDecorModels2.BatRoost::createLayer);
         event.registerLayerDefinition(BloodDecorModels2.CanopyBed.LAYER, BloodDecorModels2.CanopyBed::createLayer);
         event.registerLayerDefinition(BloodDecorModels2.Fireplace.LAYER, BloodDecorModels2.Fireplace::createLayer);
+        event.registerLayerDefinition(SpookyDecorModels.JackOLantern.LAYER, SpookyDecorModels.JackOLantern::createLayer);
+        event.registerLayerDefinition(SpookyDecorModels.Tombstone.LAYER, SpookyDecorModels.Tombstone::createLayer);
+        event.registerLayerDefinition(SpookyDecorModels.Scarecrow.LAYER, SpookyDecorModels.Scarecrow::createLayer);
         event.registerLayerDefinition(DecorModels.Scarecrow.LAYER, DecorModels.Scarecrow::createLayer);
         event.registerLayerDefinition(DecorModels.WitchsCauldron.LAYER, DecorModels.WitchsCauldron::createLayer);
         event.registerLayerDefinition(DecorModels.PumpkinPile.LAYER, DecorModels.PumpkinPile::createLayer);
@@ -637,6 +662,7 @@ public class ClientModEvents {
         event.registerLayerDefinition(MailboxModel.LAYER, MailboxModel::createLayer);
         event.registerLayerDefinition(MailboxModel.TOWN_LAYER, MailboxModel::createTownLayer);
         event.registerLayerDefinition(MayoralChestModel.LAYER, MayoralChestModel::createLayer);
+        event.registerLayerDefinition(InvestmentChestModel.LAYER, InvestmentChestModel::createLayer);
         event.registerLayerDefinition(CrimsonRevenantModel.LAYER, CrimsonRevenantModel::createLayer);
         event.registerLayerDefinition(GorefangModel.LAYER, GorefangModel::createLayer);
         event.registerLayerDefinition(SanguineWitchModel.LAYER, SanguineWitchModel::createLayer);
@@ -876,6 +902,7 @@ public class ClientModEvents {
         event.register(ModMenus.FISHERMAN.get(), FishermanScreen::new);
         event.register(ModMenus.BOUNTY_CLERK.get(), BountyClerkScreen::new);
         event.register(ModMenus.MAYORAL_CHEST.get(), MayoralChestScreen::new);
+        event.register(ModMenus.INVESTMENT.get(), InvestmentChestScreen::new);
         event.register(ModMenus.SHOPFRONT_OWNER.get(), ShopfrontScreen::new);
         event.register(ModMenus.SHOPFRONT_CUSTOMER.get(), ShopfrontScreen::new);
     }

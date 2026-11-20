@@ -176,12 +176,73 @@ public final class KitchenRecipes {
         COOKING.add(new Assembly(ModItems.UNCOOKED_FISH_SKEWER, 1, 5, () -> Items.COD, apple, () -> Items.COD, stick, stick));
         OVEN.add(new Baking(ModItems.UNCOOKED_FISH_SKEWER, ModItems.FISH_SKEWER, 10, 5));
 
+        // ── The second round of Oven meals: most need a Farmer's fine cut (farmer/MeatCut) ──
+        Supplier<Item> potato = () -> Items.POTATO;
+        Supplier<Item> carrot = () -> Items.CARROT;
+        COOKING.add(new Assembly(ModItems.UNCOOKED_PULLED_PORK_SANDWICH, 1, 4,
+            cut(com.alexh.capitalism.farmer.MeatCut.PORK_SHOULDER), () -> Items.BREAD, () -> Items.BEETROOT, () -> Items.SUGAR));
+        OVEN.add(new Baking(ModItems.UNCOOKED_PULLED_PORK_SANDWICH, ModItems.PULLED_PORK_SANDWICH, 14, 7));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_BRISKET_AND_POTATOES, 1, 4,
+            cut(com.alexh.capitalism.farmer.MeatCut.BEEF_BRISKET), potato, potato, carrot));
+        OVEN.add(new Baking(ModItems.UNCOOKED_BRISKET_AND_POTATOES, ModItems.BRISKET_AND_POTATOES, 18, 9));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_SHEPHERDS_PIE, 1, 5,
+            cut(com.alexh.capitalism.farmer.MeatCut.MUTTON_SHOULDER), potato, carrot, () -> Items.BREAD, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_SHEPHERDS_PIE, ModItems.SHEPHERDS_PIE, 18, 9));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_HAM_AND_EGG_BREAKFAST, 1, 4,
+            cut(com.alexh.capitalism.farmer.MeatCut.PORK_HAM), () -> Items.EGG, () -> Items.EGG, () -> Items.BREAD));
+        OVEN.add(new Baking(ModItems.UNCOOKED_HAM_AND_EGG_BREAKFAST, ModItems.HAM_AND_EGG_BREAKFAST, 12, 6));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_HUNTERS_RABBIT_PIE, 1, 5,
+            cut(com.alexh.capitalism.farmer.MeatCut.RABBIT_SADDLE), carrot, potato, () -> Items.WHEAT, () -> Items.BROWN_MUSHROOM));
+        OVEN.add(new Baking(ModItems.UNCOOKED_HUNTERS_RABBIT_PIE, ModItems.HUNTERS_RABBIT_PIE, 16, 8));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_FISH_TACOS, 1, 4,
+            () -> Items.COD, () -> Items.WHEAT, carrot, () -> Items.SWEET_BERRIES));
+        OVEN.add(new Baking(ModItems.UNCOOKED_FISH_TACOS, ModItems.FISH_TACOS, 10, 5));
+        // Milk leaves its bucket behind in the slot.
+        COOKING.add(new Assembly(ModItems.UNCOOKED_MUSHROOM_RISOTTO, 1, 5,
+            rice, () -> Items.BROWN_MUSHROOM, () -> Items.RED_MUSHROOM, () -> Items.MILK_BUCKET, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_MUSHROOM_RISOTTO, ModItems.MUSHROOM_RISOTTO, 14, 7));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_APPLE_CRUMBLE, 1, 5,
+            apple, apple, () -> Items.SUGAR, () -> Items.WHEAT, () -> Items.EGG));
+        OVEN.add(new Baking(ModItems.UNCOOKED_APPLE_CRUMBLE, ModItems.APPLE_CRUMBLE, 12, 6));
+
+        // ── The second round of Specialty meals (each helps a job) ──
+        COOKING.add(new Assembly(ModItems.UNCOOKED_IRONWORKERS_STEW, 1, 5,
+            cut(com.alexh.capitalism.farmer.MeatCut.BEEF_CHUCK), () -> Items.IRON_NUGGET, potato, carrot, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_IRONWORKERS_STEW, ModItems.IRONWORKERS_STEW, 18, 9));
+        // Milk leaves its bucket, Honey its bottle
+        COOKING.add(new Assembly(ModItems.UNCOOKED_LUMBERJACK_FLAPJACKS, 1, 5,
+            () -> Items.WHEAT, () -> Items.EGG, () -> Items.MILK_BUCKET, () -> Items.HONEY_BOTTLE, () -> Items.SUGAR));
+        OVEN.add(new Baking(ModItems.UNCOOKED_LUMBERJACK_FLAPJACKS, ModItems.LUMBERJACK_FLAPJACKS, 12, 6));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_BRICK_OVEN_PIZZA, 1, 5,
+            () -> Items.BREAD, cut(com.alexh.capitalism.farmer.MeatCut.PORK_HAM), () -> Items.BEETROOT, () -> Items.BROWN_MUSHROOM, () -> Items.MILK_BUCKET));
+        OVEN.add(new Baking(ModItems.UNCOOKED_BRICK_OVEN_PIZZA, ModItems.BRICK_OVEN_PIZZA, 15, 8));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_PRIME_RIB_DINNER, 1, 5,
+            cut(com.alexh.capitalism.farmer.MeatCut.BEEF_RIB), () -> Items.BAKED_POTATO, carrot, () -> Items.GOLDEN_CARROT, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_PRIME_RIB_DINNER, ModItems.PRIME_RIB_DINNER, 22, 11));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_ANGLERS_FISH_PIE, 1, 5,
+            () -> Items.SALMON, () -> Items.COD, potato, () -> Items.EGG, () -> Items.BREAD));
+        OVEN.add(new Baking(ModItems.UNCOOKED_ANGLERS_FISH_PIE, ModItems.ANGLERS_FISH_PIE, 15, 8));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_COMFORT_SOUP, 1, 5,
+            cut(com.alexh.capitalism.farmer.MeatCut.CHICKEN_BREAST), carrot, potato, rice, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_COMFORT_SOUP, ModItems.COMFORT_SOUP, 14, 7));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_TRAIL_MIX_BAR, 1, 5,
+            () -> Items.SWEET_BERRIES, () -> Items.COCOA_BEANS, () -> Items.WHEAT, () -> Items.HONEY_BOTTLE, () -> Items.SUGAR));
+        OVEN.add(new Baking(ModItems.UNCOOKED_TRAIL_MIX_BAR, ModItems.TRAIL_MIX_BAR, 10, 5));
+        COOKING.add(new Assembly(ModItems.UNCOOKED_NIGHT_WATCH_HOTPOT, 1, 5,
+            rice, cut(com.alexh.capitalism.farmer.MeatCut.PORK_LOIN), () -> Items.BROWN_MUSHROOM, carrot, bowl));
+        OVEN.add(new Baking(ModItems.UNCOOKED_NIGHT_WATCH_HOTPOT, ModItems.NIGHT_WATCH_HOTPOT, 16, 8));
+
         // ── Cooking Table only (no Oven) ──
         COOKING.add(new Assembly(ModItems.FRUIT_SALAD, 1, 4, () -> Items.MELON_SLICE, () -> Items.APPLE, () -> Items.MELON_SLICE, () -> Items.WHEAT));
         COOKING.add(new Assembly(ModItems.FROSTY_MELON_SORBET, 1, 5, () -> Items.MELON_SLICE, () -> Items.SNOWBALL, () -> Items.SUGAR, () -> Items.SWEET_BERRIES, bowl));
     }
 
     private KitchenRecipes() {
+    }
+
+    // a Farmer's raw fine cut (Raw Beef Brisket...), only made at the Butcher's Table
+    private static Supplier<Item> cut(com.alexh.capitalism.farmer.MeatCut cut) {
+        return () -> ModItems.MEAT_CUTS.get(cut).get();
     }
 
     public static @Nullable Assembly find(List<Assembly> recipes, Container slots, int slotCount) {

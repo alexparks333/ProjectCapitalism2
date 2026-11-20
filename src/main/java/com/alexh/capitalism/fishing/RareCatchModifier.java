@@ -70,6 +70,8 @@ public class RareCatchModifier extends LootModifier {
     // a rare catch for this player's cast, or null; never for someone an op has restricted (FishWatch: silently, they
     // just get ordinary fish)
     public static @Nullable RareCatch rollFor(ServerPlayer player, RareCatch.Where where, int luckOfTheSea, float otherLuck, RandomSource random) {
+        // Lucky Line (Angler's Sunrise): like 3 more points of Luck
+        if (player.hasEffect(com.alexh.capitalism.core.ModEffects.LUCKY_LINE)) otherLuck += 3;
         return FishWatch.restricted(player) ? null : roll(where, luckOfTheSea, otherLuck, random);
     }
 

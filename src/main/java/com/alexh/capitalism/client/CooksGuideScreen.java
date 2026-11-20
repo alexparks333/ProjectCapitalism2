@@ -265,7 +265,8 @@ public class CooksGuideScreen extends Screen {
         list.add(new KitchenItem(KitchenTab.ACCESSORIES, new ItemStack(com.alexh.capitalism.farmer.MeatCut.BEEF_RIB.cut()),
             HowToMake.steps("Farmers cut them from Meat Slabs at the Butcher's Table.", new ItemStack(ModItems.BUTCHERS_TABLE.get())), List.of(
             "Fine cuts of meat. Each piece rots in",
-            "time: the bar under it shows how fresh.")));
+            "time: the bar under it shows how fresh.",
+            "No Farmer? The town Butcher sometimes has some.")));
         ItemStack grill = new ItemStack(ModItems.GRILL.get());
         list.add(new KitchenItem(KitchenTab.BLOCKS, grill,
             HowToMake.crafting(new ItemStack(Items.IRON_BARS), new ItemStack(Items.IRON_BARS), new ItemStack(Items.IRON_BARS),
@@ -645,6 +646,14 @@ public class CooksGuideScreen extends Screen {
                 String name = instance.getEffect().value().getDisplayName().getString();
                 if (instance.getAmplifier() > 0) name += " " + Component.translatable("enchantment.level." + (instance.getAmplifier() + 1)).getString();
                 graphics.text(this.font, name + " " + duration(instance.getDuration()), x, y, EFFECT, false);
+                y += 10;
+            }
+        }
+        // what it does, in a line (SpecialtyTips, the same as its tooltip)
+        String tip = SpecialtyTips.tip(meal);
+        if (tip != null) {
+            for (var line : this.font.split(Component.literal(tip), 150)) {
+                graphics.text(this.font, line, x, y, TEXT_DIM, false);
                 y += 10;
             }
         }

@@ -2,6 +2,7 @@ package com.alexh.capitalism.npc;
 
 import com.alexh.capitalism.block.LiquorType;
 import com.alexh.capitalism.core.ModItems;
+import com.alexh.capitalism.farmer.MeatCut;
 import com.alexh.capitalism.occupation.CookMadeFood;
 import com.alexh.capitalism.occupation.Job;
 import net.minecraft.world.item.Item;
@@ -72,16 +73,34 @@ public final class NpcShops {
     // the smiths: 8 Whetstones per restock, 3 gold each at the NPC
     private static final int WHETSTONE_STOCK = 8;
     private static final int WHETSTONE_FAIR = 2 * GOLD;
+    // the Weaponsmith: 8 Bows per restock, 3 gold each at the NPC
+    private static final int BOW_STOCK = 8;
+    private static final int BOW_FAIR = 2 * GOLD;
+    // the Toolsmith: 4 (iron) Scythes per restock for Farmers, 6 gold each at the NPC (scythes are Toolsmith-only to craft)
+    private static final int SCYTHE_STOCK = 4;
+    private static final int SCYTHE_FAIR = 4 * GOLD;
+    // ...and 4 iron Butcher Knives (Farmers cut slabs with them; Toolsmith-only to craft), 4 gold each at the NPC
+    private static final int KNIFE_STOCK = 4;
+    private static final int KNIFE_FAIR = 3 * GOLD - 3;
+    // the Butcher: raw fine cuts by rarity (MeatCut.rarity 0 / 1 / 2): fair nuggets each, how many per restock
+    private static final int[] CUT_FAIR = {6, 12, 18};
+    private static final int[] CUT_STOCK = {4, 2, 1};
 
     private NpcShops() {
     }
 
     // The Boat Master's shop key (npc/BoatMaster; not a job)
     public static final String BOAT_MASTER = "boat_master";
+    // The Butcher's shop key (npc/Butcher; not a job)
+    public static final String BUTCHER = "butcher";
+    // Every shopkeeper who isn't a job's NPC (npc/Shopkeeper)
+    public static final List<String> SHOPKEEPERS = List.of(BOAT_MASTER, BUTCHER);
 
-    // A shop by its key: a job's id, or BOAT_MASTER
+    // A shop by its key: a job's id, or a SHOPKEEPERS key
     public static List<Section> sections(String shop) {
         if (BOAT_MASTER.equals(shop)) return BOATS;
+        List<Section> butcher = butcherShop(shop);
+        if (butcher != null) return butcher;
         Job job = Job.byId(shop);
         return job == null ? List.of() : sections(job);
     }
@@ -94,8 +113,11 @@ public final class NpcShops {
         return switch (job) {
             case COOK -> COOK;
             case BARTENDER -> BARTENDER;
-            case WEAPONSMITH -> smith(ModItems.WHETSTONE);
-            case TOOLSMITH -> smith(ModItems.PICKAXE_WHETSTONE);
+            // bows are Weaponsmith-only to craft, so his NPC sells them (3 gold at the NPC)
+            case WEAPONSMITH -> smith(ModItems.WHETSTONE, new Offer(() -> Items.BOW, BOW_FAIR, BOW_STOCK));
+            // scythes and butcher knives are Toolsmith-only to craft, so his NPC sells the iron ones (6 and 4 gold at the NPC)
+            case TOOLSMITH -> smith(ModItems.PICKAXE_WHETSTONE, new Offer(ModItems.SCYTHE, SCYTHE_FAIR, SCYTHE_STOCK),
+                new Offer(ModItems.IRON_BUTCHER_KNIFE, KNIFE_FAIR, KNIFE_STOCK));
             case ARMORSMITH -> smith(ModItems.ARMOR_WHETSTONE);
             default -> List.of();
         };
@@ -145,7 +167,15 @@ public final class NpcShops {
             new Offer(ModItems.SANGRIA_PITCHER, 9, DRINK_STOCK),
             new Offer(ModItems.TROPICAL_KELP_COOLER, 9, DRINK_STOCK),
             new Offer(ModItems.WHITE_WINE_SPRITZER, 9, DRINK_STOCK),
-            new Offer(ModItems.BEETROOT_VELVET_SOUR, 9, DRINK_STOCK))),
+            new Offer(ModItems.BEETROOT_VELVET_SOUR, 9, DRINK_STOCK),
+            new Offer(ModItems.MARGARITA, 9, DRINK_STOCK),
+            new Offer(ModItems.BERRY_DAIQUIRI, 9, DRINK_STOCK),
+            new Offer(ModItems.COSMOPOLITAN, 9, DRINK_STOCK),
+            new Offer(ModItems.TEQUILA_SUNRISE, 9, DRINK_STOCK),
+            new Offer(ModItems.MOSCOW_MULE, 9, DRINK_STOCK),
+            new Offer(ModItems.RUM_PUNCH, 9, DRINK_STOCK),
+            new Offer(ModItems.ROSE_SPRITZ, 9, DRINK_STOCK),
+            new Offer(ModItems.PUMPKIN_SPICE_FLIP, 9, DRINK_STOCK))),
         new Section("Shots", List.of(
             new Offer(ModItems.SHOTS.get(LiquorType.TEQUILA), 6, DRINK_STOCK), // 1 gold each
             new Offer(ModItems.SHOTS.get(LiquorType.VODKA), 6, DRINK_STOCK),
@@ -204,10 +234,49 @@ public final class NpcShops {
         return new Offer(() -> item, BOAT_FAIR, 0);
     }
 
-    // ── The smiths: a Repair tab (NpcRepairs) and their Whetstone. ──
-    private static List<Section> smith(Supplier<? extends Item> whetstone) {
-        return List.of(Section.repairTab(),
-            new Section("Shop", List.of(new Offer(whetstone, WHETSTONE_FAIR, WHETSTONE_STOCK))));
+    // ── The Butcher (npc/Butcher): raw fine cuts so Cooks can make the cut meals without a Farmer. Only CUTS_A_DAY
+    // random cuts each day he's in town (Butcher.todaysCuts), in one Cuts tab. His menu's shop key is "butcher:<mask>"
+    // (bit i = MeatCut i), so the client shows the same cuts and NpcStock keeps that day's stock apart; plain "butcher"
+    // is every cut (the bank's price check). NPC prices after the +50%: 1 gold for a common cut, 2 for a better one, 3
+    // for a rare one. ──
+    public static final int CUTS_A_DAY = 4;
+    private static final java.util.Map<Integer, List<Section>> BUTCHER_SHOPS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    // The Butcher's shop key for these cuts
+    public static String butcherKey(int mask) {
+        return BUTCHER + ":" + mask;
+    }
+
+    private static @org.jspecify.annotations.Nullable List<Section> butcherShop(String shop) {
+        int mask;
+        if (BUTCHER.equals(shop)) {
+            mask = (1 << MeatCut.values().length) - 1;
+        } else if (shop.startsWith(BUTCHER + ":")) {
+            try {
+                mask = Integer.parseInt(shop.substring(BUTCHER.length() + 1));
+            } catch (NumberFormatException e) {
+                return List.of();
+            }
+        } else {
+            return null;
+        }
+        return BUTCHER_SHOPS.computeIfAbsent(mask, m -> {
+            List<Offer> offers = new java.util.ArrayList<>();
+            for (MeatCut cut : MeatCut.values()) {
+                if ((m & (1 << cut.ordinal())) != 0) {
+                    offers.add(new Offer(() -> ModItems.MEAT_CUTS.get(cut).get(), CUT_FAIR[cut.rarity], CUT_STOCK[cut.rarity]));
+                }
+            }
+            return List.of(new Section("Cuts", List.copyOf(offers)));
+        });
+    }
+
+    // ── The smiths: a Repair tab (NpcRepairs), their Whetstone, and any extra goods (the Weaponsmith's Bow). ──
+    private static List<Section> smith(Supplier<? extends Item> whetstone, Offer... extra) {
+        List<Offer> shop = new java.util.ArrayList<>();
+        shop.add(new Offer(whetstone, WHETSTONE_FAIR, WHETSTONE_STOCK));
+        shop.addAll(List.of(extra));
+        return List.of(Section.repairTab(), new Section("Shop", List.copyOf(shop)));
     }
 
     // A Cook-made vanilla food, fairNuggets each, COOKED_STOCK per restock

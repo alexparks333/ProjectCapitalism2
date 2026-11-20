@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "I": "minecraft:ice"
+  },
+  "pattern": [
+    "II",
+    "II"
+  ],
+  "result": {
+    "id": "capitalism:butcher_shop_ice"
+  }
+}

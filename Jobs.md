@@ -17,9 +17,30 @@ Code: `occupation/` (`Job` = the list and each job's category, `JobData` = a pla
 - **`/pick`** (anyone): Essential jobs on the left, Fun jobs on the right, each column showing its slots ("0 of 1
   picked"). Click a job and a bar asks **"Become a Cook? This is for good." [Yes] [No]**. A full column is greyed out.
   Hover a job for all its pros and cons.
+- **A Cook can never be a Farmer, and a Farmer can never be a Cook** (`Job.clashesWith`), even with a Wishing Star slot or a Changing Star: the other one is greyed out on the job screen.
 - **Jobs are for good:** clicking a job you hold does nothing (the server says so). Only a Changing Star changes them.
 - **Slots:** 1 Essential and 1 Fun to start. A Wishing Star wished on the Wishing Well adds one of its kind, up to
   **2 each** (`JobData.MAX_SLOTS`), so 2 jobs can become 3 (or 4).
+
+## The job drafts (`occupation/JobDraft`, `/admin draft essential|fun ...`)
+How the server starts: players take turns picking, in an order the admin builds up. There are **two separate drafts**,
+the **Essential** draft and the **Fun** draft, each with its own list. **No cap:** any number of players can take the
+same job (five Cooks is fine; it just leaves a gap in the market). Ops only; `<kind>` = `essential` or `fun`.
+- **`/admin draft <kind> add <player>`** puts a player (online) at the end of that list. Everyone is told ("Bob joins
+  the Essential draft (#3)"). You can keep adding **while the draft runs**: they go to the back of the line.
+- **`/admin draft <kind> start`** starts it: one player at a time, top of the list down.
+- On your turn: everyone is told ("It's Bob's turn to pick an Essential job (2 of 10)"), you hear a bell and the job
+  screen opens. Picking (with the usual "This is for good" Yes/No) hands the turn on. Anyone who already has no free
+  slot of that kind is passed over by itself.
+- **Once anyone is on a list, that kind of job is only picked through the draft** (even before it starts): everyone
+  else's column is greyed out and the screen says who is picking. The other kind isn't held up (the Fun draft doesn't
+  stop Essential picks, and the other way round).
+- When the last player on the list has picked, that draft is **over** and anyone can /pick that kind again. (Adding
+  someone after that starts a new list: `start` it again.)
+- **`/admin draft <kind> skip`** passes over the current picker (offline, AFK); they can /pick freely once it's over.
+  A picker who logs back in on their turn gets the screen again. **`remove <name>`** takes someone off the list;
+  **`status`** shows the list (`[name]` = picking now); **`stop`** ends it early.
+- A Changing Star, `/admin jobs reset` and `/admin jobs clear` aren't part of the drafts. Kept in memory only: a server restart ends both (add whoever is left and start again).
 
 ## The Wishing Well (`occupation/WishingWellBlock`, `client/WishingWellModel`, `WishingWellRenderer`)
 - A round fieldstone well, **3 x 3 blocks and 3 high**: two courses of stones under a capstone rim, moss, clear
@@ -43,7 +64,9 @@ Code: `occupation/` (`Job` = the list and each job's category, `JobData` = a pla
 
 ## Commands and changing (`occupation/JobCommands`)
 - The old `/job` commands (`add`, `remove`, `slots`, `change`, `reset`) are **gone**: jobs only come from `/pick`, Wishing Stars and Changing Stars (`occupation/JobCommands` is just the `/pick` logic now).
-- **`/admin jobs reset <player>`** (ops, `core/AdminCommands`): clears their jobs so they pick again from scratch (the job screen opens for them); their job slots from Wishing Stars are kept.
+- **`/admin jobs reset <player>`** (ops, `core/AdminCommands`): puts someone **back to the very start**, as if they'd just joined: no jobs, **one Essential and one Fun slot** (any extra slots from Wishing Stars are gone, and the stars aren't given back). If they have extra slots it doesn't do it straight away: it says how many they'd lose and asks for **`/admin jobs reset <player> confirm`**. The job screen opens and they pick again.
+- **`/admin jobs clear <player>`**: for fixing someone's jobs later on (a bug, a mistake). Clears their jobs and the job screen opens, but **their job slots from Wishing Stars are kept** (someone with 2 + 2 slots picks 4 jobs again).
+- Both let them pick straight away, **with no job draft in the way** (saved as `JobData.freePick`, so it lasts through a relog; once every slot is full the drafts apply to them as usual).
 - **A Changing Star changes ONE job:** click one job you hold to let it go, then pick one new job of the **same kind** (Essential or Fun); that ends it (`JobData.released`). A second job can't be let go, and a job of the other kind can't be picked.
 - Older saves with 3 jobs keep the first job of each category.
 
@@ -137,7 +160,7 @@ For Sale / For Lease signs, and sell or lease lots to players (`/properties`); t
   explosions) gets one crop and one seed back (two of a crop that plants itself, like carrots).
 - **Pro:** the only job that can make and use the **Decomposter** (Yield, Super Yield and Fast Fertilizer, no fuel).
 - **Pro:** the only job that can use **Fertilizer** (Yield: 50% to 90% more crops; Fast: crops grow 1.75x as fast; one at a time).
-- **Pro:** the only job that can make **Scythes** (cut ripe crops 5 wide and 3 deep; the Diamond Scythe lasts longer; anyone can use one).
+- Scythes are made by **Toolsmiths** now (Farmers buy them; `Toolsmith.md`).
 - **Pro:** the only job that gets the **full meat drops** from animals. Everyone else (and lava, fire, falls) gets 1 piece of meat per animal (Butchery Basics can still add one).
 - **Pro:** animals killed with a diamond or netherite sword or axe may drop a **Meat Slab** (15%, 30% with a Bone in the
   sword's socket), cut up at the **Butcher's Table** into fine cuts that rot (Fridges and Freezers keep them). See `Farmer.md`.
@@ -151,7 +174,7 @@ Any crafting recipe can be made job-only (or give a job more) with the recipe ty
 ### Non-Gourmet food fills only 1/2
 **Except Cook-made food:** the same vanilla food made by a Cook (cooked in a furnace / smoker, or crafted) keeps its full values and counts as Gourmet (`Cook.md`).
 
-Always on. Every vanilla food fills 1/2 of its normal hunger, **rounded up to the nearest hunger point (half a drumstick)**. Saturation (the hidden "fullness" that drains before the drumsticks and speeds up healing) shrinks by the same amount, on purpose: normal food shouldn't keep you full for long. Gourmet food (made by a Cook) has its own full-strength values and isn't affected. Done by changing the foods' default components at startup (`FoodNerf`), so tooltips, eating and the diet all see the new numbers. To change a food, edit its line in `FoodNerf.table()`.
+Always on. Every vanilla food fills 1/2 of its normal hunger. **Meat and fish (raw or cooked) round up** to the nearest hunger point (half a drumstick); **everything else (vegetables, fruit, bread, stews, snacks) rounds down, never below 1**, so living on a pile of carrots or potatoes bought off a Farmer is no match for a Cook's meal. Saturation (the hidden "fullness" that drains before the drumsticks and speeds up healing) shrinks by the same amount, on purpose: normal food shouldn't keep you full for long. Gourmet food (made by a Cook) has its own full-strength values and isn't affected. Done by changing the foods' default components at startup (`FoodNerf`), so tooltips, eating and the diet all see the new numbers. To change a food, edit its line in `FoodNerf.table()`.
 
 1 hunger point = half a drumstick.
 
@@ -169,8 +192,8 @@ Always on. Every vanilla food fills 1/2 of its normal hunger, **rounded up to th
 | Mushroom Stew | 6 (3) | 3 (1.5) |
 | Suspicious Stew | 6 (3) | 3 (1.5) |
 | Honey Bottle | 6 (3) | 3 (1.5) |
-| Bread | 5 (2.5) | 3 (1.5) |
-| Baked Potato | 5 (2.5) | 3 (1.5) |
+| Bread | 5 (2.5) | **2 (1)** (rounds down) |
+| Baked Potato | 5 (2.5) | **2 (1)** (rounds down) |
 | Cooked Cod | 5 (2.5) | 3 (1.5) |
 | Cooked Rabbit | 5 (2.5) | 3 (1.5) |
 | Apple | 4 (2) | 2 (1) |
@@ -178,7 +201,7 @@ Always on. Every vanilla food fills 1/2 of its normal hunger, **rounded up to th
 | Enchanted Golden Apple | 4 (2) | 2 (1) |
 | Chorus Fruit | 4 (2) | 2 (1) |
 | Rotten Flesh | 4 (2) | 2 (1) |
-| Carrot | 3 (1.5) | 2 (1) |
+| Carrot | 3 (1.5) | **1 (0.5)** (rounds down) |
 | Raw Beef | 3 (1.5) | 2 (1) |
 | Raw Porkchop | 3 (1.5) | 2 (1) |
 | Raw Rabbit | 3 (1.5) | 2 (1) |
@@ -198,4 +221,4 @@ Always on. Every vanilla food fills 1/2 of its normal hunger, **rounded up to th
 | Tropical Fish | 1 (0.5) | 1 (0.5) |
 | Pufferfish | 1 (0.5) | 1 (0.5) |
 
-Because it rounds **up**, every 1- and 2-point food is unchanged; the debuff hits the big meals.
+Most foods have even values, so the rounding only matters for the odd ones: meat and fish (Cooked Cod, Cooked Rabbit, raw Beef, Porkchop, Rabbit) round up, while Bread, Baked Potato and Carrot round down. 1-point foods (Potato, Beetroot, Dried Kelp) stay at 1 rather than 0. A Cook-made version of any of these is full strength (Baked Potato 2.5 drumsticks instead of 1).

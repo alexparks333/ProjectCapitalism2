@@ -24,7 +24,8 @@ public class JobData {
         Codec.INT.optionalFieldOf("essential_slots", 1).forGetter(d -> d.essentialSlots),
         Codec.INT.optionalFieldOf("fun_slots", 1).forGetter(d -> d.funSlots),
         Codec.BOOL.optionalFieldOf("changing", false).forGetter(d -> d.changing),
-        Codec.INT.optionalFieldOf("released", -1).forGetter(d -> d.released)
+        Codec.INT.optionalFieldOf("released", -1).forGetter(d -> d.released),
+        Codec.BOOL.optionalFieldOf("free_pick", false).forGetter(d -> d.freePick)
     ).apply(inst, JobData::new));
 
     private final Set<Job> jobs = EnumSet.noneOf(Job.class);
@@ -34,11 +35,14 @@ public class JobData {
     private boolean changing;
     // while changing: the kind of job let go of (Job.Category ordinal), -1 before one is; only ONE job changes per star
     private int released = -1;
+    // an admin reset their jobs (/admin jobs reset): they pick again freely, no job draft in the way, until every slot is full
+    private boolean freePick;
 
     public JobData() {
     }
 
-    private JobData(List<String> ids, int essentialSlots, int funSlots, boolean changing, int released) {
+    private JobData(List<String> ids, int essentialSlots, int funSlots, boolean changing, int released, boolean freePick) {
+        this.freePick = freePick;
         this.released = released;
         this.essentialSlots = Math.max(1, Math.min(MAX_SLOTS, essentialSlots));
         this.funSlots = Math.max(1, Math.min(MAX_SLOTS, funSlots));
@@ -111,6 +115,14 @@ public class JobData {
 
     public void setReleased(Job.@org.jspecify.annotations.Nullable Category category) {
         this.released = category == null ? -1 : category.ordinal();
+    }
+
+    public boolean freePick() {
+        return this.freePick;
+    }
+
+    public void setFreePick(boolean freePick) {
+        this.freePick = freePick;
     }
 
     public boolean changing() {

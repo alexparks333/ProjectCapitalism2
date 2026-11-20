@@ -53,6 +53,13 @@ public enum Skill {
     REACHING_FURTHER("Reaching Further", 0x9A6AD0, false, true, "Reach {1 block|2 blocks} further when mining and building.", Attributes.BLOCK_INTERACTION_RANGE, 1.0, ADD_VALUE),
     ICE_IN_THE_PANTS("Ice In The Pants", 0x8FD8F0, false, false, "You never get hot."),
     HOT_PEPPER("Hot Pepper", 0xD8361E, false, false, "You never get cold."),
+    // ── Blood Moon Books (timed: one night long, BLOOD_NIGHT_TICKS; rarer than lessons, a little less rare than traits;
+    // the same from a Rough or a Delicate Book). Their effects are in SkillEffects. ──
+    REVENANTS_BANE("Revenant's Bane", 0x9A1020, false, false, "Hit the Crimson Revenant 75% harder."),
+    WITCHS_BANE("Witch's Bane", 0x8A2A6A, false, false, "Hit the Sanguine Witch 75% harder."),
+    WOLFSBANE("Wolfsbane", 0x6A1818, false, false, "Hit Gorefang 75% harder."),
+    BLOOD_FURY("Blood Fury", 0xC8202A, false, false, "Hit monsters 15% harder during a Blood Moon."),
+    BLOOD_WARD("Blood Ward", 0x5A2A3A, false, false, "Take 10% less damage during a Blood Moon."),
     // ── Instant (once, when read) ──
     FRESH_START("A Fresh Start", 0x7FD87F, false, "Your body starts over: diet, water and temperature back to how they began."),
     // ── Traits (permanent) ──
@@ -77,6 +84,11 @@ public enum Skill {
     public static final int DELICATE_TICKS = 48000;
     public static final float ROUGH_TRAIT_CHANCE = 0.01F;
     public static final float DELICATE_TRAIT_CHANCE = 0.125F;
+    // Blood Moon Books: a little less rare than traits
+    public static final float ROUGH_BLOOD_CHANCE = 0.015F;
+    public static final float DELICATE_BLOOD_CHANCE = 0.16F;
+    // how long a Blood Moon Book lasts: about one night (dusk to dawn)
+    public static final int BLOOD_NIGHT_TICKS = 11000;
     public static final int COMMON_WEIGHT = 10;
     public static final int RARE_WEIGHT = 4;
 
@@ -154,18 +166,29 @@ public enum Skill {
         return null;
     }
 
+    // a Blood Moon Book (one night long, for the Blood Moon and its bosses)
+    public boolean bloodMoon() {
+        return this == REVENANTS_BANE || this == WITCHS_BANE || this == WOLFSBANE || this == BLOOD_FURY || this == BLOOD_WARD;
+    }
+
     private static List<Skill> all(boolean trait) {
         List<Skill> list = new ArrayList<>();
         for (Skill skill : values()) {
-            if (skill.trait == trait) list.add(skill);
+            if (skill.trait == trait && !skill.bloodMoon()) list.add(skill);
         }
         return list;
     }
 
-    // A random book: first lesson or trait (traitOdds times the usual trait chance: 2 with Lucky Librarian), then which
-    // one by weight
+    // A random book: first trait or not (traitOdds times the usual chance: 2 with Lucky Librarian, more with a fine
+    // Knowledge Piece), then, if not, a Blood Moon Book or a lesson (the same odds multiplier), then which one (by
+    // weight; Blood Moon Books all alike). Traits are rolled first so their odds stay exactly as they were.
     public static Skill roll(RandomSource random, boolean delicate, float traitOdds) {
         boolean trait = random.nextFloat() < (delicate ? DELICATE_TRAIT_CHANCE : ROUGH_TRAIT_CHANCE) * traitOdds;
+        if (!trait && random.nextFloat() < (delicate ? DELICATE_BLOOD_CHANCE : ROUGH_BLOOD_CHANCE) * traitOdds) {
+            List<Skill> blood = new ArrayList<>();
+            for (Skill skill : values()) if (skill.bloodMoon()) blood.add(skill);
+            return blood.get(random.nextInt(blood.size()));
+        }
         List<Skill> pool = all(trait);
         int total = 0;
         for (Skill skill : pool) total += skill.weight();

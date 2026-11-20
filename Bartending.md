@@ -21,7 +21,7 @@ Type **`/guides`** to open the Guides screen, then click **Bartender's Guide**. 
 
 **Recipes** (two tabs)
 - **Drinks** (plain drinks: wine glasses, Beet Nightcap, the classic cocktails) and **Specialty Drinks** (cocktails with effects). A drink goes in Specialty Drinks automatically if it gives any effect.
-- **Click any drink or item** to see its recipe: machine, ingredients, glass bottles, time and water drops.
+- **Click any drink or item** to see its recipe: machine, ingredients, glass bottles, time and water drops. Once made, a Specialty drink also shows what it does in one line (the same line as its tooltip, `client/SpecialtyTips`; no numbers).
 - **Gold-outlined ingredients** can be made too. Click one to jump to its recipe. (e.g. a juice in a drink jumps to Bar > Ingredients.)
 - **Undiscovered recipes (Smash Bros style):** anything you haven't made yet shows as a **black silhouette**, and its page says **"???"** instead of the name, with its drops / drumsticks / effects hidden ("Make it once to unlock its name and info!"). The **recipe itself still shows** (ingredients aren't hidden), so you can work out how to make it. Make it **once** (take it out of the machine's result slot) and the picture, name and info unlock for good. Per player, kept through death.
   - Counts as "made": crafting it (blocks, plates), smelting it (Cooked Rice), taking it out of the Juicer / Fermenter bucket slot, the Bartending Table result, the Sushi Table output, the Cooking Table result, or an Oven meal slot, by hand (clicking or shift-clicking). Pulling it out with a hopper doesn't count. Buying it doesn't count.
@@ -216,8 +216,16 @@ A glass of wine hands back its glass bottle when you drink it.
 | **Zombie's Hangover Cure** | Shot of Vodka, Carrot Juice, Beetroot Juice, Rotten Flesh, Milk Bucket | 1 | **Iron Stomach** + Regeneration II 1:30 |
 | **Ender Twilight Fizz** | Shot of Vodka, Shot of White Wine, Chorus Fruit Juice, Glow Berry Juice, Sugar | 1 | **Spatial Dislocation** 1:30 |
 | **Drunken Brawler's Stout** | Shot of Tequila, Shot of Whiskey, Shot of Rum, Bitters, Leather | 1 | **Berserker's Rage** 1:00 (Strength II + no knockback + Nausea) |
+| **Forgefire Old Fashioned** | Shot of Whiskey, Bitters, Magma Cream, Iron Nugget, Simple Syrup | 1 | **Steady Forge** 5:00 |
+| **Angler's Sunrise** | Shot of Tequila, Kelp Juice, Glow Berry Juice, Raw Cod, Sugar | 1 | **Lucky Line** 5:00 |
+| **Butcher's Bloody Mary** | Shot of Vodka, Beetroot Juice, Carrot Juice, Bitters, Bone Meal | 1 | **Steady Hands** 5:00 |
+| **Hot Toddy** | Shot of Whiskey, Honey Bottle, Purified Water, Sugar | 1 | **Warmed Up** 8:00 |
+| **Midnight Oil Martini** | Shot of Vodka, Cocoa Beans, Simple Syrup, Bitters, Sugar | 1 | **Quick Study** 3:00 |
+| **Haggler's Highball** | Shot of Whiskey, Gold Nugget, Water Bucket, Bitters, Sugar | 1 | **Silver Tongue** 5:00 |
+| **Desert Rose** | Shot of Tequila, Cactus, Watermelon Juice, Simple Syrup, Sugar | 1 | **Quenched** 4:00 |
+| **Moonstalker Sangria** | Shot of Red Wine, Beetroot Juice, Sweet Berries, Bitters, Spider Eye | 1 | **Moonstalker** 5:00 |
 
-**Classic cocktails** (no effects: just the 6 water drops, gold when full, like every cocktail):
+**Classic cocktails** (no effects: just the 6 water drops, gold when full, like every cocktail; textures of the second round by `tools/make_cocktails.ps1`; the Bartender NPC sells all of them):
 
 | Drink | Ingredients | Glass bottles |
 |---|---|---|
@@ -228,13 +236,31 @@ A glass of wine hands back its glass bottle when you drink it.
 | **White Wine Spritzer** | Shot of White Wine, Apple Juice, Simple Syrup, Water Bucket, Sugar | 1 |
 | **Tropical Kelp Cooler** | Shot of Rum, Kelp Juice, Watermelon Juice, Simple Syrup, Sugar | 1 |
 | **Beetroot Velvet Sour** | Shot of Tequila, Beetroot Juice, Bitters, Simple Syrup, Egg | 1 |
+| **Margarita** | Shot of Tequila, Simple Syrup, Cactus (the lime), Sugar, Snowball (the ice) | 1 |
+| **Berry Daiquiri** | Shot of Rum, Sweet Berry Juice, Simple Syrup, Snowball | 1 |
+| **Cosmopolitan** | Shot of Vodka, Sweet Berry Juice, Apple Juice, Simple Syrup | 1 |
+| **Tequila Sunrise** | Shot of Tequila, Glow Berry Juice, Sweet Berry Juice, Simple Syrup | 1 |
+| **Moscow Mule** | Shot of Vodka, Carrot Juice (the ginger), Simple Syrup, Bitters, Copper Ingot (the mug) | 1 |
+| **Rum Punch** | Shot of Rum, Watermelon Juice, Sweet Berry Juice, Apple Juice, Sugar | 1 |
+| **Rosé Spritz** | Shot of Red Wine, Watermelon Juice, Simple Syrup, Sugar | 1 |
+| **Pumpkin Spice Flip** | Shot of Rum, Pumpkin, Egg, Milk Bucket, Sugar | 1 |
 
 Every cocktail gives **6 water drops** (overflow turns gold), can be drunk even when your bars are full, hands back its glass bottle.  Ingredients go in any order. Honey Bottles give their glass back into the glass slot; Water and Milk Buckets leave their empty bucket.
 
 ### Cocktail effects
+Every Specialty drink (and Specialty meal, `Cook.md`) has a one-line "what it does" on its tooltip, in purple (`client/SpecialtyTips`; add a line there for a new one).
+- **The second round** (each helps a job, so they come to the Bartender; textures `tools/make_cocktails.ps1`, icons `tools/make_effect_icons.ps1`):
+  - **Steady Forge** (Forgefire Old Fashioned, smiths): dents in a smith table's repair game stay hot 50% longer (`client/DentGame`).
+  - **Lucky Line** (Angler's Sunrise, anglers): rare catches come more often, like 3 more points of Luck (still needs Luck of the Sea on the rod; `fishing/RareCatchModifier`).
+  - **Steady Hands** (Butcher's Bloody Mary, Farmers): the butchery game's scanner lasts 50% longer, and trimming can lose 8% of the meat (not 5%) before it's botched (`client/ButcheryGame`).
+  - **Hot Toddy**: Warmed Up for 8 minutes (the cold can't reach you; Campfire Chili gives 5).
+  - **Quick Study** (Midnight Oil Martini, the Librarian's customers): skill books read in half the time, Temporary lessons last 25% longer (`librarian/SkillBookItem`).
+  - **Silver Tongue** (Haggler's Highball): 10% off at NPC shops (`economy/NpcPricing`; it counts in the Banker's lowest-price floor too).
+  - **Quenched** (Desert Rose): thirst drains half as fast.
+  - **Moonstalker** (Moonstalker Sangria): +15% damage to hostile mobs at night, and to the Blood Moon bosses any time (arrows too; `player/DrinkEffects`).
 - **Luminescent Aura** (Glowberry Gold Rush): a bright light (level 15) follows your head, so you don't need torches while it lasts. It's an invisible light block that moves with you (in air or water) and disappears when the effect ends or you log out.
 - **Magma Trail** (Nether Fireball Shot): you leave a trail of little flames where you walk (each lasts 5 seconds). They don't hurt you or blocks, but **hostile mobs and other players** that step in them take half a heart of fire damage and catch fire for 4 seconds (Fire Resistance protects them; creative players are left alone).
-- **Phase Step** (Ender Tele-Tini): the moment you finish drinking it, you're **teleported back to where you were standing 10 seconds earlier** (same dimension only), with portal particles, and get **Slow Falling for 10 seconds** so you land safely.
+- **Phase Step** (Ender Tele-Tini): the moment you finish drinking it, you're **teleported back to where you were standing 5 seconds earlier** (same dimension only), with portal particles, and get **Slow Falling for 10 seconds** so you land safely.
 - **Aquatic Treasure Vision** (Pirate's High Seas Grog): chests that are part of a **shipwreck** or **buried treasure**, within about 48 blocks, **show as a glowing cyan spot, through the ground and water**: a small glowing orb sits in the middle of each chest (a client-only display entity: a shrunken sea lantern with a cyan glow outline), plus soft sparkles rising from it when it's in view. Only you see it (the server never knows about it), it has no hitbox so it can't get in your way, and it disappears when you leave or the effect ends. **Opening the chest doesn't stop the glow**, only breaking it does: the first time Treasure Vision spots an unopened treasure chest it tags that chest for good (`ModAttachments.TREASURE_CHEST`, saved on the chest). A chest someone opened before anyone saw it with Treasure Vision can't be told apart from a normal chest, so it won't glow. The list updates every 2 seconds; opened chests stop glowing. Plus Dolphin's Grace for fast swimming (1:00). (Skimming the surface fast with Dolphin's Grace used to get you kicked for "flying" by vanilla's anti-fly check; while you have Dolphin's Grace and water is within 3 blocks under you, the server now forgives it. Also covers the Ocean Sovereign Roll.)
 - **Fortune Boost** (Miner's Moonshine): every item an ore drops has a **1 in 3 chance of one extra**, on top of Fortune. (Silk-touched ore blocks don't count.) Plus Haste II.
 - **Life Siphon** (Vampiric Mulled Wine): when you hit a **hostile mob in melee**, you heal **25% of the damage** you dealt (red particles). Arrows don't count.

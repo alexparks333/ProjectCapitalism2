@@ -101,6 +101,8 @@ public class WeaponsmithsGuideScreen extends JobGuideScreen {
             "Gear back into 1 of its material.")));
         list.add(new Entry(USING, socket, "Molten Sockets", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_SWORD), socket), List.of(), List.of(
             "Adds a gem socket to a sword, mace or", "trident. Try different gems.")));
+        list.add(new Entry(USING, new ItemStack(Items.REDSTONE), "Setting Gems", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_SWORD), new ItemStack(Items.REDSTONE)), List.of(), List.of(
+            "Only you set gems in weapons, here.", "A weapon alone breaks its gem out:", "the gem is lost.")));
 
         // ── Recipes: Crafting ──
         addSwordAndAxe(list, iron, "Iron", "Iron Ingots", Items.IRON_SWORD, Items.IRON_AXE, stick);

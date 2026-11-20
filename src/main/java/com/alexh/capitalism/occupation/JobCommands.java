@@ -33,8 +33,20 @@ public final class JobCommands {
             data.setReleased(job.category);
             player.sendSystemMessage(Component.literal("You let go of " + job.title + ". Now pick a new " + job.category.title + " job.").withStyle(ChatFormatting.YELLOW));
         } else {
+            // the job draft (JobDraft): only the player whose turn it is picks, and only that round's kind
+            // (a Changing Star's change isn't part of the draft)
+            String draft = data.changing() ? null : JobDraft.blocked(player, job);
+            if (draft != null) {
+                player.sendSystemMessage(Component.literal(draft).withStyle(ChatFormatting.RED));
+                return;
+            }
             if (data.changing() && released == null && !data.hasFreeSlot(job.category)) {
                 player.sendSystemMessage(Component.literal("First click the job you want to let go of.").withStyle(ChatFormatting.RED));
+                return;
+            }
+            // a Cook can't be a Farmer, a Farmer can't be a Cook (Job.clashesWith)
+            if (job.clashesWith() != null && data.has(job.clashesWith())) {
+                player.sendSystemMessage(Component.literal("You're a " + job.clashesWith().title + ": you can't also be a " + job.title + ".").withStyle(ChatFormatting.RED));
                 return;
             }
             if (released != null && job.category != released) {
@@ -54,7 +66,12 @@ public final class JobCommands {
                 player.sendSystemMessage(Component.literal("Your new job is set.").withStyle(ChatFormatting.GOLD));
             }
         }
+        // reset by an admin: free to pick until every slot is full again, then the drafts apply as usual
+        boolean wasFree = data.freePick();
+        if (wasFree && data.full()) data.setFreePick(false);
         player.setData(ModAttachments.JOBS.get(), data);
         JobEvents.sync(player);
+        if (wasFree && !data.freePick()) JobDraft.sync(player);
+        if (data.has(job) && released == null && !data.changing()) JobDraft.picked(player, job);
     }
 }

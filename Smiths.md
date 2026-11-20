@@ -66,7 +66,7 @@ enchanting). Damaged item + 1 of its material, press **Forge**: glowing dents po
 before they cool. More damaged = more dents (4-14), faster. All dents = a full anvil repair (25%); Compacted Iron /
 Diamond = double the repair for double the XP. **XP:** Netherite 5, Diamond 2, else 1 (x2 Compacted). Lava: 100.
 While no smith of that job is online, their **NPC** repairs too: 30% per repair for 2-50 gold by material, and sells
-that smith's Whetstone (3 gold, 8 per restock). See `NPCs.md`.
+that smith's Whetstone (3 gold, 8 per restock); the Weaponsmith NPC also sells Bows (3 gold, 8 per restock), the Toolsmith NPC Scythes (6 gold, 4 per restock); Scythes repair at the Toolsmith Table. See `NPCs.md`.
 
 ### Salvage
 **Salvage Hammer** (iron T: `III / .I. / .I.`, only smiths can craft it, 35 uses). Gear + hammer -> 1 of its material
@@ -74,7 +74,7 @@ that smith's Whetstone (3 gold, 8 per restock). See `NPCs.md`.
 
 ## Molten Sockets (see `Sockets.md`)
 1% drop from really hard mobs (2% with an Emerald sword); the Wither and Ender Dragon always drop one. A smith sets it
-for 30 levels; the owner right-clicks gems in and out.
+for 30 levels; the same smith sets gems in it at their table (1 level each), and breaks them out (the gem is lost).
 
 | Gem | Sword | Pickaxe | Armor (each piece, they add up) |
 |---|---|---|---|

@@ -143,6 +143,14 @@ public class ModSetupEvents {
             (packet, context) -> context.enqueueWork(() -> com.alexh.capitalism.client.DayNoticeHud.show(packet))
         );
         registrar.playToClient(
+            com.alexh.capitalism.network.DraftStatePacket.TYPE,
+            com.alexh.capitalism.network.DraftStatePacket.STREAM_CODEC,
+            (packet, context) -> context.enqueueWork(() -> {
+                ClientJobData.draftLine = new String[] {packet.essentialLine(), packet.funLine()};
+                ClientJobData.draftLocked = new boolean[] {packet.essentialLocked(), packet.funLocked()};
+            })
+        );
+        registrar.playToClient(
             com.alexh.capitalism.network.OpenJobPickPacket.TYPE,
             com.alexh.capitalism.network.OpenJobPickPacket.STREAM_CODEC,
             (packet, context) -> context.enqueueWork(com.alexh.capitalism.client.JobPickScreen::open)
@@ -183,6 +191,18 @@ public class ModSetupEvents {
                     && player.level().getEntity(packet.entityId()) instanceof Apprentice apprentice) {
                     apprentice.rename(player, packet.name());
                 }
+            })
+        );
+        registrar.playToClient(
+            com.alexh.capitalism.network.AdminPanelPacket.TYPE,
+            com.alexh.capitalism.network.AdminPanelPacket.STREAM_CODEC,
+            (packet, context) -> context.enqueueWork(() -> com.alexh.capitalism.client.AdminPanelScreen.receive(packet))
+        );
+        registrar.playToServer(
+            com.alexh.capitalism.network.AdminSetPacket.TYPE,
+            com.alexh.capitalism.network.AdminSetPacket.STREAM_CODEC,
+            (packet, context) -> context.enqueueWork(() -> {
+                if (context.player() instanceof ServerPlayer player) AdminPanel.handle(player, packet.key(), packet.value());
             })
         );
         registrar.playToClient(

@@ -32,7 +32,8 @@ public class DietData {
 
     private final float[] values = new float[GROUPS];
     // Which head start the player has had (see startBalanced). Bumping SEED gives everyone a fresh one once.
-    private static final int SEED = 2;
+    // 3: the diet window grew (130 -> 200 points): players who already had a head start keep their mix, scaled up.
+    private static final int SEED = 3;
     private int seed;
     // Meals eaten that count toward the diet. Buffs/debuffs only start after enough of them (config),
     // so nobody gets the Balanced bonus just for having the head start.
@@ -58,6 +59,13 @@ public class DietData {
     // Returns true if it did anything (only once per player, ever).
     public boolean startBalanced(float totalPoints) {
         if (this.seed >= SEED) return false;
+        float total = total(this.values);
+        if (this.seed >= 2 && total > 0) {
+            // already had a head start: keep what they've been eating, just scaled to the (bigger) window
+            this.seed = SEED;
+            for (int i = 0; i < GROUPS; i++) this.values[i] *= totalPoints / total;
+            return true;
+        }
         this.seed = SEED;
         for (int i = 0; i < GROUPS; i++) {
             this.values[i] = totalPoints * IDEAL[i];
@@ -74,7 +82,7 @@ public class DietData {
 
     // Adds a meal: `points` (the food's hunger value) split across the groups by `shares` (they add up to 1).
     // The diet only remembers the last `window` points: past that, everything shrinks to make room, so one snack
-    // can only nudge the chart (a 2-point melon slice is ~1.5% of a 130-point window).
+    // can only nudge the chart (a 2-point melon slice is 1% of a 200-point window).
     public void eat(float[] shares, float points, float window) {
         for (int i = 0; i < GROUPS; i++) {
             this.values[i] += shares[i] * points;
@@ -124,7 +132,7 @@ public class DietData {
 
     public static Tier tier(float[] values) {
         double minPoints = 12;
-        double good = 0.86;
+        double good = 0.90;
         double poor = 0.44;
         try {
             minPoints = CapitalismConfig.DIET_MIN_POINTS.get();
@@ -139,7 +147,7 @@ public class DietData {
         for (float v : values) {
             if (Math.round(v / total(values) * 100) == 0) return Tier.POOR;
         }
-        // Compare whole percentages, like the screen shows them (Poor 0-44%, Okay 45-85%, Balanced 86%+).
+        // Compare whole percentages, like the screen shows them (Poor 0-44%, Okay 45-89%, Balanced 90%+).
         long pct = Math.round(balance(values) * 100);
         if (pct >= Math.round(good * 100)) return Tier.BALANCED;
         if (pct <= Math.round(poor * 100)) return Tier.POOR;

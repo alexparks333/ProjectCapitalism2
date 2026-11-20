@@ -51,6 +51,35 @@ public final class MealEffects {
     private MealEffects() {
     }
 
+    // ── The second round of Specialty meals (Cook.md > Meal effects) ──
+    // Timber (Lumberjack Flapjacks): an axe chops logs 25% faster
+    @SubscribeEvent
+    public static void onBreakSpeed(net.neoforged.neoforge.event.entity.player.PlayerEvent.BreakSpeed event) {
+        Player player = event.getEntity();
+        if (!player.hasEffect(ModEffects.TIMBER) || !event.getState().is(net.minecraft.tags.BlockTags.LOGS)) return;
+        if (!player.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)) return;
+        event.setNewSpeed(event.getNewSpeed() * 1.25F);
+    }
+
+    // Night Watch (Night Watch Hotpot): hostile mobs only notice you from half as far away
+    @SubscribeEvent
+    public static void onVisibility(net.neoforged.neoforge.event.entity.living.LivingEvent.LivingVisibilityEvent event) {
+        if (event.getEntity() instanceof Player player && player.hasEffect(ModEffects.NIGHT_WATCH)
+            && event.getLookingEntity() instanceof net.minecraft.world.entity.monster.Enemy) {
+            event.modifyVisibility(0.5);
+        }
+    }
+
+    // Comfort Soup: cures the sickness from raw water (Hunger) and warms you back up to normal if you're cold
+    @SubscribeEvent
+    public static void onEat(net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent.Finish event) {
+        if (!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player)) return;
+        if (!event.getItem().is(com.alexh.capitalism.core.ModItems.COMFORT_SOUP.get())) return;
+        player.removeEffect(net.minecraft.world.effect.MobEffects.HUNGER);
+        WellbeingData wellbeing = player.getData(com.alexh.capitalism.core.ModAttachments.WELLBEING.get());
+        if (wellbeing.bodyHeat < BodyTemperature.NORMAL) wellbeing.bodyHeat = BodyTemperature.NORMAL;
+    }
+
     // Players move on their own client, so the boost runs there (only for your own player).
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Pre event) {

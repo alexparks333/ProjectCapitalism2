@@ -131,7 +131,9 @@ public class JobPickScreen extends Screen {
                 boolean hover = inside(mouseX, mouseY, x, y);
                 boolean has = ClientJobData.has(job);
                 // a full column (and not changing): its other jobs are out of reach
-                boolean locked = !has && ClientJobData.count(category) >= ClientJobData.slots(category);
+                // (and the job draft: not our turn, or not this round's kind)
+                boolean locked = !has && (ClientJobData.count(category) >= ClientJobData.slots(category) || ClientJobData.draftLocks(category)
+                    || clashes(job));
                 if (hover) hovered = job;
                 graphics.fill(x, y, x + TILE_W, y + TILE_H, has ? PICKED_TRIM : hover ? TRIM_LIGHT : TRIM_DARK);
                 graphics.fill(x + 1, y + 1, x + TILE_W - 1, y + TILE_H - 1, has ? PICKED : hover && !locked ? TILE_HOVER : TILE);
@@ -151,6 +153,9 @@ public class JobPickScreen extends Screen {
             graphics.text(this.font, q, l + 16, by + 2, GOLD, false);
             button(graphics, mouseX, mouseY, yesX(), by, "Yes", 0xFF2E7A28);
             button(graphics, mouseX, mouseY, noX(), by, "No", 0xFF7A2828);
+        } else if (!ClientJobData.draftText().isEmpty()) {
+            graphics.centeredText(this.font, ClientJobData.draftText(), l + panelW() / 2, t + panelH() - 16,
+                ClientJobData.draftYourTurn() ? PICKED_TRIM : GOLD);
         } else if (ClientJobData.changing) {
             graphics.centeredText(this.font, "Changing jobs: click a job you hold to drop it, then pick another.", l + panelW() / 2, t + panelH() - 16, GOLD);
         }
@@ -204,6 +209,9 @@ public class JobPickScreen extends Screen {
                         // held: only a change (Changing Star) lets it go; the server says why not otherwise
                         ClientPacketDistributor.sendToServer(new PickJobPacket(job.ordinal()));
                         this.confirming = null;
+                    } else if (ClientJobData.draftLocks(category) || clashes(job)) {
+                        // the server says whose turn it is
+                        ClientPacketDistributor.sendToServer(new PickJobPacket(job.ordinal()));
                     } else if (ClientJobData.count(category) < ClientJobData.slots(category)) {
                         this.confirming = job;
                     }
@@ -212,6 +220,11 @@ public class JobPickScreen extends Screen {
             }
         }
         return super.mouseClicked(event, doubleClick);
+    }
+
+    // holds the job this one can't go with (a Cook can't be a Farmer and the other way round)
+    private static boolean clashes(Job job) {
+        return job.clashesWith() != null && ClientJobData.has(job.clashesWith());
     }
 
     private static boolean inside(int mx, int my, int x, int y) {

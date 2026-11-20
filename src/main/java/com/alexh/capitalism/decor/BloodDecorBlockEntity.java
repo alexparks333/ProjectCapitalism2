@@ -97,6 +97,10 @@ public class BloodDecorBlockEntity extends BlockEntity implements Container, Men
     private int holding;
     // the bookshelf door: who placed it
     private @Nullable UUID owner;
+    // the Haunted Tombstone: what's carved on it (a Name Tag's name; synced to the client to draw)
+    private String epitaph = "";
+    // the Grinning Jack-o'-Lantern: when it last cackled (game time; not saved)
+    private long lastCackle = -100000L;
 
     private final ContainerOpenersCounter openers = new ContainerOpenersCounter() {
         @Override
@@ -152,6 +156,7 @@ public class BloodDecorBlockEntity extends BlockEntity implements Container, Men
                 if (level.getGameTime() % 20 == Math.floorMod(pos.asLong(), 20)) gutter(level, pos, state);
             }
             case IRON_MAIDEN -> be.watchTrap(level, pos, state);
+            case GRINNING_JACK_O_LANTERN -> be.cackle(level, pos);
             case BLOOD_FOUNTAIN -> {
                 if (level.getGameTime() % 10 == Math.floorMod(pos.asLong(), 10)) takeCoins(level, pos);
             }
@@ -546,6 +551,7 @@ public class BloodDecorBlockEntity extends BlockEntity implements Container, Men
         this.song = input.getIntOr("song", 0);
         this.fuel = input.getIntOr("fuel", 0);
         this.owner = input.read("owner", UUIDUtil.CODEC).orElse(null);
+        this.epitaph = input.getStringOr("epitaph", "");
     }
 
     @Override
@@ -555,6 +561,7 @@ public class BloodDecorBlockEntity extends BlockEntity implements Container, Men
         output.putInt("song", this.song);
         output.putInt("fuel", this.fuel);
         if (this.owner != null) output.store("owner", UUIDUtil.CODEC, this.owner);
+        if (!this.epitaph.isEmpty()) output.putString("epitaph", this.epitaph);
     }
 
     @Override
@@ -564,6 +571,59 @@ public class BloodDecorBlockEntity extends BlockEntity implements Container, Men
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return new CompoundTag();
+        // (only what the client draws: the tombstone's epitaph)
+        CompoundTag tag = new CompoundTag();
+        if (!this.epitaph.isEmpty()) tag.putString("epitaph", this.epitaph);
+        return tag;
+    }
+
+    // ── the Haunted Tombstone ──
+
+    public static final int EPITAPH_MAX = 60;
+
+    public String epitaph() {
+        return this.epitaph;
+    }
+
+    public void setEpitaph(String text) {
+        this.epitaph = text.length() > EPITAPH_MAX ? text.substring(0, EPITAPH_MAX) : text;
+        this.setChanged();
+        if (this.level != null) this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+    }
+
+    // ── the Grinning Jack-o'-Lantern: at night, someone walking past sets it cackling, and out fly a few bats ──
+
+    public static final double CACKLE_RANGE = 4.0;
+    public static final int CACKLE_COOLDOWN = 20 * 30;
+    // its bats fly off and vanish after this long
+    public static final int BAT_LIFE = 20 * 8;
+    public static final String BAT_TAG = "capitalism_lantern_bat";
+
+    void cackle(ServerLevel level, BlockPos pos) {
+        if (level.getGameTime() % 10 == 0) this.haunt(level, pos);
+    }
+
+    // (every half second; the tests call it straight)
+    void haunt(ServerLevel level, BlockPos pos) {
+        // its bats from last time, gone after a few seconds
+        for (var bat : level.getEntitiesOfClass(net.minecraft.world.entity.ambient.Bat.class, new AABB(pos).inflate(24),
+                b -> b.entityTags().contains(BAT_TAG) && b.tickCount > BAT_LIFE)) {
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, bat.getX(), bat.getY() + 0.3, bat.getZ(), 4, 0.15, 0.15, 0.15, 0.01);
+            bat.discard();
+        }
+        if (!isNight(level) || level.getGameTime() - this.lastCackle < CACKLE_COOLDOWN) return;
+        Vec3 c = Vec3.atCenterOf(pos);
+        if (level.getNearestPlayer(c.x, c.y, c.z, CACKLE_RANGE, p -> !p.isSpectator()) == null) return;
+        this.lastCackle = level.getGameTime();
+        level.playSound(null, pos, SoundEvents.WITCH_CELEBRATE, SoundSource.BLOCKS, 1.0F, 0.7F + level.getRandom().nextFloat() * 0.2F);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, c.x, c.y + 0.2, c.z, 8, 0.25, 0.2, 0.25, 0.02);
+        for (int i = 0; i < 3; i++) {
+            var bat = net.minecraft.world.entity.EntityTypes.BAT.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            if (bat == null) continue;
+            bat.snapTo(c.x, c.y + 0.5, c.z, level.getRandom().nextFloat() * 360.0F, 0.0F);
+            bat.setResting(false);
+            bat.addTag(BAT_TAG);
+            level.addFreshEntity(bat);
+        }
     }
 }

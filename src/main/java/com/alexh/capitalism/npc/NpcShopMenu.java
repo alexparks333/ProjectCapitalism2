@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-// An NPC's shop (NpcShops, by shop key: a job's id or the Boat Master's): no slots, just the offers (and for smiths, repairs of what you carry: repair()). The client asks to buy with a menu button
+// An NPC's shop (NpcShops, by shop key: a job's id or a Shopkeeper's): no slots, just the offers (and for smiths, repairs of what you carry: repair()). The client asks to buy with a menu button
 // (offer index * 2, +1 = buy up to BULK at once); the server checks the NPC is still there and close and that there's
 // stock left (NpcStock, shared by everyone), takes the gold (GoldMoney.take makes change) and hands over the items.
 // Synced to the client: how many of each offer are left, then the seconds until the restock.
@@ -31,7 +31,7 @@ public class NpcShopMenu extends AbstractContainerMenu {
     public static final int REPAIR_BUTTON = 1000;
 
     private final String shop;
-    // the job, for a job NPC's shop (null for the Boat Master)
+    // the job, for a job NPC's shop (null for a Shopkeeper: the Boat Master, the Butcher)
     private final @Nullable Job job;
     private final @Nullable JobNpc npc;
     private final ContainerData data;

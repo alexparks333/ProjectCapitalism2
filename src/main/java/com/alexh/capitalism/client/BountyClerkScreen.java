@@ -24,7 +24,7 @@ import java.util.List;
 
 // Talking to the Bounty Clerk (town/BountyMenu, the rules in bounty/Bounties), drawn in code: a dark oak panel with a
 // brass edge and rivets, a parchment page inside it, three tabs, your gold by the tabs.
-//  - Today's Task: the task posted for everyone, pinned up as a notice (its title, its tier, the reward, the 2-nugget
+//  - Today's Task: the task posted for everyone, pinned up as a notice (its title, its tier, the reward, the fee by tier (2 nuggets to 2 gold)
 //    fee) and "Take this task" (asking first if it would replace yours); why you can't, if you can't; once you've taken
 //    one today, how long till you can take another.
 //  - My Task: your one task, its tier, a progress bar, the reward, Turn In (when it's done) and Abandon (click twice).
@@ -247,11 +247,11 @@ public class BountyClerkScreen extends AbstractContainerScreen<BountyMenu> {
         this.tierBadge(g, task.tier, cx + cw / 2 - (this.font.width(task.tier.title) + 8) / 2, y + 2);
         g.fill(cx + 16, cy + ch - 30, cx + cw - 16, cy + ch - 29, 0x40503820);
         this.ink(g, "Reward: " + GoldMoney.format(offer.reward()), cx + cw / 2, cy + ch - 24, GOOD);
-        this.ink(g, "Fee " + Bounties.FEE + " gold nuggets · no time limit", cx + cw / 2, cy + ch - 12, INK_DIM);        // can they take it?
+        this.ink(g, "Fee " + GoldMoney.format(Bounties.fee(task)) + " · no time limit", cx + cw / 2, cy + ch - 12, INK_DIM);        // can they take it?
         long today = Bounties.today(this.minecraft.level);
         boolean takenToday = data.takenDay() == today;
         boolean canDo = !task.conditional() || this.possibleForMe(task);
-        boolean gold = this.minecraft.player.isCreative() || GoldMoney.carried(this.minecraft.player) >= Bounties.FEE;
+        boolean gold = this.minecraft.player.isCreative() || GoldMoney.carried(this.minecraft.player) >= Bounties.fee(task);
         String label = takenToday ? "Taken one today" : !canDo ? "Not for you" : this.exchangeArmed >= 0 ? "Yes, exchange it" : "Take this task";
         boolean ok = !takenToday && canDo && gold;
         this.button(g, takeX(), takeY() - 10, 120, 20, label, ok, over(mouseX, mouseY, takeX(), takeY() - 10, 120, 20));
@@ -259,7 +259,7 @@ public class BountyClerkScreen extends AbstractContainerScreen<BountyMenu> {
         int noteColour = INK_DIM;
         if (takenToday) note = "You can take another in " + countdown(Bounties.ticksToTomorrow(this.minecraft.level)) + ".";
         else if (!canDo) { note = this.whyNot(task); noteColour = BAD; }
-        else if (!gold) { note = "The fee is " + Bounties.FEE + " gold nuggets."; noteColour = BAD; }
+        else if (!gold) { note = "The fee is " + GoldMoney.format(Bounties.fee(task)) + "."; noteColour = BAD; }
         else if (this.exchangeArmed >= 0 && data.task() != null) { note = "This replaces your current task: " + data.task().title() + " (no refund)."; noteColour = BAD; }
         else if (data.task() != null) note = "Taking it replaces your task: " + data.task().title() + ".";
         if (note != null) {

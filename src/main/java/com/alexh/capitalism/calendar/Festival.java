@@ -15,7 +15,8 @@ import java.util.function.Supplier;
 // (and the day before), shown on the clock (client/ClockHud).
 public enum Festival {
 
-    NEW_YEAR("New Year's Day", Season.SPRING, 1, 0xFFFFE070, "A celebration in the town: fireworks all over it tonight.",
+    // the last night of the year: fireworks over the town at exactly midnight (CalendarEvents), then it rolls over to Spring 1
+    NEW_YEAR("New Year's Eve", Season.WINTER, 28, 0xFFFFE070, "Fireworks over the town at midnight to ring in the new year!",
         0, false, 0, 1.0, true, false, false, List::of),
     FOUNDERS_DAY("Founders' Day", Season.SPRING, 7, 0xFF7CE07C, "Every town NPC's shop is 20% off today.",
         0.20, false, 0, 1.0, false, false, false, List::of),

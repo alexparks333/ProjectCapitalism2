@@ -29,6 +29,8 @@ public class CapitalismConfig {
     // ── Economy ──────────────────────────────────────────────────────────────
     public static ModConfigSpec.IntValue STARTING_BALANCE;
     public static ModConfigSpec.ConfigValue<List<? extends String>> BANK_PRICES;
+    public static ModConfigSpec.IntValue INVESTMENT_DAILY_PERCENT;
+    public static ModConfigSpec.BooleanValue INVESTMENT_MARKET;
     public static ModConfigSpec.BooleanValue LEADERBOARD_ENABLED;
     public static ModConfigSpec.IntValue LEADERBOARD_INTERVAL_TICKS;
 
@@ -87,7 +89,9 @@ public class CapitalismConfig {
     // from (a Golden Apple costs 8 gold, Raw Gold smelts into a whole ingot, 4 Rabbit Hide make a Leather, Netherite = 4
     // scrap + 4 gold), Arrows aren't bought (4 from a flint, a feather and a stick), and nothing pays more than an NPC
     // shop could sell it for (BankerEvents caps that).
-    private static final List<String> DEFAULT_BANK_PRICES = List.of(
+    // (the list as it shipped up to version 5; DEFAULT_BANK_PRICES below is this with BANK_PRICE_CHANGES_V6 and
+    // BANK_PRICES_ADDED_V6 applied, and economy/BankPriceUpgrade brings an existing server's list up to date the same way)
+    private static final List<String> BANK_PRICES_V5 = List.of(
         // Wood: a log a nugget (a tree is 4 to 7 logs; 25-35 gold an hour chopping). Bamboo grows like mad
         "minecraft:oak_log=1", "minecraft:spruce_log=1", "minecraft:birch_log=1", "minecraft:jungle_log=1",
         "minecraft:acacia_log=1", "minecraft:dark_oak_log=1", "minecraft:mangrove_log=1", "minecraft:cherry_log=1",
@@ -128,7 +132,7 @@ public class CapitalismConfig {
         // more mob drops (Blaze Powder under half a rod: no loop), the sea's treasures
         "minecraft:blaze_powder=2", "minecraft:ink_sac=1/2", "minecraft:glow_ink_sac=1", "minecraft:white_wool=1/2",
         "minecraft:breeze_rod=6", "minecraft:armadillo_scute=2", "minecraft:nautilus_shell=9", "minecraft:echo_shard=18",
-        "minecraft:totem_of_undying=45", "minecraft:sponge=9", "minecraft:wet_sponge=9", "minecraft:name_tag=9", "minecraft:saddle=9",
+        "minecraft:totem_of_undying=45", "minecraft:sponge=9", "minecraft:wet_sponge=9", "minecraft:name_tag=1/2", "minecraft:saddle=7",
         // more wood: the Nether's stems, pale oak, planks four to a log, saplings
         "minecraft:pale_oak_log=1", "minecraft:crimson_stem=1", "minecraft:warped_stem=1", "minecraft:oak_planks=1/8",
         "minecraft:spruce_planks=1/8", "minecraft:birch_planks=1/8", "minecraft:oak_sapling=1/4", "minecraft:spruce_sapling=1/4",
@@ -142,6 +146,140 @@ public class CapitalismConfig {
         "minecraft:tuff=1/16", "minecraft:mud=1/16", "minecraft:moss_block=1/4", "minecraft:copper_ore=1/2", "minecraft:iron_ore=2",
         "minecraft:coal_ore=1", "minecraft:gold_ore=6", "minecraft:nether_quartz_ore=1"
     );
+
+    // Version 6 (2026-11-20): old line -> new line.
+    //  - Emerald 45 -> 1: villagers hand emeralds out for next to nothing (a Fletcher gives one for 32 sticks, a nugget's
+    //    worth of logs), so 5 gold each was a money printer; at any more than a nugget a village of Fletchers still
+    //    prints. (Emeralds are for the Whisperer's Knowledge Pieces.) Its block follows.
+    //  - Totem of Undying 45 -> 18: a raid farm pours them out.
+    //  - Rare and dangerous things up: Echo Shard (the Warden's city) 18 -> 45, Shulker Shell (shulkers never come back)
+    //    36 -> 54, Turtle Scute 6 -> 9, Lapis 1 for 3 -> 1 for 2 (it's rarer than redstone or copper).
+    public static final java.util.Map<String, String> BANK_PRICE_CHANGES_V6 = java.util.Map.of(
+        "minecraft:emerald=45", "minecraft:emerald=1",
+        "minecraft:totem_of_undying=45", "minecraft:totem_of_undying=18",
+        "minecraft:echo_shard=18", "minecraft:echo_shard=45",
+        "minecraft:shulker_shell=36", "minecraft:shulker_shell=54",
+        "minecraft:turtle_scute=6", "minecraft:turtle_scute=9",
+        "minecraft:lapis_lazuli=1/3", "minecraft:lapis_lazuli=1/2");
+
+    // Version 6: new things the Banker buys. Storage blocks pay what their 9 (or 4) pieces do, never more; the rare
+    // finds (bosses, trial vaults, the deep ocean, bastions, ancient cities) pay for the trip; everything a farm or bone
+    // meal pours out (flowers, dyes' wool, vines) by the handful.
+    public static final List<String> BANK_PRICES_ADDED_V6 = List.of(
+        // storage blocks (9 of the piece, or 4 for quartz / amethyst / glowstone / clay / honeycomb / honey)
+        "minecraft:coal_block=9", "minecraft:iron_block=27", "minecraft:raw_iron_block=18", "minecraft:copper_block=3",
+        "minecraft:raw_copper_block=3", "minecraft:raw_gold_block=54", "minecraft:lapis_block=4", "minecraft:redstone_block=3",
+        "minecraft:diamond_block=486", "minecraft:emerald_block=9", "minecraft:netherite_block=4860",
+        "minecraft:quartz_block=4", "minecraft:amethyst_block=2", "minecraft:glowstone=2", "minecraft:clay=2",
+        "minecraft:snow_block=1/2", "minecraft:slime_block=18", "minecraft:honey_block=8", "minecraft:honeycomb_block=4",
+        "minecraft:hay_block=4", "minecraft:melon=4", "minecraft:dried_kelp_block=2", "minecraft:bone_block=1",
+        // bosses and rare finds
+        "minecraft:nether_star=180", "minecraft:wither_skeleton_skull=45", "minecraft:elytra=180", "minecraft:dragon_head=90",
+        "minecraft:dragon_breath=9", "minecraft:heart_of_the_sea=45", "minecraft:trident=27", "minecraft:heavy_core=180",
+        "minecraft:ancient_debris=126", "minecraft:sniffer_egg=27", "minecraft:trial_key=9", "minecraft:ominous_trial_key=18",
+        "minecraft:ominous_bottle=9", "minecraft:goat_horn=9", "minecraft:rabbit_foot=6",
+        "minecraft:skeleton_skull=9", "minecraft:zombie_head=9", "minecraft:creeper_head=18", "minecraft:piglin_head=18",
+        // smithing templates (copying one costs 7 diamonds, so these never pay for that)
+        "minecraft:netherite_upgrade_smithing_template=90", "minecraft:sentry_armor_trim_smithing_template=9",
+        "minecraft:dune_armor_trim_smithing_template=9", "minecraft:coast_armor_trim_smithing_template=9",
+        "minecraft:wild_armor_trim_smithing_template=9", "minecraft:ward_armor_trim_smithing_template=18",
+        "minecraft:eye_armor_trim_smithing_template=18", "minecraft:vex_armor_trim_smithing_template=18",
+        "minecraft:tide_armor_trim_smithing_template=9", "minecraft:snout_armor_trim_smithing_template=9",
+        "minecraft:rib_armor_trim_smithing_template=9", "minecraft:spire_armor_trim_smithing_template=18",
+        "minecraft:silence_armor_trim_smithing_template=27", "minecraft:wayfinder_armor_trim_smithing_template=9",
+        "minecraft:shaper_armor_trim_smithing_template=9", "minecraft:raiser_armor_trim_smithing_template=9",
+        "minecraft:host_armor_trim_smithing_template=9", "minecraft:flow_armor_trim_smithing_template=18",
+        "minecraft:bolt_armor_trim_smithing_template=18",
+        // music discs (a creeper shot by a skeleton, or a trip somewhere)
+        "minecraft:music_disc_13=9", "minecraft:music_disc_cat=9", "minecraft:music_disc_blocks=9", "minecraft:music_disc_chirp=9",
+        "minecraft:music_disc_far=9", "minecraft:music_disc_mall=9", "minecraft:music_disc_mellohi=9", "minecraft:music_disc_stal=9",
+        "minecraft:music_disc_strad=9", "minecraft:music_disc_ward=9", "minecraft:music_disc_11=9", "minecraft:music_disc_wait=9",
+        "minecraft:music_disc_otherside=45", "minecraft:music_disc_pigstep=45", "minecraft:music_disc_relic=27",
+        "minecraft:music_disc_creator=45", "minecraft:music_disc_creator_music_box=27", "minecraft:music_disc_precipice=27",
+        // archaeology
+        "minecraft:angler_pottery_sherd=4", "minecraft:archer_pottery_sherd=4", "minecraft:arms_up_pottery_sherd=4",
+        "minecraft:blade_pottery_sherd=4", "minecraft:brewer_pottery_sherd=4", "minecraft:burn_pottery_sherd=4",
+        "minecraft:danger_pottery_sherd=4", "minecraft:explorer_pottery_sherd=4", "minecraft:flow_pottery_sherd=4",
+        "minecraft:friend_pottery_sherd=4", "minecraft:guster_pottery_sherd=4", "minecraft:heart_pottery_sherd=4",
+        "minecraft:heartbreak_pottery_sherd=4", "minecraft:howl_pottery_sherd=4", "minecraft:miner_pottery_sherd=4",
+        "minecraft:mourner_pottery_sherd=4", "minecraft:plenty_pottery_sherd=4", "minecraft:prize_pottery_sherd=4",
+        "minecraft:scrape_pottery_sherd=4", "minecraft:sheaf_pottery_sherd=4", "minecraft:shelter_pottery_sherd=4",
+        "minecraft:skull_pottery_sherd=4", "minecraft:snort_pottery_sherd=4",
+        // the Nether and the End
+        "minecraft:shroomlight=1", "minecraft:crimson_fungus=1/4", "minecraft:warped_fungus=1/4", "minecraft:weeping_vines=1/8",
+        "minecraft:twisting_vines=1/8", "minecraft:soul_soil=1/8", "minecraft:gilded_blackstone=2", "minecraft:magma_block=1/2",
+        "minecraft:nether_wart_block=1/4", "minecraft:warped_wart_block=1/4", "minecraft:chorus_flower=1",
+        "minecraft:popped_chorus_fruit=1/2",
+        // the sea
+        "minecraft:sea_lantern=4", "minecraft:prismarine=1", "minecraft:tube_coral_block=1/2", "minecraft:brain_coral_block=1/2",
+        "minecraft:bubble_coral_block=1/2", "minecraft:fire_coral_block=1/2", "minecraft:horn_coral_block=1/2",
+        "minecraft:seagrass=1/16", "minecraft:turtle_egg=2",
+        // caves
+        "minecraft:pointed_dripstone=1/8", "minecraft:dripstone_block=1/8", "minecraft:glow_lichen=1/8",
+        "minecraft:spore_blossom=2", "minecraft:small_amethyst_bud=1/4", "minecraft:large_amethyst_bud=1/2",
+        "minecraft:amethyst_cluster=1", "minecraft:sculk=1/8", "minecraft:sculk_sensor=4", "minecraft:sculk_catalyst=9",
+        "minecraft:sculk_shrieker=9", "minecraft:ochre_froglight=2", "minecraft:verdant_froglight=2",
+        "minecraft:pearlescent_froglight=2",
+        // more wood: the rest of the logs, planks and saplings
+        "minecraft:stripped_oak_log=1", "minecraft:stripped_spruce_log=1", "minecraft:stripped_birch_log=1",
+        "minecraft:stripped_jungle_log=1", "minecraft:stripped_acacia_log=1", "minecraft:stripped_dark_oak_log=1",
+        "minecraft:stripped_mangrove_log=1", "minecraft:stripped_cherry_log=1", "minecraft:stripped_pale_oak_log=1",
+        "minecraft:jungle_planks=1/8", "minecraft:acacia_planks=1/8", "minecraft:dark_oak_planks=1/8",
+        "minecraft:mangrove_planks=1/8", "minecraft:cherry_planks=1/8", "minecraft:pale_oak_planks=1/8",
+        "minecraft:crimson_planks=1/8", "minecraft:warped_planks=1/8", "minecraft:bamboo_planks=1/8",
+        "minecraft:cherry_sapling=1/4", "minecraft:pale_oak_sapling=1/4", "minecraft:mangrove_propagule=1/4",
+        "minecraft:azalea=1/4", "minecraft:flowering_azalea=1/2", "minecraft:stick=1/32",
+        // stone and earth (barely worth carrying, like cobblestone)
+        "minecraft:andesite=1/16", "minecraft:diorite=1/16", "minecraft:granite=1/16", "minecraft:deepslate=1/16",
+        "minecraft:sandstone=1/8", "minecraft:red_sandstone=1/8", "minecraft:terracotta=1/8", "minecraft:mossy_cobblestone=1/8",
+        "minecraft:smooth_basalt=1/16", "minecraft:coarse_dirt=1/32", "minecraft:rooted_dirt=1/16", "minecraft:podzol=1/8",
+        "minecraft:mycelium=1/4", "minecraft:packed_mud=1/8", "minecraft:pale_moss_block=1/4", "minecraft:mud_bricks=1/8",
+        // flowers and plants (bone meal makes these by the stack)
+        "minecraft:dandelion=1/8", "minecraft:poppy=1/8", "minecraft:blue_orchid=1/8", "minecraft:allium=1/8",
+        "minecraft:azure_bluet=1/8", "minecraft:red_tulip=1/8", "minecraft:orange_tulip=1/8", "minecraft:white_tulip=1/8",
+        "minecraft:pink_tulip=1/8", "minecraft:oxeye_daisy=1/8", "minecraft:cornflower=1/8", "minecraft:lily_of_the_valley=1/8",
+        "minecraft:sunflower=1/8", "minecraft:lilac=1/8", "minecraft:rose_bush=1/8", "minecraft:peony=1/8",
+        "minecraft:torchflower=1", "minecraft:pitcher_plant=1", "minecraft:torchflower_seeds=1", "minecraft:pitcher_pod=1",
+        "minecraft:wither_rose=2", "minecraft:pink_petals=1/8", "minecraft:fern=1/16", "minecraft:short_grass=1/32",
+        "minecraft:big_dripleaf=1/4", "minecraft:bamboo=1/32", "minecraft:sugar=1/2", "minecraft:paper=1/2",
+        // wool in every colour (as white: the dye is the cost)
+        "minecraft:orange_wool=1/2", "minecraft:magenta_wool=1/2", "minecraft:light_blue_wool=1/2", "minecraft:yellow_wool=1/2",
+        "minecraft:lime_wool=1/2", "minecraft:pink_wool=1/2", "minecraft:gray_wool=1/2", "minecraft:light_gray_wool=1/2",
+        "minecraft:cyan_wool=1/2", "minecraft:purple_wool=1/2", "minecraft:blue_wool=1/2", "minecraft:brown_wool=1/2",
+        "minecraft:green_wool=1/2", "minecraft:red_wool=1/2", "minecraft:black_wool=1/2",
+        // a few more drops and odds and ends
+        "minecraft:cobweb=1", "minecraft:baked_potato=1/2", "minecraft:poisonous_potato=1/8",
+        "minecraft:fermented_spider_eye=1", "minecraft:book=3", "minecraft:experience_bottle=4");
+
+    // the Banker's default prices (a new server's list): version 5 with version 6's changes and additions
+    private static final List<String> DEFAULT_BANK_PRICES = upgradeBankPrices(BANK_PRICES_V5);
+
+    // A price list brought up to version 6: lines still at an old default take the new price; the new items go on the
+    // end, unless the list already prices that item (a server's own price always stays). Lines an admin changed are kept.
+    public static List<String> upgradeBankPrices(List<? extends String> old) {
+        List<String> out = new java.util.ArrayList<>();
+        java.util.Set<String> priced = new java.util.HashSet<>();
+        for (String line : old) {
+            String now = BANK_PRICE_CHANGES_V6.getOrDefault(line.trim(), line);
+            out.add(now);
+            int split = now.lastIndexOf('=');
+            if (split > 0) priced.add(now.substring(0, split).trim());
+        }
+        for (String line : BANK_PRICES_ADDED_V6) {
+            String id = line.substring(0, line.lastIndexOf('='));
+            if (priced.add(id)) out.add(line);
+        }
+        return out;
+    }
+
+    // the version of the Banker's list a server has (economy/BankPriceUpgrade brings it up to this)
+    public static final int BANK_PRICES_LATEST = 6;
+    public static ModConfigSpec.IntValue BANK_PRICES_VERSION;
+
+    // the whole spec (the admin panel, core/AdminPanel, walks it to show and change every setting)
+    public static ModConfigSpec spec() {
+        return SPEC;
+    }
 
     // The town (town/Town): where the Whisperer walks, and the protected town center (no breaking blocks)
     public static ModConfigSpec.IntValue TOWN_WALK_MIN_X;
@@ -216,18 +354,22 @@ public class CapitalismConfig {
                 "Items not listed (or priced 0) can't be sold. Payouts come as blocks, then ingots, then nuggets.")
             .defineListAllowEmpty("bankPricesV5", DEFAULT_BANK_PRICES, () -> "minecraft:stone=0",
                 o -> o instanceof String s && s.contains("="));
+        BANK_PRICES_VERSION = builder.comment("Leave this alone: which version of the Banker's list the server has. When the mod adds new prices it brings the list up to date once (prices you changed are kept) and sets this")
+            .defineInRange("bankPricesVersion", 0, 0, 1000);
         LEADERBOARD_ENABLED = builder.comment("Show the Gold Leaderboard on the sidebar (gold in inventory + ender chest)").define("leaderboardEnabled", true);
         LEADERBOARD_INTERVAL_TICKS = builder.comment("How often the Gold Leaderboard updates (200 ticks = 10 seconds)").defineInRange("leaderboardIntervalTicks", 200, 20, 72000);
+        INVESTMENT_MARKET = builder.comment("The Investment Chest's stock market: its daily rate rerolls every 3 days (usually 4 to 7%, rarely a bull run of 8 or 9%, rarely a crash of 2 or 3%). False: always investmentDailyPercent").define("investmentMarket", true);
+        INVESTMENT_DAILY_PERCENT = builder.comment("The Investment Chest's daily rate when investmentMarket is off: a percent of the least a player held in it since the last morning (6: 50 gold earns 3 a day)").defineInRange("investmentDailyPercent", 6, 0, 100);
         builder.pop();
 
         builder.comment("Wellness settings (diet)").push("wellness");
         DIET_KEEP_PER_MINUTE = builder.comment("How much of each food group is kept every minute (1.0 = never fades; the diet window already keeps it recent. 0.97 = fades 3% a minute)").defineInRange("dietKeepPerMinute", 1.0, 0.5, 1.0);
         DIET_MIN_POINTS = builder.comment("Diet points needed before a bonus or penalty kicks in (1 hunger point eaten = 1 diet point)").defineInRange("dietMinPoints", 12.0, 0.0, 1000.0);
-        DIET_BALANCED_SCORE = builder.comment("Balance at or above this = Balanced diet bonus (0-1, 1 = exactly the ideal 10% veg / 10% fruit / 65% protein / 15% carbs)").defineInRange("dietBalancedScore", 0.86, 0.0, 1.0);
+        DIET_BALANCED_SCORE = builder.comment("Balance at or above this = Balanced diet bonus (0-1, 1 = exactly the ideal 10% veg / 10% fruit / 65% protein / 15% carbs)").defineInRange("dietBalancedScore", 0.90, 0.0, 1.0);
         DIET_POOR_SCORE = builder.comment("Balance at or below this = Poor diet penalty (0-1)").defineInRange("dietPoorScore", 0.44, 0.0, 1.0);
         DIET_BALANCED_FOOD_BONUS = builder.comment("Extra food bar room with a Balanced diet (2 = 1 drumstick)").defineInRange("dietBalancedFoodBonus", 2, 0, 2);
-        DIET_START_POINTS = builder.comment("New players start with this many diet points, split into the ideal mix (a balanced head start, so a couple of apples do not wreck the chart)").defineInRange("dietStartPoints", 130.0, 0.0, 1000.0);
-        DIET_WINDOW_POINTS = builder.comment("The diet remembers the last this-many diet points (1 hunger point eaten = 1 diet point). Bigger = each food moves the chart less (a 2-point melon slice is about 1.5% of 130)").defineInRange("dietWindowPoints", 130.0, 10.0, 10000.0);
+        DIET_START_POINTS = builder.comment("New players start with this many diet points, split into the ideal mix (a balanced head start, so a couple of apples do not wreck the chart)").defineInRange("dietStartPoints", 200.0, 0.0, 1000.0);
+        DIET_WINDOW_POINTS = builder.comment("The diet remembers the last this-many diet points (1 hunger point eaten = 1 diet point). Bigger = each food moves the chart less (a 2-point melon slice is 1% of 200)").defineInRange("dietWindowPoints", 200.0, 10.0, 10000.0);
         DIET_MEALS_BEFORE_EFFECTS = builder.comment("Meals a new player must eat before diet buffs/debuffs start (the head start alone gives nothing)").defineInRange("dietMealsBeforeEffects", 20, 0, 10000);
         DIET_POOR_FOOD_LOSS = builder.comment("Max food lost with a Poor diet (2 = 1 drumstick)").defineInRange("dietPoorFoodLoss", 2, 0, 18);
         builder.pop();

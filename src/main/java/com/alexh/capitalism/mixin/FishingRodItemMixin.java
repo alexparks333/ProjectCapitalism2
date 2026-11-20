@@ -17,6 +17,8 @@ public abstract class FishingRodItemMixin {
     @ModifyExpressionValue(method = "use", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;getFishingTimeReduction(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/Entity;)F"))
     private float capitalism$patience(float seconds, @Local(argsOnly = true) Player player) {
-        return seconds + 5.0F * Skills.level(player, Skill.FISHERMANS_PATIENCE);
+        // Quick Bite (an Angler's Fish Pie): like one more level of Lure
+        float quickBite = player.hasEffect(com.alexh.capitalism.core.ModEffects.QUICK_BITE) ? 5.0F : 0.0F;
+        return seconds + 5.0F * Skills.level(player, Skill.FISHERMANS_PATIENCE) + quickBite;
     }
 }

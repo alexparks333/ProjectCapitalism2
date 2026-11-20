@@ -6,8 +6,11 @@ how tasks count, `BountyData` a player's bounties, `ShopIndex` the town's Shopfr
 (skin by `tools/make_bounty_clerk.ps1`). The NPC is in `Town.md` > The Bounty Clerk.
 
 Something to do when you're bored: the Bounty Clerk keeps one task posted for the whole server ("Kill 6 Zombies").
-Take it for 2 gold nuggets; it never expires and pays gold when you turn it in. Tasks are a bonus, not a job: the
-economy pays about 25-60 gold an hour (`Economy.md`); a task pays 3 to 50.
+Take it for a small fee (2 nuggets for an Easy task up to 2 gold for a Heroic one); it never expires and pays gold when you turn it in. Tasks are a bonus, not a job: the
+economy pays about 25-60 gold an hour (`Economy.md`); a task pays 5 to 55. The tasks are about fighting, mining, wood
+and meat, fishing, the Nether, structures and the town's trade (niche ones like taming, milking and odd deliveries were
+cut on 2026-11-19). Every task's pay is its base gold plus a tier bonus (`BountyTask.TIER_BONUS`): Easy +2, Medium +3,
+Hard +4, Heroic +5.
 
 ## The rules
 
@@ -15,11 +18,11 @@ economy pays about 25-60 gold an hour (`Economy.md`); a task pays 3 to 50.
   someone takes it, a new one is posted** for everyone else (it's sent to anyone with the screen open), so no two
   players take the same task. A new one is never one of the **last 20 posted**.
 - Posting: a tier by weight (**Easy 40%, Medium 30%, Hard 20%, Heroic 10%**), then any task of it; its amount rolled in
-  its range, its reward in proportion ("Kill 4-7 Zombies": 4 pays 3 gold, 7 pays 5). A town task ("feed your pet", the
-  Shopfront ones) is only posted if someone on can do it; if it's posted and you can't do it (no pet...), it stays up and
+  its range, its reward in proportion ("Kill 4-7 Zombies": 4 pays 5 gold, 7 pays 7). A town task (the
+  Shopfront ones) is only posted if someone on can do it; if it's posted and you can't do it (no Shopfront...), it stays up and
   your button says why.
 - **One task at a time.** Taking the posted task **exchanges** it for yours: your old one is dropped, no refund (the
-  screen asks first: "This replaces your current task: ..."). The fee is **exactly 2 gold nuggets** (a flat fee, not an
+  screen asks first: "This replaces your current task: ..."). The fee goes by tier (`Bounties.FEES`): **Easy 2 nuggets, Medium 6 nuggets, Hard 1 gold, Heroic 2 gold** (a flat fee, not an
   NPC shop price, so not through `NpcPricing`: see `CLAUDE.md`). Creative players take them free.
 - **One take per Calendar day**, even if you finish and turn in the first at once. The screen counts down to the next.
 - **Tasks never expire.** **Abandon** drops yours (click twice; no refund).
@@ -55,6 +58,9 @@ economy pays about 25-60 gold an hour (`Economy.md`); a task pays 3 to 50.
 - The menu holds your inventory, hidden, so gold and deliveries on the screen stay up to date while it's open.
 ## How tasks count (`BountyEvents`)
 
+(Some of these kinds are no longer used by any task after the 2026-11-19 trim, e.g. taming, shearing, mail; the code still
+counts them, ready for new tasks.)
+
 Kills (by the player or their arrows), "at night" kills, mining (not in creative; a break something else cancelled
 doesn't count), harvesting (crops only when ripe), planting saplings, breeding, taming, shearing, milking, fishing (any
 fish, a particular fish, treasure), rare catches (`fishing/RareCatchModifier`, so the Luck of the Sea rule holds),
@@ -67,216 +73,171 @@ Blood Moon Level II monsters, kills in one Blood Moon, surviving a whole Blood M
 mail, buying from or selling through a Shopfront, buying a meal (the mod's food) from a Cook's Shopfront, feeding your
 pet.
 
-## The tasks (188 in all; amounts and gold are ranges)
+## The tasks (144 in all; amounts and gold are ranges, gold as paid: the base plus the tier's bonus)
 
-### Easy (55 tasks)
-
-| Task | Gold |
-|---|---|
-| Kill 4–7 Zombies | 3–5 |
-| Kill 4–7 Skeletons | 3–5 |
-| Kill 4–7 Spiders | 3–5 |
-| Kill 2–4 Creepers | 3–5 |
-| Kill 4–7 Drowned | 3–5 |
-| Kill 4–7 Husks | 3–5 |
-| Kill 4–7 Strays | 3–5 |
-| Kill 3–6 Slimes | 3–5 |
-| Kill 5–9 Silverfish | 3–4 |
-| Kill 2–4 Zombie Villagers | 3–5 |
-| Kill 4–7 Cave Spiders | 3–5 |
-| Mine 16–24 Coal Ore | 3–4 |
-| Mine 12–20 Copper Ore | 3–4 |
-| Chop 24–40 logs | 3–4 |
-| Mine 48–80 Stone | 3–4 |
-| Dig 24–48 Sand | 3–4 |
-| Dig 12–20 Clay | 3–4 |
-| Dig 12–24 Gravel | 3–4 |
-| Gather 16–32 Kelp | 3–4 |
-| Gather 12–24 Sugar Cane | 3–4 |
-| Harvest 24–40 Wheat | 3–4 |
-| Harvest 24–40 Carrots | 3–4 |
-| Harvest 24–40 Potatoes | 3–4 |
-| Harvest 8–12 Pumpkins | 3–5 |
-| Harvest 8–12 Melons | 3–5 |
-| Plant 16–24 saplings | 3–4 |
-| Breed 3–5 animals | 3–5 |
-| Shear 4–8 sheep | 3–5 |
-| Milk a cow 2–4 times | 3–4 |
-| Deliver 10–16 Eggs | 3–4 |
-| Catch 8–12 fish | 3–5 |
-| Catch 4–6 Salmon | 3–5 |
-| Deliver 12–20 Bread | 3–5 |
-| Deliver 24–48 Torches | 3–4 |
-| Deliver 6–10 Leather | 3–5 |
-| Deliver 24–40 String | 3–4 |
-| Deliver 12–24 Bones | 3–4 |
-| Deliver 6–12 White Wool | 3–4 |
-| Deliver 8–16 Apples | 3–5 |
-| Walk 400–700 blocks | 3–5 |
-| Row a boat 250–400 blocks | 3–5 |
-| Send something by Mailbox | 3 |
-| Buy anything from a player's Shopfront *(only offered when possible)* | 3 |
-| Mine 3–5 Iron Ore | 3–5 |
-| Dig 64–96 Dirt | 3–4 |
-| Quarry 32–64 Andesite, Diorite or Granite | 3–4 |
-| Harvest 24–40 Beetroots | 3–4 |
-| Cut 24–48 Bamboo | 3–4 |
-| Cut 8–16 Cactus | 3–4 |
-| Catch 6–10 Cod | 3–5 |
-| Kill 5–8 Skeletons at night | 3–5 |
-| Smelt 16–32 Glass | 3–4 |
-| Deliver 12–20 Baked Potatoes | 3–4 |
-| Deliver 12–20 Feathers | 3–4 |
-| Deliver 12–20 Charcoal | 3–4 |
-
-### Medium (63 tasks)
+### Easy (32 tasks)
 
 | Task | Gold |
 |---|---|
-| Kill 8–12 Creepers | 7–10 |
-| Kill 6–10 Spiders at night | 6–9 |
-| Kill 2–4 Witches | 8–12 |
-| Kill 8–12 Drowned | 6–8 |
-| Kill 4–6 Pillagers | 8–11 |
-| Kill 2–4 Phantoms | 8–11 |
-| Kill 4–6 Guardians | 8–11 |
-| Kill 4–7 Magma Cubes | 7–10 |
-| Kill 2–4 Endermen | 7–10 |
-| Kill 4–7 Zombified Piglins | 6–8 |
-| Kill 3–5 Hoglins | 8–11 |
-| Kill 4–6 Bogged | 7–9 |
-| Mine 8–12 Iron Ore | 6–9 |
-| Mine 6–10 Gold Ore | 8–11 |
-| Mine 10–14 Lapis Ore | 6–8 |
-| Mine 12–20 Redstone Ore | 6–8 |
-| Mine 20–32 Nether Quartz Ore | 6–9 |
-| Mine 48–80 Deepslate | 6–7 |
-| Mine 8–12 Obsidian | 8–11 |
-| Smelt 24–40 Iron Ingots | 7–10 |
-| Cook 12–20 meat | 6–8 |
-| Brew 3 potions | 8 |
-| Enchant any item | 7 |
-| Get something repaired at a town smith NPC | 6 |
-| Tame a Wolf | 8 |
-| Tame a Cat | 8 |
-| Tame a Horse | 8 |
-| Tame a Parrot | 10 |
-| Breed 8–12 animals | 7–10 |
-| Shear 16–24 sheep | 7–10 |
-| Catch 20–30 fish | 7–10 |
-| Catch a Pufferfish and a Tropical Fish | 8 |
-| Fish up 2–4 treasures | 8–12 |
-| Deliver 4–8 Honey Bottles | 7–10 |
-| Deliver 2–4 Cakes | 7–11 |
-| Deliver 3–5 Ender Pearls | 7–10 |
-| Deliver 12–20 Gunpowder | 7–10 |
-| Deliver 24–40 Glass | 6–8 |
-| Deliver 12–20 Paper | 6–8 |
-| Deliver 6–10 Books | 7–10 |
-| Travel 1500–2500 blocks | 6–9 |
-| Reach Y -50 | 7 |
-| Climb above Y 200 | 7 |
-| Ride a horse 400–600 blocks | 7–9 |
-| Trade with villagers 3–5 times | 7–10 |
-| Visit 4 different biomes in one day | 8 |
-| Sell something from your Shopfront *(only offered when possible)* | 7 |
-| Feed your pet 2–4 times *(only offered when possible)* | 6–8 |
-| Buy a meal from a Cook's Shopfront *(only offered when possible)* | 7 |
-| Kill 12–18 Zombies (any kind) | 6–9 |
-| Kill 12–18 Skeletons (any kind) | 6–9 |
-| Kill 4–7 Piglins | 7–10 |
-| Kill 5–8 Creepers at night | 7–10 |
-| Mine 32–48 Copper Ore | 6–8 |
-| Mine 16–32 Glowstone | 7–10 |
-| Mine 12–20 Nether Gold Ore | 6–8 |
-| Tame a Donkey or Mule | 8 |
-| Tame a Llama | 8 |
-| Smelt 8–16 Gold Ingots | 7–10 |
-| Cook 12–20 fish | 6–8 |
-| Catch 2–3 Tropical Fish | 7–10 |
-| Deliver 32–48 Bricks | 6–8 |
-| Deliver 32–64 Arrows | 6–8 |
+| Kill 4–7 Zombies | 5–7 |
+| Kill 4–7 Skeletons | 5–7 |
+| Kill 4–7 Spiders | 5–7 |
+| Kill 2–4 Creepers | 5–7 |
+| Kill 4–7 Drowned | 5–7 |
+| Kill 4–7 Husks | 5–7 |
+| Kill 4–7 Strays | 5–7 |
+| Kill 3–6 Slimes | 5–7 |
+| Kill 4–7 Cave Spiders | 5–7 |
+| Kill 5–8 Skeletons at night | 5–7 |
+| Mine 16–24 Coal Ore | 5–6 |
+| Mine 12–20 Copper Ore | 5–6 |
+| Mine 3–5 Iron Ore | 5–7 |
+| Mine 48–80 Stone | 5–6 |
+| Chop 24–40 logs | 5–6 |
+| Chop 24–40 Oak logs | 5–6 |
+| Chop 24–40 Birch logs | 5–6 |
+| Chop 24–40 Spruce logs | 5–6 |
+| Deliver 4–6 Raw Beef | 5–7 |
+| Deliver 4–6 Raw Porkchops | 5–7 |
+| Deliver 4–6 Raw Chicken | 5–7 |
+| Deliver 4–6 Raw Mutton | 5–7 |
+| Deliver 12–24 Bones | 5–6 |
+| Deliver 24–40 String | 5–6 |
+| Deliver 6–10 Leather | 5–7 |
+| Harvest 24–40 Wheat | 5–6 |
+| Harvest 24–40 Carrots | 5–6 |
+| Harvest 24–40 Potatoes | 5–6 |
+| Catch 8–12 fish | 5–7 |
+| Catch 4–6 Salmon | 5–7 |
+| Catch 6–10 Cod | 5–7 |
+| Buy anything from a player's Shopfront *(only offered when possible)* | 5 |
 
-### Hard (44 tasks)
+### Medium (49 tasks)
 
 | Task | Gold |
 |---|---|
-| Kill 12–18 Endermen | 14–19 |
-| Kill 4–6 Blazes | 12–16 |
-| Kill 4–6 Wither Skeletons | 13–17 |
-| Kill 2–4 Ghasts | 12–17 |
-| Kill 2–4 Vindicators | 12–16 |
-| Kill a Ravager | 16 |
-| Kill an Evoker | 16 |
-| Kill 2–4 Breezes | 12–16 |
-| Kill 3–5 Piglin Brutes | 14–19 |
-| Kill 2–4 Shulkers | 13–17 |
-| Kill a Blood Moon Level II monster | 12 |
-| Mine 4–6 Diamond Ore | 14–19 |
-| Mine 2–4 Emerald Ore | 13–18 |
-| Mine 2–3 Ancient Debris | 16–20 |
-| Deliver 12–20 Amethyst Shards | 10–13 |
-| Loot a Shipwreck chest | 12 |
-| Loot a Desert Temple chest | 14 |
-| Loot an Ocean Ruin chest | 12 |
-| Loot a Bastion chest | 18 |
+| Kill 8–12 Creepers | 10–13 |
+| Kill 6–10 Spiders at night | 9–12 |
+| Kill 5–8 Creepers at night | 10–13 |
+| Kill 12–18 Zombies | 9–12 |
+| Kill 12–18 Skeletons | 9–12 |
+| Kill 8–12 Drowned | 9–11 |
+| Kill 2–4 Witches | 11–15 |
+| Kill 4–6 Pillagers | 11–14 |
+| Kill 2–4 Phantoms | 11–14 |
+| Kill 4–6 Guardians | 11–14 |
+| Kill 2–4 Endermen | 10–13 |
 | Visit the Nether and come back alive | 12 |
-| Open a Trial Chamber Vault | 15 |
-| Catch any rare fish | 14 |
-| Uncork a Message in a Bottle | 12 |
-| Crack open a Sunken Pirate Chest | 15 |
-| Deliver 6–10 Blaze Rods | 12–16 |
-| Deliver 2–4 Ghast Tears | 14–20 |
-| Deliver 2 Golden Apples | 15 |
-| Deliver 8–12 Slime Balls | 10–13 |
-| Deliver 3–5 Nautilus Shells | 12–17 |
-| Survive a whole Blood Moon without dying | 15 |
-| Get 20–30 kills in one Blood Moon | 14–19 |
-| Kill 5–8 Witches | 12–16 |
-| Kill 10–15 Guardians | 12–16 |
-| Kill 6–10 Phantoms | 12–16 |
-| Kill 10–15 Pillagers | 12–16 |
-| Kill 20–30 Creepers | 12–16 |
-| Mine 16–24 Gold Ore | 12–16 |
-| Loot a Stronghold chest | 16 |
-| Loot a Jungle Temple chest | 14 |
-| Loot a Woodland Mansion chest | 18 |
-| Loot a Nether Fortress chest | 14 |
-| Loot an Ancient City chest | 20 |
-| Deliver 2–3 Diamonds | 14–20 |
-| Deliver 2–3 Emeralds | 12–18 |
+| Kill 4–7 Magma Cubes | 10–13 |
+| Kill 4–7 Zombified Piglins | 9–11 |
+| Kill 3–5 Hoglins | 11–14 |
+| Kill 4–7 Piglins | 10–13 |
+| Mine 20–32 Nether Quartz Ore | 9–12 |
+| Mine 16–32 Glowstone | 10–13 |
+| Mine 12–20 Nether Gold Ore | 9–11 |
+| Chop 16–32 Crimson Stems | 10–13 |
+| Chop 16–32 Warped Stems | 10–13 |
+| Mine 8–12 Iron Ore | 9–12 |
+| Mine 6–10 Gold Ore | 11–14 |
+| Mine 10–14 Lapis Ore | 9–11 |
+| Mine 12–20 Redstone Ore | 9–11 |
+| Mine 32–48 Copper Ore | 9–11 |
+| Mine 8–12 Obsidian | 11–14 |
+| Reach Y -50 | 10 |
+| Smelt 24–40 Iron Ingots | 10–13 |
+| Smelt 8–16 Gold Ingots | 10–13 |
+| Chop 24–40 Dark Oak logs | 9–12 |
+| Chop 24–40 Jungle logs | 9–12 |
+| Chop 24–40 Acacia logs | 9–12 |
+| Chop 24–40 Mangrove logs | 10–13 |
+| Chop 24–40 Cherry logs | 10–13 |
+| Deliver 10–16 Raw Beef | 10–13 |
+| Deliver 10–16 Raw Porkchops | 10–13 |
+| Deliver 4–6 Raw Rabbit | 10–13 |
+| Cook 12–20 meat | 9–11 |
+| Cook 12–20 fish | 9–11 |
+| Deliver 12–20 Gunpowder | 10–13 |
+| Deliver 3–5 Ender Pearls | 10–13 |
+| Deliver 32–64 Arrows | 9–11 |
+| Catch 20–30 fish | 10–13 |
+| Fish up 2–4 treasures | 11–15 |
+| Travel 1,500–2,500 blocks | 9–12 |
+| Enchant any item | 10 |
+| Sell something from your Shopfront *(only offered when possible)* | 10 |
+| Buy a meal from a Cook's Shopfront *(only offered when possible)* | 10 |
 
-### Heroic (26 tasks)
+### Hard (40 tasks)
 
 | Task | Gold |
 |---|---|
-| Help slay the Crimson Revenant | 45 |
-| Help slay the Sanguine Witch | 45 |
-| Help slay Gorefang | 45 |
-| Help slay the Wither | 50 |
-| Help slay the Ender Dragon | 50 |
-| Slay a Warden | 50 |
-| Slay an Elder Guardian | 35 |
-| Win a Raid (Hero of the Village) | 40 |
-| Open an Ominous Vault | 35 |
-| Catch an Epic or rarer fish | 35 |
-| Top a Blood Moon's kill board | 40 |
-| Deliver a Trident | 35 |
-| Deliver a Totem of Undying | 40 |
-| Deliver 3 Wither Skeleton Skulls | 45 |
-| Kill 15–20 Wither Skeletons | 35–45 |
-| Kill 40–50 Endermen | 35–45 |
-| Kill 3 Ravagers | 40 |
-| Kill 3 Evokers | 40 |
-| Mine 6–8 Ancient Debris | 40–50 |
-| Loot an End City chest | 40 |
-| Deliver a Heart of the Sea | 40 |
-| Deliver 4 Shulker Shells | 40 |
-| Deliver a Heavy Core | 45 |
-| Deliver 4–6 Echo Shards | 35–45 |
-| Deliver a Sniffer Egg | 35 |
-| Deliver the Pigstep music disc | 40 |
+| Kill 12–18 Endermen | 18–23 |
+| Kill 5–8 Witches | 16–20 |
+| Kill 10–15 Guardians | 16–20 |
+| Kill 6–10 Phantoms | 16–20 |
+| Kill 10–15 Pillagers | 16–20 |
+| Kill 20–30 Creepers | 16–20 |
+| Kill 2–4 Vindicators | 16–20 |
+| Kill a Ravager | 20 |
+| Kill an Evoker | 20 |
+| Kill 2–4 Breezes | 16–20 |
+| Kill 2–4 Shulkers | 17–21 |
+| Kill a Blood Moon Level II monster | 16 |
+| Survive a whole Blood Moon without dying | 19 |
+| Get 20–30 kills in one Blood Moon | 18–23 |
+| Kill 4–6 Blazes | 16–20 |
+| Kill 4–6 Wither Skeletons | 17–21 |
+| Kill 2–4 Ghasts | 16–21 |
+| Kill 3–5 Piglin Brutes | 18–23 |
+| Mine 2–3 Ancient Debris | 20–24 |
+| Loot a Nether Fortress chest | 18 |
+| Loot a Bastion chest | 22 |
+| Deliver 6–10 Blaze Rods | 16–20 |
+| Deliver 2–4 Ghast Tears | 18–24 |
+| Mine 4–6 Diamond Ore | 18–23 |
+| Mine 2–4 Emerald Ore | 17–22 |
+| Mine 16–24 Gold Ore | 16–20 |
+| Deliver 2–3 Diamonds | 18–24 |
+| Deliver 2–3 Emeralds | 16–22 |
+| Deliver 24–32 Raw Beef | 16–20 |
+| Deliver 24–32 Raw Mutton | 16–20 |
+| Chop 128–192 logs | 16–20 |
+| Loot a Shipwreck chest | 16 |
+| Loot a Desert Temple chest | 18 |
+| Loot an Ocean Ruin chest | 16 |
+| Loot a Stronghold chest | 20 |
+| Loot a Jungle Temple chest | 18 |
+| Loot a Woodland Mansion chest | 22 |
+| Loot an Ancient City chest | 24 |
+| Open a Trial Chamber Vault | 19 |
+| Catch any rare fish | 18 |
 
+### Heroic (23 tasks)
+
+| Task | Gold |
+|---|---|
+| Help slay the Crimson Revenant | 50 |
+| Help slay the Sanguine Witch | 50 |
+| Help slay Gorefang | 50 |
+| Help slay the Wither | 55 |
+| Help slay the Ender Dragon | 55 |
+| Slay a Warden | 55 |
+| Slay an Elder Guardian | 40 |
+| Win a Raid (Hero of the Village) | 45 |
+| Top a Blood Moon's kill board | 45 |
+| Kill 15–20 Wither Skeletons | 40–50 |
+| Kill 40–50 Endermen | 40–50 |
+| Kill 3 Ravagers | 45 |
+| Kill 3 Evokers | 45 |
+| Mine 6–8 Ancient Debris | 45–55 |
+| Open an Ominous Vault | 40 |
+| Catch an Epic or rarer fish | 40 |
+| Loot an End City chest | 45 |
+| Deliver 3 Wither Skeleton Skulls | 50 |
+| Deliver a Trident | 40 |
+| Deliver a Totem of Undying | 45 |
+| Deliver a Heart of the Sea | 45 |
+| Deliver 4 Shulker Shells | 45 |
+| Deliver 4–6 Echo Shards | 40–50 |
 
 ## Admin
 
@@ -288,7 +249,7 @@ pet.
 
 `bounty/BountyTests` ("bounties"): the catalogue (unique ids, 120+ tasks, deliveries beat the Banker, Hard pays 10-20),
 the tier weights over 4,000 rolls, one task posted for everyone and a new one the moment it's taken (everyone sees the
-new one; the board remembers the last 20), the 2-nugget fee, a kill before taking doesn't count and after does, turn-in
+new one; the board remembers the last 20), the 2-nugget fee for an Easy task and 2 gold for a Heroic one, a kill before taking doesn't count and after does, turn-in
 pays, one take a day even after a turn-in, taking another exchanges it, a delivery takes exactly its items, abandon, and
 the race: the first 3 to reach 50 have places reserved in order, claim a Fun Wishing Star once (claiming late doesn't
 lose it), the 4th gets nothing, everyone's Ledger shows the winners; the standings (most first, ties to whoever got there first, the tie time only moving with the count, offline players kept and saved with the world, everyone's Ledger gets the top 10 and their rank).

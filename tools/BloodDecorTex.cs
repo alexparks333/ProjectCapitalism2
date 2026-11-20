@@ -11,7 +11,9 @@ public static partial class BoatTex
     static readonly string[] BloodNames = { "blood_moon_lantern", "crimson_candelabra", "crimson_throne", "vampire_coffin", "blood_fountain",
         "blood_moon_banner", "crimson_rug", "revenant_greatsword_statue", "gorefang_skull_trophy", "sanguine_staff_pedestal", "bat_gargoyle",
         "grandfather_clock", "crimson_chandelier", "blood_pipe_organ", "secret_bookshelf_door", "haunted_portrait", "iron_maiden", "blood_moon_altar",
-        "bat_roost", "crimson_canopy_bed", "blood_crystal_fireplace" };
+        "bat_roost", "crimson_canopy_bed", "blood_crystal_fireplace",
+        // the Halloween ones (the Blood Merchant's Spooky tab; models in client/SpookyDecorModels)
+        "grinning_jack_o_lantern", "haunted_tombstone", "possessed_scarecrow" };
 
     static bool IsBlood(string name) { return Array.IndexOf(BloodNames, name) >= 0 || name == "bottle_of_blood"; }
 
@@ -41,6 +43,14 @@ public static partial class BoatTex
     }
 
     // ── the palette ──
+    // an orange pumpkin skin with deep ribs (the Halloween jack-o'-lantern)
+    static Color Pumpkin(double u, double v, int seed)
+    {
+        Color c = Mix(Rgb(206, 96, 18), Rgb(246, 146, 40), Fbm(u * 0.4, v * 0.4, seed));
+        c = Mul(c, 0.72 + 0.28 * Math.Abs(Math.Sin(u * 1.3)));
+        if (Hash((int)(u * S), (int)(v * S), seed + 1) < 0.03) c = Mul(c, 0.85);
+        return c;
+    }
     static Color BlackIron(double u, double v)
     {
         Color c = Mix(Rgb(20, 19, 23), Rgb(64, 60, 68), Fbm(u * 0.6, v * 0.6, 910));
@@ -289,6 +299,48 @@ public static partial class BoatTex
             }
             case "haunted_portrait":
                 Zone(128, 148, 64, 32, (u, v) => Velvet(u, v, false), false);
+                break;
+            case "grinning_jack_o_lantern":
+                // STEEL: a ribbed orange pumpkin skin; DARKWOOD: its green-brown stem; FIRE: the candlelit face, gold and orange
+                Zone(192, 116, 64, 32, (u, v) => Pumpkin(u, v, 1201), false);
+                Zone(192, 84, 64, 32, (u, v) => Mix(Rgb(70, 78, 36), Rgb(120, 112, 58), Fbm(u * 2.0, v * 0.3, 1202)), false);
+                Zone(64, 60, 16, 8, (u, v) => Mix(Rgb(255, 150, 20), Rgb(255, 232, 110), Fbm(u * 1.2, v * 1.2, 1203)), true);
+                break;
+            case "haunted_tombstone":
+                // WHITE: weathered grey headstone; MOSS: real moss; GHOST: the glowing wisp, pale blue-green
+                Zone(64, 84, 64, 32, (u, v) =>
+                {
+                    Color c = Mix(Rgb(104, 106, 108), Rgb(150, 152, 150), Fbm(u * 0.5, v * 0.5, 1204));
+                    if (Fbm(u * 1.6, v * 1.6, 1205) > 0.7) c = Mul(c, 0.82);
+                    if (Hash((int)(u * S), (int)(v * S), 1206) < 0.05) c = Mul(c, 0.75);
+                    return c;
+                }, false);
+                Zone(0, 148, 64, 32, (u, v) => Mix(Rgb(40, 70, 28), Rgb(96, 132, 52), Fbm(u * 0.9, v * 0.9, 1207)), false);
+                Zone(80, 60, 16, 8, (u, v) => Mix(Rgb(150, 255, 230), Rgb(230, 255, 250), Fbm(u * 1.5, v * 1.5, 1208)), true);
+                break;
+            case "possessed_scarecrow":
+                // CANVAS: a ragged charcoal coat; OLDWOOD: grey weathered wood; LEATHER: burlap (the sack head, belt, patch); BAMBOO: straw; FIRE: sickly green eyes
+                Zone(0, 84, 64, 32, (u, v) =>
+                {
+                    Color c = Mix(Rgb(30, 26, 34), Rgb(62, 52, 66), Fbm(u * 0.4, v * 0.4, 1209));
+                    if (Hash((int)(u / 4), (int)(v / 4), 1210) < 0.2) c = Mix(c, Rgb(70, 40, 76), 0.5);
+                    if ((u % 4) < 0.25 && ((int)v % 2 == 0)) c = Mul(c, 0.6);
+                    return c;
+                }, false);
+                Zone(128, 148, 64, 32, (u, v) =>
+                {
+                    Color c = Mix(Rgb(70, 64, 58), Rgb(122, 112, 100), Fbm(u * 1.4, v * 0.3, 1211));
+                    if (Math.Abs(Math.Sin(u * 2.6 + Fbm(u * 0.4, v * 0.2, 1212) * 4)) < 0.12) c = Mul(c, 0.6);
+                    return c;
+                }, false);
+                Zone(128, 20, 40, 24, (u, v) =>
+                {
+                    Color c = Mix(Rgb(140, 110, 70), Rgb(186, 156, 104), Fbm(u * 0.8, v * 0.8, 1213));
+                    if (((int)(u * S) + (int)(v * S)) % 3 == 0) c = Mul(c, 0.84);
+                    return c;
+                }, false);
+                Zone(96, 148, 32, 32, (u, v) => Mix(Rgb(196, 160, 70), Rgb(240, 214, 120), Fbm(u * 2.5, v * 0.3, 1214)), false);
+                Zone(64, 60, 16, 8, (u, v) => Mix(Rgb(120, 255, 60), Rgb(220, 255, 170), Fbm(u * 1.2, v * 1.2, 1215)), true);
                 break;
             case "iron_maiden":
                 Zone(0, 84, 64, 32, (u, v) => Mul(Velvet(u, v, false), 0.6), false);
@@ -716,6 +768,39 @@ public static partial class BoatTex
         Color wood = Rgb(58, 34, 30), woodL = Rgb(94, 60, 48), woodD = Rgb(30, 18, 16), black = Rgb(14, 8, 10);
         switch (name)
         {
+            case "grinning_jack_o_lantern":
+            {
+                Color pum = Rgb(232, 118, 26), pumL = Rgb(250, 160, 50), pumD = Rgb(170, 70, 12), lit = Rgb(255, 226, 90), litD = Rgb(255, 150, 30);
+                IEll(15.5, 18.5, 13, 10.5, pumD); IEll(15.5, 18.0, 12, 10, pum); IEll(11, 15, 4, 5, pumL);
+                for (int x = 9; x <= 22; x += 6) ILine(x, 9.5, x, 27.5, pumD);
+                IRect(14, 4, 17, 8, Rgb(80, 86, 40)); IP(18, 4, Rgb(80, 86, 40)); IP(19, 3, Rgb(80, 86, 40)); IRect(19, 6, 22, 7, Rgb(60, 120, 40));
+                for (int i = 0; i < 3; i++) { IRect(9 - i, 13 + i, 11 + i, 13 + i, lit); IRect(20 - i, 13 + i, 22 + i, 13 + i, lit); }
+                IRect(15, 17, 16, 18, litD);
+                IRect(8, 21, 23, 23, lit); IRect(8, 21, 23, 21, litD); IRect(11, 24, 12, 24, lit); IRect(19, 24, 20, 24, lit); IRect(14, 21, 15, 22, pumD); IRect(18, 23, 19, 23, pumD);
+                return true;
+            }
+            case "haunted_tombstone":
+            {
+                Color st = Rgb(128, 130, 132), stL = Rgb(168, 170, 168), stD = Rgb(80, 82, 86), moss = Rgb(70, 110, 40), wisp = Rgb(190, 255, 240);
+                IRect(4, 27, 27, 30, stD); IRect(5, 26, 26, 26, st);
+                IRect(7, 12, 24, 25, st); IEll(15.5, 12, 8.5, 6, st); IRect(7, 12, 8, 25, stL); IRect(23, 12, 24, 25, stD);
+                IRect(13, 9, 18, 12, Rgb(222, 214, 190)); IP(14, 10, stD); IP(17, 10, stD);
+                IRect(10, 15, 21, 15, stD); IRect(11, 17, 20, 17, stD); IRect(12, 19, 19, 19, stD); IRect(9, 22, 22, 22, stD);
+                IRect(7, 23, 10, 25, moss); IRect(21, 24, 24, 25, moss); ILine(19, 6.5, 21, 11, stD);
+                IEll(15.5, 2.5, 2, 2, wisp); IP(15, 5, wisp); IP(16, 6, wisp);
+                return true;
+            }
+            case "possessed_scarecrow":
+            {
+                Color post = Rgb(96, 88, 78), coat = Rgb(44, 38, 50), coatL = Rgb(70, 58, 78), straw = Rgb(232, 200, 110), sack = Rgb(170, 140, 92), eye = Rgb(140, 255, 80);
+                IRect(15, 18, 16, 31, post); IRect(3, 12, 28, 13, post);
+                IRect(11, 12, 20, 22, coat); IRect(11, 12, 12, 22, coatL); for (int x = 11; x <= 20; x += 2) IRect(x, 23, x, 24 + (x % 3), coat);
+                IRect(5, 11, 10, 14, coat); IRect(21, 11, 26, 14, coat); IRect(2, 11, 4, 14, straw); IRect(27, 11, 29, 14, straw);
+                IRect(12, 4, 19, 11, sack); IRect(13, 7, 14, 7, eye); IRect(17, 7, 18, 7, eye); IRect(13, 9, 18, 9, Rgb(40, 30, 24)); for (int x = 13; x <= 18; x += 2) IP(x, 10, Rgb(40, 30, 24));
+                IRect(10, 3, 21, 3, coat); IRect(13, 0, 18, 2, coat); IP(19, 1, coat); IP(20, 2, coat);
+                IRect(24, 9, 26, 11, Rgb(20, 18, 22)); IP(27, 10, Rgb(230, 180, 50)); IP(25, 9, eye);
+                return true;
+            }
             case "blood_moon_lantern":
             {
                 // crescent on top, the stepped roof, the cage with the glowing moon, the foot

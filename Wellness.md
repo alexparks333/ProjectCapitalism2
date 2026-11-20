@@ -19,17 +19,17 @@ Start). Don't bring them back. The cold and the heat are the body heat system be
 
 ## Diet (Eco-style)
 - Four food groups: Vegetables, Fruit, Protein, Carbs. Eating adds the food's hunger points to its group(s) (`player/DietValues.java`). Unlisted foods don't count.
-- **Diet window:** the diet only remembers your last `dietWindowPoints` (130) diet points (1 hunger point eaten = 1 diet point, about 16 steaks). Past that, everything shrinks to make room. So one snack can only nudge the chart: a 2-point melon slice is about 1.5%. (Was 160; the user found that a little too slow.) (It used to fade 3% a minute, which left tiny totals where one melon slice swung 81% -> 54%.) `dietKeepPerMinute` is now 1.0 (no fading).
+- **Diet window:** the diet only remembers your last `dietWindowPoints` (200) diet points (1 hunger point eaten = 1 diet point, about 25 steaks). Past that, everything shrinks to make room. So one snack can only nudge the chart: a 2-point melon slice is about 1%. (Was 160, then 130 (160 felt a little too slow, 130 swung too much), now 200.) (It used to fade 3% a minute, which left tiny totals where one melon slice swung 81% -> 54%.) `dietKeepPerMinute` is now 1.0 (no fading).
 - **Food tooltips:** every food that counts shows its diet points, e.g. "Diet: +2 Fruit (~1% of your diet)" (`ClientModEvents.onItemTooltip`).
 - **Hunger and thirst on tooltips:** every food shows how much it fills, e.g. "Hunger: +7 drumsticks", and every drink shows its water, e.g. "Thirst: +6 water drops" (Bartender drinks, Purified Water, water bottles). Values come from the item itself and the config, so they always match what you get.
 - Note: because the ideal is 65% protein, eating only meat bottoms out around 61% (Okay), never Poor. Only-fruit or only-veg can reach Poor.
 - **Ideal diet:** 10% Vegetables, 10% Fruit, 65% Protein, 15% Carbs (`DietData.IDEAL`).
-- **Balanced head start:** the first time a player joins they get `dietStartPoints` (130, a full window) diet points split into the ideal mix. Once per player (saved as `seed`; bumping `DietData.SEED` re-seeds everyone once, which happened with the window change).
+- **Balanced head start:** the first time a player joins they get `dietStartPoints` (200, a full window) diet points split into the ideal mix. Once per player (saved as `seed`; bumping `DietData.SEED` re-seeds everyone once, which happened with the window change; SEED 3 (130 -> 200) scales an existing diet up to the new size instead, keeping its mix).
 - **Meals before buffs:** diet effects only start once a player has eaten `dietMealsBeforeEffects` (20) meals that count toward the diet. This is silent: no badge, the diet card just shows the chart's status without a drumstick bonus until then. (Saved as `meals`.)
 - Balance = how close your mix is to the ideal (100% = exactly the ideal, 0% = everything in veg or fruit). Compared as whole percentages, exactly as the screen shows.
   - Below `dietMinPoints` (12) total: no effect ("Eat something!").
-  - **Balanced 86%+** (`dietBalancedScore` 0.86): +`dietBalancedFoodBonus` (2 = 1 drumstick). The food bar can go to 22.
-  - **Okay 45–85%**: no effect.
+  - **Balanced 90%+** (`dietBalancedScore` 0.90): +`dietBalancedFoodBonus` (2 = 1 drumstick). The food bar can go to 22.
+  - **Okay 45–89%**: no effect.
   - **Poor 0–44%** (`dietPoorScore` 0.44): −`dietPoorFoodLoss` (2 = 1 drumstick). The food bar stops at 18.
   - **A food group at 0%** (once the diet counts): **Poor**, whatever the balance (`DietData.tier`). It also drags the wellbeing meter toward a lost heart.
 - **Filling the bonus drumstick:** vanilla stops the food bar at 20 and only lets you eat below 20; we let you eat whenever you're below **your** top (22 with a Balanced diet; `mixin/PlayerMixin.canEat`, each side reading the top it knows), so once the bonus drumstick is used up you can eat again. Vanilla still stops the bar at 20 while eating, so the 11th drumstick fills from what the meal brings past 20 (e.g. steak at 16 → 22, anything at 20 → up to 22). We remember the bar when you start eating and top it up after. Gold drumsticks also top it up (gold always goes first, see Cook.md "Gourmet food and the golden food bar"). Your client also runs vanilla's eating, which would cut the bar shown on screen back to 20, so the thirst sync (every half second and right after eating) also sends the real food bar.
@@ -70,7 +70,8 @@ reset to 70% on respawn. Creative/spectator: always 70%, no effects.
     cold is 10% colder; **Blaze Powder** = the cold can't reach you, but somewhere hot you burn (100%). Both: neither.
   - **Hand Warmer** (only from the Traveling Merchant) in your offhand: the cold can't reach you while it burns (20 minutes).
   - **Cook meals:** **Campfire Chili** (Warmed Up, 5 min): the cold can't reach you. **Frosty Melon Sorbet** (Cooled
-    Off, 5 min): never above 70.
+    Off, 5 min): never above 70. **Comfort Soup** (Comforted, 3 min): pulled fast to a perfect 70 (about 15 a second) and
+    held there whatever the weather, hot or cold. The **Hot Toddy** (a Bartender drink) gives Warmed Up for 8 min.
   - **Skill books:** **Winter Survival** (rare trait) / **Hot Pepper** (lesson): the cold can't touch you. **Ice In The Pants**
     (lesson) / **Used To Hell** (rare trait): never above 70%. **A Fresh Start** (instant): 70%, dry, diet and water
     back to the start.
@@ -101,8 +102,8 @@ reset to 70% on respawn. Creative/spectator: always 70%, no effects.
 
 ## Wellbeing (hearts)
 - **Bonus hearts ("thriving", all in effect after the grace period):**
-  - **+1 heart:** **Balanced** diet (86%+) + **Good** water purity or better.
-  - **+2 hearts:** **Balanced** diet (86%+) + **Excellent** water purity (90%+).
+  - **+1 heart:** **Balanced** diet (90%+) + **Good** water purity or better.
+  - **+2 hearts:** **Balanced** diet (90%+) + **Excellent** water purity (90%+).
 - **Wellbeing** (`player/WellbeingData.java`, saved, kept through death) is a timer in seconds, from -(debuff + grace) up to +(buff + grace) minutes:
   - Thriving (+1 or +2 level): +1 a second. Otherwise it drifts back toward 0 by 1 a second.
   - Once it reaches `wellbeingBuffMinutes` (5 min of thriving) you get the bonus for your current level: +1 heart, or +2 with Excellent water. Dropping from Excellent to Good water later takes you down to +1 (after the grace period).
@@ -126,9 +127,23 @@ reset to 70% on respawn. Creative/spectator: always 70%, no effects.
 - **No "hit by air":** Minecraft plays the got-hit camera shake whenever your health goes down, even from a lower max health. When a heart fades, the server tells the client the new health first (`QuietHealthPacket`), so vanilla's health update isn't a "drop" and there's no shake or flash.
 - The grace timers are saved (`WellbeingData`: `effective` / `pending`); the fading amounts aren't (after a relog they snap to what's in effect).
 
+## Intoxication (`player/Intoxication`, `client/IntoxicationClient`)
+Small and fun. Every alcoholic drink counts toward **today's drinks** (it starts over each morning, the same day as
+Cravings; saved, kept through death):
+- **Spirit shots and cocktails: 1** drink each. **Wine shot: half**, **Glass of Wine: 1.5**. The strong ones:
+  **Ender Twilight Fizz 1.5**, **Drunken Brawler's Stout 2.5**. (Water, juices, Bitters don't count.)
+- **3 drinks in a day: Tipsy** for **2 minutes**: the view rocks gently (a couple of degrees).
+- **5 drinks in a day: Drunk** for **4 minutes** (instead of Tipsy): the view rocks and drifts more, and walking pulls
+  you a little to one side and back. Nothing like the Stout's Nausea.
+- Each drink past the line starts the timer again. Both fade in and out over 5 seconds. They're neutral effects
+  (icons by `tools/make_intoxication_icons.ps1`), so an Overworld Mojito doesn't sober you up; milk does.
+- **The Wellness screen:** a tiny **"Drinks 2"** in the top right of "How you're doing" once you've had one today
+  (amber when Tipsy, red when Drunk); hover it for the lines.
+- Test: `player/FoodDrinkTests` > `intoxication`.
+
 ## The screen
 - Far-left card: Water Purity tube with the band names beside it (your band is bright), band name and % underneath.
-- Diet card: donut chart, balance % in the middle, a two-line badge (golden apple "Balanced! / +1 drumstick", apple "Okay diet", rotten flesh "Poor diet / -1 drumstick", bowl "Eat something!"). No meals badge and no hint text under it.
+- Diet card: donut chart, balance % in the middle, a two-line badge (golden apple "Balanced! / +1 drumstick", apple "Okay diet", rotten flesh "Poor diet / -1 drumstick", bowl "Eat something!"). The badge shows the diet as it is right now (matching the %); during the grace period the second line counts down instead ("Bonus in 42s", "Bonus ends 42s", "Penalty in 42s", "Penalty ends 42s"). No meals badge and no hint text under it.
 - Food Groups card: icon, share %, a colored bar with a white tick at that group's ideal share.
 - How you're doing: real hearts / drumsticks / water drops like the HUD. Bonus slots (11th drumstick / drop) sit on a gold-tinted slot, the bonus heart is gold, and anything lost simply isn't there (9 drumsticks / drops).
 - Wellbeing bar under that: neutral on the left, gold zone (+1 heart) on the right, and a white marker. The line above says what's next (see Wellbeing above for all the messages).

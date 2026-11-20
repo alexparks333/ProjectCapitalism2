@@ -8,7 +8,7 @@ import java.util.Locale;
 public enum Job {
     COOK("Cook", Category.ESSENTIAL,
         List.of("Makes Gourmet food (full-strength food)", "Only one who can make Training Feed (for Pet Trainers)"),
-        List.of("Can't eat raw meat or fish")),
+        List.of("Can't eat raw meat or fish", "Can't also be a Farmer")),
     BARTENDER("Bartender", Category.FUN,
         List.of("Only one who can use the Fermenter and Bartending Table", "Makes Excellent Purified Water"),
         List.of()),
@@ -30,6 +30,7 @@ public enum Job {
         List.of("Makes Iron and Diamond Pickaxes, Shovels, Hoes and Axes from plain materials (others need Compacted ones)",
             "Only one who can make Netherite Pickaxes, Shovels and Hoes (and Axes, like a Weaponsmith)",
             "Crafts faster-mining tools (with a rare Grail roll)",
+            "Only one who can make Scythes and Butcher Knives (Farmers buy them), and repairs Scythes",
             "Only one who can use the Toolsmith Table"),
         List.of()),
     ENCHANTER("Enchanter", Category.ESSENTIAL,
@@ -63,9 +64,8 @@ public enum Job {
             "Gets the full meat drops from animals (others get just one piece of meat)",
             "Only one who can make and use the Decomposter (makes Fertilizer and Super Fertilizer)",
             "Only one who can use Fertilizer (fertilized farmland gives 50% to 90% more crops)",
-            "Only one who can make the Scythe (harvests ripe crops 5 wide and 3 deep; anyone can use one)",
             "Animals killed with a diamond or netherite sword or axe may drop a Meat Slab (cut up at the Butcher's Table)"),
-        List.of()),
+        List.of("Can't also be a Cook")),
     REAL_ESTATE_AGENT("Real Estate Agent", Category.FUN,
         List.of("Only one who can buy town land from the city (For Sale by the City signs)",
             "Builds on the lots they own (the rest of the town is protected)",
@@ -111,5 +111,15 @@ public enum Job {
 
     public int bit() {
         return 1 << ordinal();
+    }
+
+    // Jobs one player can never hold together (Jobs.md > Picking jobs): a Cook can't be a Farmer and a Farmer can't be
+    // a Cook, whatever slots they have. Null = no such job.
+    public Job clashesWith() {
+        return switch (this) {
+            case COOK -> FARMER;
+            case FARMER -> COOK;
+            default -> null;
+        };
     }
 }

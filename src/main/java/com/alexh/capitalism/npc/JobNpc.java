@@ -124,7 +124,7 @@ public class JobNpc extends PathfinderMob {
         }
     }
 
-    // Should it still be standing here? (its job's NPC: NpcManager says; the Boat Master overrides this)
+    // Should it still be standing here? (its job's NPC: NpcManager says; a Shopkeeper overrides this)
     public boolean stillWanted() {
         return NpcManager.isCurrent(this);
     }

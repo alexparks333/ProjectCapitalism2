@@ -58,6 +58,8 @@ public class ModServerEvents {
         drain *= heatMultiplier;
         // skill books: Water Rationing (a lesson) and Camel (a trait) slow it down
         drain *= com.alexh.capitalism.librarian.Skills.thirstDrainMultiplier(player);
+        // Quenched (a Desert Rose): half as fast
+        if (player.hasEffect(com.alexh.capitalism.core.ModEffects.QUENCHED)) drain *= 0.5f;
         // a Camel pet's No Water Draining: none at all
         if (player.hasEffect(com.alexh.capitalism.core.ModEffects.NO_WATER_DRAINING)) drain = 0f;
         // sweating skips the hidden hydration buffer (it sweats away alongside), so the bar drops straight away

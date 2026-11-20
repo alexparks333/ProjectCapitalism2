@@ -125,11 +125,16 @@ public class SmithTableScreen extends AbstractContainerScreen<SmithTableMenu> {
             String cost = this.xpCost() + " XP";
             graphics.text(this.font, cost, xo + FORGE_X - 3 - this.font.width(cost), yo + FORGE_Y + 2,
                 forge == DentForging.State.NEEDS_XP ? XP_SHORT : XP_OK, true);
+        } else if (this.game == null && this.menu.socket() == SmithTableMenu.GEM_BREAK) {
+            // breaking a gem out: free, but the gem is lost
+            String text = "Breaks the gem";
+            graphics.text(this.font, text, xo + 142 - this.font.width(text) / 2, yo + FORGE_Y + 2, XP_SHORT, true);
         } else if (this.game == null && this.menu.socket() != SmithTableMenu.SOCKET_NONE) {
-            // setting a Molten Socket: its XP cost, under the result box
-            String cost = Socketing.SOCKET_XP + " XP";
-            graphics.text(this.font, cost, xo + 142 - this.font.width(cost) / 2, yo + FORGE_Y + 2,
-                this.menu.socket() == SmithTableMenu.SOCKET_NEEDS_XP ? XP_SHORT : XP_OK, true);
+            // setting a Molten Socket or a gem: its XP cost, under the result box
+            boolean gem = this.menu.socket() == SmithTableMenu.GEM_READY || this.menu.socket() == SmithTableMenu.GEM_NEEDS_XP;
+            String cost = (gem ? Socketing.GEM_XP : Socketing.SOCKET_XP) + " XP";
+            boolean short_ = this.menu.socket() == SmithTableMenu.SOCKET_NEEDS_XP || this.menu.socket() == SmithTableMenu.GEM_NEEDS_XP;
+            graphics.text(this.font, cost, xo + 142 - this.font.width(cost) / 2, yo + FORGE_Y + 2, short_ ? XP_SHORT : XP_OK, true);
         }
         if (this.menu.needsLava()) {
             String text = "Needs Lava";

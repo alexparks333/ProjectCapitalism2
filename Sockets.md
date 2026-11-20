@@ -13,11 +13,22 @@ A rare, secret upgrade for **swords, pickaxes, axes and armor**. Code: `weaponsm
 - Costs **30 XP levels** (`SOCKET_XP`), shown under the result box (green, red if you can't afford it; the result can't be taken without the levels). No lava. Creative is free.
 - **One socket per item.** A full set of armor = 4 sockets.
 
-## Gems (anyone, any inventory)
-- **The Smith's Chisel** (only from the Traveling Merchant, `Town.md`): right-click a socketed item with it and the Molten Socket pops back out (its gem too), to be set into something else. Used up.
-- **Set a gem:** hold a gem (any in the table below; an empty socket's tooltip lists the ones that fit that item) on the cursor and **right-click** the socketed item. One gem is used.
-- **Take it out:** **right-click** the socketed item with an **empty cursor**: the gem comes back on the cursor. (Left-click still picks the item up as normal.)
-- A socket holds one gem; take it out before setting another. A gem that doesn't fit the item says so ("Quartz only fits in a sword.").
+## Gems (set by the item's smith, at their table)
+Changed 2026-11-19: players used to set their own gems in any inventory, which was too strong. Now only the smith can.
+- **Set a gem:** at the **same table that gave the item its socket** (Weaponsmith Table for swords, maces and tridents,
+  Toolsmith Table for pickaxes and axes, Armorsmith Table for armor): the socketed item in the **big slot**, a gem that
+  fits it in the **small slot** (an empty socket's tooltip lists them) = the same item with the gem set. Costs **1 XP
+  level** (`Socketing.GEM_XP`), shown under the result box; no lava. One gem is used.
+- **Break it out:** the item **alone in the big slot** (nothing in the small slot) = the same item with an **empty
+  socket**. Free, but **the gem is destroyed** ("Breaks the gem" under the result box). Then set another.
+- A repair comes first: a damaged, socketed diamond axe + a Diamond is a repair (Forge), not a Diamond gem. Repair it,
+  then set the gem.
+- In an inventory, a gem on the cursor right-clicked onto a socketed item does nothing but say who sets it ("Gems are
+  set by an Armorsmith at their table.").
+- **The Smith's Chisel** (only from the Traveling Merchant, `Town.md`), the one exception: right-click a socketed item
+  with it and the Molten Socket pops back out, **its gem too**, to be set into something else. Used up.
+- Code: `Socketing.canSetGem / canBreakGem`, `SmithTableMenu` (`GEM_READY`, `GEM_NEEDS_XP`, `GEM_BREAK`), the cost text in
+  `client/SmithTableScreen`.
 
 | Gem | Sword | Pickaxe | Axe | Armor (each piece) |
 |---|---|---|---|---|

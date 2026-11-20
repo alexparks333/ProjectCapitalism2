@@ -214,6 +214,43 @@ public final class FarmerTests {
     }
 
     private static void scythe(GameTests.Checks c) {
+        // Toolsmiths make Scythes (and Butcher Knives) for Farmers: the Toolsmith Table repairs Scythes, and the
+        // Toolsmith NPC sells the iron one
+        c.check(com.alexh.capitalism.weaponsmith.SmithTable.TOOLSMITH.repairs(new ItemStack(ModItems.SCYTHE.get()))
+                && com.alexh.capitalism.weaponsmith.SmithTable.TOOLSMITH.repairs(new ItemStack(ModItems.DIAMOND_SCYTHE.get()))
+                && new ItemStack(ModItems.SCYTHE.get()).isValidRepairItem(new ItemStack(net.minecraft.world.item.Items.IRON_INGOT)),
+            "Scythes are repaired at the Toolsmith Table (with their metal)");
+        c.check(com.alexh.capitalism.npc.NpcShops.all(com.alexh.capitalism.occupation.Job.TOOLSMITH).stream()
+                .anyMatch(o -> o.item().get() == ModItems.SCYTHE.get() && o.fairNuggets() == 36),
+            "the Toolsmith NPC sells the Scythe (4 gold fair, 6 at the NPC)");
+        c.check(com.alexh.capitalism.npc.NpcShops.all(com.alexh.capitalism.occupation.Job.TOOLSMITH).stream()
+                .anyMatch(o -> o.item().get() == ModItems.IRON_BUTCHER_KNIFE.get() && com.alexh.capitalism.economy.NpcPricing.lowestNpcPrice(o.fairNuggets()) <= 36),
+            "...and the iron Butcher Knife");
+        // the Butcher (npc/Butcher): every raw fine cut, so Cooks can make the cut meals without a Farmer
+        var butcherShop = com.alexh.capitalism.npc.NpcShops.all(com.alexh.capitalism.npc.NpcShops.BUTCHER);
+        c.check(java.util.Arrays.stream(MeatCut.values()).allMatch(cut -> butcherShop.stream().anyMatch(o -> o.item().get() == ModItems.MEAT_CUTS.get(cut).get())),
+            "the Butcher sells every fine cut (" + butcherShop.size() + " offers)");
+        c.check(butcherShop.stream().allMatch(o -> o.maxStock() > 0 && !o.forever()), "...in limited stock that restocks");
+        c.check(butcherShop.stream().filter(o -> o.item().get() == ModItems.MEAT_CUTS.get(MeatCut.BEEF_RIB).get()).allMatch(o -> o.maxStock() == 1 && o.fairNuggets() == 18),
+            "...only one rare cut (Beef Rib) per restock, 3 gold at the NPC");
+        // ...but only 4 random ones a day, in one Cuts tab, on the 35% of days he comes to town
+        int today = com.alexh.capitalism.npc.Butcher.cutsFor(12345L);
+        var todays = com.alexh.capitalism.npc.NpcShops.sections(com.alexh.capitalism.npc.NpcShops.butcherKey(today));
+        c.check(Integer.bitCount(today) == 4 && todays.size() == 1 && todays.get(0).title().equals("Cuts") && todays.get(0).offers().size() == 4,
+            "the Butcher's shop on a day: one Cuts tab with 4 cuts");
+        boolean changes = false;
+        int inTown = 0;
+        for (long day = 0; day < 2000; day++) {
+            if (com.alexh.capitalism.npc.Butcher.cutsFor(com.alexh.capitalism.npc.NpcManager.dailySeed(99L, day, "butcher_cuts")) != today) changes = true;
+            if (com.alexh.capitalism.npc.NpcManager.butcherInTownOn(99L, day)) inTown++;
+        }
+        c.check(changes, "...the cuts change from day to day");
+        c.near(inTown / 2000.0, 0.35, 0.03, "...and he's in town about 35% of days");
+        var butcher = com.alexh.capitalism.core.ModEntities.BUTCHER.get().create(c.level(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        if (butcher != null) butcher.setUp();
+        c.check(butcher != null && butcher.skin().equals(com.alexh.capitalism.npc.NpcShops.BUTCHER) && butcher.job() == null && !butcher.stillWanted(),
+            "the Butcher: his own skin, no job, gone without a spot (/npc setspot butcher)");
+        if (butcher != null) butcher.discard();
         ServerLevel level = c.level();
         ServerPlayer farmer = farmer(c);
         // a 5x4 field; the player faces north (-z) and cuts the middle of the south row
@@ -557,14 +594,18 @@ public final class FarmerTests {
         // a placed slab on ice rots like in a Freezer; off the ice it carries on as normal
         BlockPos ice = c.helper.absolutePos(new BlockPos(3, 1, 3));
         BlockPos placed = ice.above();
-        level.setBlockAndUpdate(ice, Blocks.PACKED_ICE.defaultBlockState());
+        // (on Butcher Shop Ice: it counts as ice, and never melts)
+        level.setBlockAndUpdate(ice, ModBlocks.BUTCHER_SHOP_ICE.get().defaultBlockState());
+        c.check(level.getBlockState(ice).is(net.minecraft.tags.BlockTags.ICE) && !level.getBlockState(ice).isRandomlyTicking()
+                && ColdStorageBlockEntity.Kind.FREEZER.fuel(new ItemStack(ModItems.BUTCHER_SHOP_ICE.get())) == 4 * ColdStorageBlockEntity.Kind.FREEZER.fuel(new ItemStack(Items.ICE)),
+            "Butcher Shop Ice counts as ice, never melts (no random ticks), and is 4 Ice worth of Freezer fuel");
         level.setBlockAndUpdate(placed, ModBlocks.MEAT_SLABS.get(MeatCut.PORK_LOIN).get().defaultBlockState());
         MeatSlabBlockEntity slabEntity = (MeatSlabBlockEntity) level.getBlockEntity(placed);
         ItemStack loin = Freshness.newSlab(MeatCut.PORK_LOIN, now, level.getRandom());
         loin.set(com.alexh.capitalism.core.ModComponents.ROTS_AT.get(), now + 1000);
         slabEntity.applyComponentsFromItemStack(loin);
         slabEntity.update(level, placed, level.getBlockState(placed), now);
-        c.check(slabEntity.onIce() && slabEntity.left(now + 600) == 900, "a slab on ice: 600 ticks only take 100 off (" + slabEntity.left(now + 600) + " left of 1000)");
+        c.check(slabEntity.onIce() && slabEntity.left(now + 600) == 900, "a slab on Butcher Shop Ice: 600 ticks only take 100 off (" + slabEntity.left(now + 600) + " left of 1000)");
         level.setBlockAndUpdate(ice, Blocks.STONE.defaultBlockState());
         slabEntity.update(level, placed, level.getBlockState(placed), now + 600);
         c.check(!slabEntity.onIce() && slabEntity.left(now + 700) == 800, "off the ice it rots as normal again (" + slabEntity.left(now + 700) + ")");

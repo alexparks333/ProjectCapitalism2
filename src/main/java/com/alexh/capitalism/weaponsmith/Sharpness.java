@@ -101,6 +101,7 @@ public final class Sharpness {
         if (!(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player) return;
         ItemStack sword = player.getMainHandItem();
         if (!isSword(sword) || isDull(sword) || player.isCreative()) return;
+        if (Wear.tempered(player)) return;
         int hits = hits(sword) + 1;
         sword.set(ModComponents.SWORD_HITS.get(), hits);
         if (hits >= maxHits(sword)) {

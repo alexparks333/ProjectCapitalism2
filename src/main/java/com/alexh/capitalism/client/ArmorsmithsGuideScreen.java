@@ -86,6 +86,8 @@ public class ArmorsmithsGuideScreen extends JobGuideScreen {
             "Gear back into 1 of its material."));
         list.add(made(USING, socket, "Molten Sockets", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_HELMET), socket),
             "Adds a gem socket. Try different gems."));
+        list.add(made(USING, new ItemStack(Items.REDSTONE), "Setting Gems", HowToMake.table(atTable, new ItemStack(Items.DIAMOND_HELMET), new ItemStack(Items.REDSTONE)),
+            "Only you set gems in armor, here.", "Armor alone breaks its gem out:", "the gem is lost."));
 
         // ── Recipes: Crafting ──
         addArmor(list, iron, "Iron", Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS);
@@ -100,11 +102,11 @@ public class ArmorsmithsGuideScreen extends JobGuideScreen {
             "Getting hit dents your armor, and dented armor protects less.", "Fix it at an Armor Whetstone."));
         list.add(info(ARMOR, new ItemStack(Items.LAPIS_LAZULI), "Gems", List.of(new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.REDSTONE),
                 new ItemStack(Items.EMERALD), new ItemStack(Items.PRISMARINE_SHARD), new ItemStack(Items.ECHO_SHARD)),
-            "Hold a gem and right-click armor that has a socket.", "Each gem does something different. Find out!"));
+            "An Armorsmith sets a gem in a socketed", "piece at the table. Each gem does", "something different. Find out!"));
 
         // ── Information: Perks ──
         list.add(info(PERKS, whetstone, "Armorsmith Only", List.of(table, whetstone),
-            "Only you can make Armor Whetstones and add sockets to armor."));
+            "Only you can make Armor Whetstones and add sockets and gems to armor."));
         list.add(info(PERKS, diamond, "Cheaper Armor", List.of(iron, diamond),
             "You make armor with plain ingots and diamonds.", "Others need twice as much."));
         list.add(info(PERKS, table, "Repairs", List.of(table),

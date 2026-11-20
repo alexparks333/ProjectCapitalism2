@@ -325,6 +325,7 @@ public class BartendersGuideScreen extends Screen {
         list.add(new Topic(Tab.TOPICS, "Glass Bottles", List.of("Every drink needs a glass bottle.", "You get the bottle back after drinking.")));
         list.add(new Topic(Tab.TOPICS, "Golden Drops", List.of("Your drinks can fill the water bar", "past full, as golden drops.")));
         list.add(new Topic(Tab.TOPICS, "Hoppers", List.of("Hoppers can put things into your machines", "and take them out.")));
+        list.add(new Topic(Tab.TOPICS, "One Too Many", List.of("Too many drinks in one day and", "your customers will feel it.")));
         list.add(new Topic(Tab.DEBUFFS, "Locked Machines", List.of("Others can't use the Fermenter", "or the Bartending Table.")));
         return list;
     }
@@ -463,6 +464,15 @@ public class BartendersGuideScreen extends Screen {
             }
             if (entry.bonus().food() > 0) {
                 graphics.text(this.font, "+" + drops(entry.bonus().food()) + " food", x, nextY, GOLD, false);
+                nextY += 10;
+            }
+        }
+        // a Specialty drink: what it does, in a line (SpecialtyTips, the same as its tooltip)
+        String tip = known(entry.result()) ? SpecialtyTips.tip(entry.result()) : null;
+        if (tip != null) {
+            for (var line : this.font.split(Component.literal(tip), 150)) {
+                graphics.text(this.font, line, x, nextY, 0xFFC890E8, false);
+                nextY += 10;
             }
         }
     }

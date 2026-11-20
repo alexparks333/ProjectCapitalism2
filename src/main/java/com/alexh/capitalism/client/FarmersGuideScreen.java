@@ -76,7 +76,7 @@ public class FarmersGuideScreen extends JobGuideScreen {
             "Meat keeps longer in it", "while it burns coal or charcoal."));
         list.add(made(BLOCKS, freezer, "Freezer",
             HowToMake.crafting(iron, iron, iron, iron, chest, iron, iron, new ItemStack(Items.PACKED_ICE), iron),
-            "Meat keeps much longer in it", "while it melts any ice or snowballs.", "Packed and Blue Ice last longest."));
+            "Meat keeps much longer in it", "while it melts any ice or snowballs.", "Packed, Blue and Butcher Shop Ice", "last longest."));
 
         // ── Workshop: Items ──
         list.add(made(ITEMS, fertilizer, "Yield Fertilizer",
@@ -88,20 +88,24 @@ public class FarmersGuideScreen extends JobGuideScreen {
         list.add(made(ITEMS, fastFertilizer, "Fast Fertilizer",
             HowToMake.steps("Rotted down in the Decomposter.", boneMeal, sugar, dirt),
             "Use it on farmland.", "Crops on it grow faster."));
-        list.add(made(ITEMS, scythe, "Scythe",
-            HowToMake.crafting(iron, iron, iron, e, e, stick, e, e, stick),
-            "Cut one ripe crop and it cuts", "the ripe crops around it too:", "a patch ahead of you and either side."));
-        list.add(made(ITEMS, diamondScythe, "Diamond Scythe",
-            HowToMake.crafting(diamond, diamond, diamond, e, e, stick, e, e, stick),
-            "The same patch as the Scythe,", "but it lasts far longer."));
+        // Butcher Shop Ice: 4 Ice in a 2x2, anyone can make it
+        ItemStack butcherIce = new ItemStack(ModItems.BUTCHER_SHOP_ICE.get());
+        ItemStack ice = new ItemStack(Items.ICE);
+        ItemStack none = ItemStack.EMPTY;
+        list.add(made(ITEMS, butcherIce, "Butcher Shop Ice",
+            HowToMake.crafting(ice, ice, none, ice, ice, none, none, none, none),
+            "Ice that never melts.", "Show your meat on it in the shop:", "it keeps like on any ice."));
+        // Scythes and Butcher Knives are made by Toolsmiths (their guide has the recipes): Farmers buy them
+        list.add(info(ITEMS, scythe, "Scythe", List.of(scythe),
+            "Cut one ripe crop and it cuts", "the ripe crops around it too.", "Buy one from a Toolsmith."));
+        list.add(info(ITEMS, diamondScythe, "Diamond Scythe", List.of(diamondScythe),
+            "The same patch as the Scythe,", "but it lasts far longer.", "Buy one from a Toolsmith."));
         ItemStack ironKnife = new ItemStack(com.alexh.capitalism.core.ModItems.IRON_BUTCHER_KNIFE.get());
         ItemStack diamondKnife = new ItemStack(com.alexh.capitalism.core.ModItems.DIAMOND_BUTCHER_KNIFE.get());
-        list.add(made(ITEMS, ironKnife, "Iron Butcher Knife",
-            HowToMake.crafting(e, iron, iron, e, iron, e, stick, e, e),
-            "Goes on the Butcher's Table.", "Cuts a few slabs before it's spent."));
-        list.add(made(ITEMS, diamondKnife, "Diamond Butcher Knife",
-            HowToMake.crafting(e, diamond, diamond, e, iron, e, stick, e, e),
-            "A cleaver that cuts many more", "slabs before it's spent."));
+        list.add(info(ITEMS, ironKnife, "Iron Butcher Knife", List.of(ironKnife),
+            "Goes on the Butcher's Table.", "Cuts a few slabs before it's spent.", "Buy from a Toolsmith or their NPC."));
+        list.add(info(ITEMS, diamondKnife, "Diamond Butcher Knife", List.of(diamondKnife),
+            "A cleaver that cuts many more", "slabs before it's spent.", "Buy one from a Toolsmith."));
 
         // ── Information: Harvests ──
         list.add(info(HARVESTS, new ItemStack(Items.WHEAT), "Full Harvests", List.of(new ItemStack(Items.WHEAT), new ItemStack(Items.CARROT), new ItemStack(Items.POTATO)),
@@ -164,11 +168,12 @@ public class FarmersGuideScreen extends JobGuideScreen {
         list.add(info(FRESHNESS, fridgeIcon, "The Fridge", List.of(fridgeIcon, new ItemStack(Items.COAL), new ItemStack(Items.CHARCOAL)),
             "Meat keeps longer in it while it", "burns coal or charcoal. It only", "burns while there's meat inside."));
         list.add(info(FRESHNESS, freezerIcon, "The Freezer", List.of(freezerIcon, new ItemStack(Items.ICE), new ItemStack(Items.PACKED_ICE), new ItemStack(Items.BLUE_ICE), new ItemStack(Items.SNOWBALL)),
-            "Meat keeps much longer in it", "while it melts any ice or snowballs.", "Packed and Blue Ice last longest."));
+            "Meat keeps much longer in it", "while it melts any ice or snowballs.", "Packed, Blue and Butcher Shop Ice", "last longest."));
         list.add(info(FRESHNESS, rib, "Dry-Aging", List.of(rib, fridgeIcon),
             "Fine cuts left in a running Fridge", "age: Dry-Aged, then Prime. Cooks", "sear better steaks from them."));
-        list.add(info(FRESHNESS, new ItemStack(Items.PACKED_ICE), "On Ice", List.of(new ItemStack(Items.ICE), new ItemStack(Items.PACKED_ICE), new ItemStack(Items.BLUE_ICE)),
-            "Set a slab down on ice and", "it keeps like in a Freezer.", "The ice never melts away."));
+        list.add(info(FRESHNESS, new ItemStack(Items.PACKED_ICE), "On Ice", List.of(new ItemStack(Items.ICE), new ItemStack(Items.PACKED_ICE),
+                new ItemStack(Items.BLUE_ICE), new ItemStack(ModItems.BUTCHER_SHOP_ICE.get())),
+            "Set a slab down on ice and", "it keeps like in a Freezer.", "Plain ice can melt;", "Butcher Shop Ice never does."));
         list.add(info(FRESHNESS, new ItemStack(com.alexh.capitalism.core.ModItems.FREEZER_SLING.get()), "Freezer Sling", List.of(new ItemStack(com.alexh.capitalism.core.ModItems.FREEZER_SLING.get())),
             "A Designer's bag that keeps meat", "like a Freezer on your back."));
         list.add(info(FRESHNESS, rotten, "Rotten Meat", List.of(rotten),
@@ -183,8 +188,6 @@ public class FarmersGuideScreen extends JobGuideScreen {
             "Others can't make or use the Decomposter."));
         list.add(info(DEBUFFS, fertilizer, "No Fertilizer", List.of(),
             "Others can't use any Fertilizer."));
-        list.add(info(DEBUFFS, scythe, "No Scythes", List.of(),
-            "Others can't make a Scythe.", "Anyone can still use one."));
         list.add(info(DEBUFFS, table, "No Butchering", List.of(),
             "Others get no Meat Slabs", "and can't use the Butcher's Table."));
         return list;
