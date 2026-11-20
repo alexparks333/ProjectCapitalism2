@@ -272,6 +272,15 @@ public class CapitalismConfig {
         return out;
     }
 
+    // the mod's own price for an item ("54", "1/2"), or "" if it isn't on the default list (the admin panel's reset)
+    public static String defaultBankPrice(String id) {
+        for (String line : DEFAULT_BANK_PRICES) {
+            int split = line.lastIndexOf('=');
+            if (line.substring(0, split).trim().equals(id)) return line.substring(split + 1).trim();
+        }
+        return "";
+    }
+
     // the version of the Banker's list a server has (economy/BankPriceUpgrade brings it up to this)
     public static final int BANK_PRICES_LATEST = 6;
     public static ModConfigSpec.IntValue BANK_PRICES_VERSION;

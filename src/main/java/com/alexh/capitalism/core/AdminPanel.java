@@ -61,7 +61,7 @@ public final class AdminPanel {
             List<String> path = value.getPath();
             rows.add(String.join(SEP, path.getFirst(), String.join(".", path), type, String.valueOf(now),
                 range == null ? "" : String.valueOf(range.getMin()), range == null ? "" : String.valueOf(range.getMax()),
-                comment(value.getSpec().getComment())));
+                comment(value.getSpec().getComment()), String.valueOf(value.getDefault())));
         }
         return rows;
     }
@@ -80,7 +80,7 @@ public final class AdminPanel {
             if (key == null || !BuiltInRegistries.ITEM.containsKey(key) || !seen.add(key.toString())) continue;
             BankerEvents.Price price = paid.get(BuiltInRegistries.ITEM.getValue(key));
             rows.add(String.join(SEP, key.toString(), line.substring(split + 1).trim(),
-                price == null || price.nuggets() <= 0 ? "" : price.text()));
+                price == null || price.nuggets() <= 0 ? "" : price.text(), CapitalismConfig.defaultBankPrice(key.toString())));
         }
         return rows;
     }
@@ -199,12 +199,14 @@ public final class AdminPanel {
         return null;
     }
 
-    // the packet from the panel (AdminSetPacket): operators only
-    public static void handle(ServerPlayer player, String key, String value) {
+    // the panel's Save (AdminSetPacket): every waiting change at once; operators only
+    public static void handle(ServerPlayer player, List<String> keys, List<String> values) {
         if (!allowed(player)) return;
-        String error = apply(player, key, value);
-        if (error != null) player.sendSystemMessage(Component.literal("[Admin] ").withStyle(ChatFormatting.RED)
-            .append(Component.literal(error).withStyle(ChatFormatting.YELLOW)));
+        for (int i = 0; i < Math.min(keys.size(), values.size()); i++) {
+            String error = apply(player, keys.get(i), values.get(i));
+            if (error != null) player.sendSystemMessage(Component.literal("[Admin] ").withStyle(ChatFormatting.RED)
+                .append(Component.literal(keys.get(i) + ": " + error).withStyle(ChatFormatting.YELLOW)));
+        }
         open(player, false);
     }
 }

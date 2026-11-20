@@ -202,7 +202,7 @@ public class ModSetupEvents {
             com.alexh.capitalism.network.AdminSetPacket.TYPE,
             com.alexh.capitalism.network.AdminSetPacket.STREAM_CODEC,
             (packet, context) -> context.enqueueWork(() -> {
-                if (context.player() instanceof ServerPlayer player) AdminPanel.handle(player, packet.key(), packet.value());
+                if (context.player() instanceof ServerPlayer player) AdminPanel.handle(player, packet.keys(), packet.values());
             })
         );
         registrar.playToClient(

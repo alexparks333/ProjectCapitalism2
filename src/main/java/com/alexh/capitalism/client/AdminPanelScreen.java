@@ -32,7 +32,8 @@ import java.util.Map;
 //    bought). What it really pays shows under the name (NPC shop prices and crafting caps can make it less).
 //    "+ Held item" adds what's in your hand.
 //  - Commands: every operator command and what it does. Click one and it's typed into chat for you to finish.
-// The search box filters the tab. Changes go to the server (network/AdminSetPacket), which saves them, says so in chat
+// The search box filters the tab. Changes wait (a gold bar) until Save sends them all (network/AdminSetPacket); Undo drops
+// them; Reset puts a setting or price back to the mod default. The server saves them, says so in chat
 // and sends the new figures back.
 public class AdminPanelScreen extends Screen {
 
@@ -48,6 +49,7 @@ public class AdminPanelScreen extends Screen {
     private static final int RED = 0xFFFF6A5A;
     private static final int SECTION = 0xFFE0A040;
     private static final int VALUE_W = 74;
+    private static final int RESET_W = 34;
     private static final int LIST_TOP = 58;
     private static final String[] TABS = {"Settings", "Banker", "Commands"};
 
@@ -58,19 +60,55 @@ public class AdminPanelScreen extends Screen {
     // the Settings section showing (null: the first); a search looks through every section
     private static @Nullable String shownSection;
 
+    // changes made but not saved yet (key -> new value), in the order they were made; Save sends them all
+    private static final Map<String, String> pending = new java.util.LinkedHashMap<>();
+
     private int tab = lastTab;
     private int scroll;
     private final List<Row> rows = new ArrayList<>();
     private EditBox search;
     private EditBox editor;
     private Button addHeld;
+    private Button save;
+    private Button undo;
     private @Nullable Row editing;
+    // Esc pressed once with unsaved changes (a second Esc throws them away)
+    private boolean warned;
+    // this frame's mouse, and the reset button's tooltip if it's under it
+    private int mouseX, mouseY;
+    private @Nullable Component resetTip;
 
-    // one line of the list: a section heading, a setting, a Banker price or a command
-    private record Row(Kind kind, String key, String title, String value, String note, String help, String type, @Nullable ItemStack icon) {
+    // one line of the list: a section heading, a setting, a Banker price or a command. value: what the server has;
+    // def: the mod's default ("" if none)
+    private record Row(Kind kind, String key, String title, String value, String note, String help, String type, @Nullable ItemStack icon, String def) {
         int height() {
             return kind == Kind.SECTION ? 16 : 24;
         }
+
+        // what it shows: the unsaved value if there is one
+        String shown() {
+            return pending.getOrDefault(key, value);
+        }
+
+        boolean changed() {
+            return pending.containsKey(key);
+        }
+
+        // differs from the default (so the reset button shows)
+        boolean resettable() {
+            return (kind == Kind.SETTING || kind == Kind.PRICE) && !def.isEmpty() && !same(shown(), def, type);
+        }
+    }
+
+    // "6" and "6.0" are the same number; "true" and "TRUE" the same switch
+    private static boolean same(String a, String b, String type) {
+        if (a.equals(b)) return true;
+        try {
+            if (type.equals("D") || type.equals("I") || type.equals("L")) return Double.parseDouble(a) == Double.parseDouble(b);
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+        return a.equalsIgnoreCase(b);
     }
 
     private enum Kind { SECTION, SETTING, PRICE, COMMAND }
@@ -203,7 +241,7 @@ public class AdminPanelScreen extends Screen {
     protected void init() {
         int l = left(), w = panelW();
         String typed = this.search == null ? "" : this.search.getValue();
-        this.search = new EditBox(this.font, l + 8, this.top() + 36, w - 16 - 84, 14, Component.literal("Search"));
+        this.search = new EditBox(this.font, l + 8, this.top() + 36, w - 16 - 112, 14, Component.literal("Search"));
         this.search.setHint(Component.literal("Search...").withStyle(ChatFormatting.DARK_GRAY));
         this.search.setValue(typed);
         this.search.setResponder(s -> {
@@ -212,9 +250,15 @@ public class AdminPanelScreen extends Screen {
             this.rebuild();
         });
         this.addRenderableWidget(this.search);
-        this.addHeld = Button.builder(Component.literal("+ Held item"), b -> send(AdminPanel.BANK_ADD, ""))
-            .bounds(l + w - 8 - 78, this.top() + 35, 78, 16).build();
+        this.addHeld = Button.builder(Component.literal("+ Held item"), b -> send(List.of(AdminPanel.BANK_ADD), List.of("")))
+            .bounds(l + w - 8 - 78, this.top() + 15, 78, 16).build();
         this.addRenderableWidget(this.addHeld);
+        this.save = Button.builder(Component.literal("Save"), b -> this.saveAll())
+            .bounds(l + w - 8 - 104, this.top() + 35, 52, 16).build();
+        this.addRenderableWidget(this.save);
+        this.undo = Button.builder(Component.literal("Undo"), b -> this.undoAll())
+            .bounds(l + w - 8 - 50, this.top() + 35, 50, 16).build();
+        this.addRenderableWidget(this.undo);
         this.editor = new EditBox(this.font, 0, 0, VALUE_W - 4, 14, Component.literal("Value"));
         this.editor.setMaxLength(40);
         this.editor.setVisible(false);
@@ -243,9 +287,9 @@ public class AdminPanelScreen extends Screen {
                 if (find.isEmpty() && !f[0].equals(currentSection())) continue;
                 if (!find.isEmpty() && !f[0].equals(section)) {
                     section = f[0];
-                    this.rows.add(new Row(Kind.SECTION, "", sectionTitle(section), "", "", "", "", null));
+                    this.rows.add(new Row(Kind.SECTION, "", sectionTitle(section), "", "", "", "", null, ""));
                 }
-                this.rows.add(new Row(Kind.SETTING, f[1], title, f[3], range, f[6], f[2], null));
+                this.rows.add(new Row(Kind.SETTING, f[1], title, f[3], range, f[6], f[2], null, f.length > 7 ? f[7] : ""));
             }
         } else if (this.tab == 1) {
             List<Row> priced = new ArrayList<>();
@@ -260,7 +304,7 @@ public class AdminPanelScreen extends Screen {
                 String pays = f[2].isEmpty() ? "Not bought" : "Pays " + f[2];
                 boolean capped = !f[2].isEmpty() && !f[2].equals(textOf(f[1]));
                 priced.add(new Row(Kind.PRICE, AdminPanel.BANK + f[0], name, f[1], pays + (capped ? " (capped: an NPC shop or crafting sells it for less)" : ""),
-                    f[0], capped ? "C" : "", stack));
+                    f[0], capped ? "C" : "", stack, f.length > 3 ? f[3] : ""));
             }
             priced.sort(java.util.Comparator.comparing(Row::title));
             this.rows.addAll(priced);
@@ -273,7 +317,7 @@ public class AdminPanelScreen extends Screen {
                     section = command[0];
                     continue;
                 }
-                if (matches(find, command[0], command[1])) inSection.add(new Row(Kind.COMMAND, command[0], command[0], "", command[1], "", "", null));
+                if (matches(find, command[0], command[1])) inSection.add(new Row(Kind.COMMAND, command[0], command[0], "", command[1], "", "", null, ""));
             }
             flushSection(section, inSection);
         }
@@ -288,7 +332,7 @@ public class AdminPanelScreen extends Screen {
 
     private void flushSection(@Nullable String section, List<Row> inSection) {
         if (section != null && !inSection.isEmpty()) {
-            this.rows.add(new Row(Kind.SECTION, "", section, "", "", "", "", null));
+            this.rows.add(new Row(Kind.SECTION, "", section, "", "", "", "", null, ""));
             this.rows.addAll(inSection);
         }
         inSection.clear();
@@ -336,13 +380,35 @@ public class AdminPanelScreen extends Screen {
 
     // ── changes ──
 
-    private static void send(String key, String value) {
-        ClientPacketDistributor.sendToServer(new AdminSetPacket(key, value));
+    private static void send(List<String> keys, List<String> values) {
+        ClientPacketDistributor.sendToServer(new AdminSetPacket(keys, values));
+    }
+
+    // a change waits until Save (back to what the server has = no change at all)
+    private void change(Row row, String value) {
+        value = value.trim();
+        if (same(value, row.value, row.type)) pending.remove(row.key);
+        else pending.put(row.key, value);
+        this.warned = false;
+    }
+
+    private void saveAll() {
+        if (this.editing != null) this.commitEdit();
+        if (pending.isEmpty()) return;
+        send(new ArrayList<>(pending.keySet()), new ArrayList<>(pending.values()));
+        pending.clear();
+        this.warned = false;
+    }
+
+    private void undoAll() {
+        this.cancelEdit();
+        pending.clear();
+        this.warned = false;
     }
 
     private void startEdit(Row row, int y) {
         this.editing = row;
-        this.editor.setValue(row.value);
+        this.editor.setValue(row.shown());
         this.editor.setVisible(true);
         this.editor.setX(valueX() + 2);
         this.editor.setY(y + 5);
@@ -353,7 +419,7 @@ public class AdminPanelScreen extends Screen {
 
     private void commitEdit() {
         if (this.editing == null) return;
-        send(this.editing.key, this.editor.getValue());
+        this.change(this.editing, this.editor.getValue());
         this.cancelEdit();
     }
 
@@ -382,6 +448,14 @@ public class AdminPanelScreen extends Screen {
                 this.commitEdit();
                 return true;
             }
+        }
+        // closing with unsaved changes: the first Esc warns, a second throws them away
+        if (event.isEscape() && !pending.isEmpty()) {
+            if (!this.warned) {
+                this.warned = true;
+                return true;
+            }
+            pending.clear();
         }
         return super.keyPressed(event);
     }
@@ -434,10 +508,19 @@ public class AdminPanelScreen extends Screen {
         return super.mouseClicked(event, doubleClick);
     }
 
+    // the reset-to-default button, just left of the value
+    private int resetX() {
+        return valueX() - RESET_W - 3;
+    }
+
     private void click(Row row, int mx, int y) {
+        if (row.resettable() && mx >= resetX() && mx < resetX() + RESET_W) {
+            this.change(row, row.def);
+            return;
+        }
         switch (row.kind) {
             case SETTING -> {
-                if (row.type.equals("B")) send(row.key, String.valueOf(!Boolean.parseBoolean(row.value)));
+                if (row.type.equals("B")) this.change(row, String.valueOf(!Boolean.parseBoolean(row.shown())));
                 else startEdit(row, y);
             }
             case PRICE -> startEdit(row, y);
@@ -488,14 +571,29 @@ public class AdminPanelScreen extends Screen {
     @Override
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
         int l = left(), w = panelW(), t = top(), b = bottom();
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        this.resetTip = null;
         g.fill(0, 0, this.width, this.height, 0x90000000);
         g.fill(l - 2, t - 2, l + w + 2, b + 2, EDGE);
         g.fill(l - 1, t - 1, l + w + 1, b + 1, EDGE_LIGHT);
         g.fill(l, t, l + w, b, PANEL);
         Component title = Component.literal("ADMIN PANEL").withStyle(ChatFormatting.BOLD);
         g.text(this.font, title, l + 8, t + 5, RED, false);
-        String note = this.tab == 2 ? "Click a command to type it into chat" : "Changes save at once";
-        g.text(this.font, note, l + w - 8 - this.font.width(note), t + 5, DIM, false);
+        this.save.active = this.undo.active = !pending.isEmpty();
+        String note;
+        int noteColor;
+        if (this.warned && !pending.isEmpty()) {
+            note = "Not saved! Save, or Esc again to throw away";
+            noteColor = RED;
+        } else if (!pending.isEmpty()) {
+            note = pending.size() + " unsaved change" + (pending.size() == 1 ? "" : "s") + ": press Save";
+            noteColor = GOLD;
+        } else {
+            note = this.tab == 2 ? "Click a command to type it into chat" : "All changes saved";
+            noteColor = DIM;
+        }
+        g.text(this.font, note, l + w - 8 - this.font.width(note), t + 5, noteColor, false);
         for (int i = 0; i < TABS.length; i++) {
             int x = tabX(i);
             boolean on = i == this.tab, hover = mouseX >= x && mouseX < x + tabW() && mouseY >= t + 16 && mouseY < t + 30;
@@ -504,7 +602,7 @@ public class AdminPanelScreen extends Screen {
         }
         int count = (int) this.rows.stream().filter(r -> r.kind != Kind.SECTION).count();
         String counted = count + (this.tab == 0 ? " settings" : this.tab == 1 ? " items" : " commands");
-        g.text(this.font, counted, l + w - 8 - this.font.width(counted), t + 19, DIM, false);
+        if (this.tab != 1) g.text(this.font, counted, l + w - 8 - this.font.width(counted), t + 19, DIM, false);
         if (this.tab == 0) {
             List<String> sections = sections();
             List<int[]> chips = chips();
@@ -546,7 +644,9 @@ public class AdminPanelScreen extends Screen {
         }
         super.extractRenderState(g, mouseX, mouseY, a);
         String about = hovered == null ? "" : hovered.kind == Kind.SETTING ? hovered.help : hovered.kind == Kind.COMMAND ? hovered.note : "";
-        if (hovered != null && this.editing == null && !about.isEmpty()) {
+        if (this.resetTip != null && mouseY >= listTop() && mouseY < listBottom()) {
+            g.setComponentTooltipForNextFrame(this.font, List.of(this.resetTip), mouseX, mouseY, ItemStack.EMPTY);
+        } else if (hovered != null && this.editing == null && !about.isEmpty()) {
             List<Component> tip = new ArrayList<>();
             tip.add(Component.literal(hovered.title).withStyle(ChatFormatting.GOLD));
             for (var part : this.font.split(Component.literal(about), 240)) {
@@ -557,7 +657,11 @@ public class AdminPanelScreen extends Screen {
                 });
                 tip.add(Component.literal(sb.toString()).withStyle(ChatFormatting.GRAY));
             }
-            if (hovered.kind == Kind.SETTING) tip.add(Component.literal(hovered.key + (hovered.note.isEmpty() ? "" : "   " + hovered.note)).withStyle(ChatFormatting.DARK_GRAY));
+            if (hovered.kind == Kind.SETTING) {
+                tip.add(Component.literal("Default: " + hovered.def + (hovered.note.isEmpty() ? "" : "   " + hovered.note)).withStyle(ChatFormatting.DARK_AQUA));
+                if (hovered.changed()) tip.add(Component.literal("Saved: " + hovered.value + "  (not saved yet: " + hovered.shown() + ")").withStyle(ChatFormatting.YELLOW));
+                tip.add(Component.literal(hovered.key).withStyle(ChatFormatting.DARK_GRAY));
+            }
             g.setComponentTooltipForNextFrame(this.font, tip, mouseX, mouseY, ItemStack.EMPTY);
         }
     }
@@ -568,12 +672,14 @@ public class AdminPanelScreen extends Screen {
             return;
         }
         g.fill(l + 8, y + 1, l + w - 8, y + row.height() - 1, hover ? ROW_HOVER : ROW);
+        // unsaved: a gold bar down the left
+        if (row.changed()) g.fill(l + 8, y + 1, l + 10, y + row.height() - 1, GOLD);
         int textX = l + 12;
         if (row.icon != null) {
             g.item(row.icon, l + 11, y + 4);
             textX = l + 31;
         }
-        int textW = valueX() - textX - 6;
+        int textW = resetX() - textX - 4;
         if (row.kind == Kind.COMMAND) textW = l + w - 14 - textX;
         g.text(this.font, this.font.plainSubstrByWidth(row.title, textW), textX, y + 3, row.kind == Kind.COMMAND ? GOLD : TEXT, false);
         // the line under it, small
@@ -587,17 +693,32 @@ public class AdminPanelScreen extends Screen {
         if (row.kind == Kind.COMMAND) return;
         // the value, right
         int vx = valueX();
+        // back to the default: a little circling arrow, when it isn't the default
+        if (row.resettable()) {
+            int rx = resetX();
+            boolean over = this.mouseX >= rx && this.mouseX < rx + RESET_W && this.mouseY >= y + 5 && this.mouseY < y + 19;
+            g.fill(rx, y + 5, rx + RESET_W, y + 19, over ? 0xFF8A5A20 : 0xFF3A3040);
+            g.centeredText(this.font, "Reset", rx + RESET_W / 2, y + 8, over ? TEXT : EDGE_LIGHT);
+            if (over) this.resetTip = Component.literal("Back to the default: " + row.def);
+        }
         if (this.editing != null && this.editing.key.equals(row.key)) return;
+        String value = row.shown();
         if (row.type.equals("B")) {
-            boolean on = Boolean.parseBoolean(row.value);
+            boolean on = Boolean.parseBoolean(value);
             g.fill(vx, y + 5, vx + VALUE_W, y + 19, on ? 0xFF2A6A3A : 0xFF6A2A2A);
             g.centeredText(this.font, on ? "ON" : "OFF", vx + VALUE_W / 2, y + 8, on ? GREEN : RED);
         } else {
             g.fill(vx, y + 5, vx + VALUE_W, y + 19, 0xFF000000);
             g.fill(vx, y + 5, vx + VALUE_W, y + 6, 0xFF505060);
-            String shown = this.font.plainSubstrByWidth(row.value, VALUE_W - 6);
-            g.text(this.font, shown, vx + VALUE_W - 4 - this.font.width(shown), y + 8, row.kind == Kind.PRICE && row.value.equals("0") ? DIM : GOLD, false);
+            String shown = this.font.plainSubstrByWidth(value, VALUE_W - 6);
+            g.text(this.font, shown, vx + VALUE_W - 4 - this.font.width(shown), y + 8,
+                row.changed() ? 0xFFFFFF80 : row.kind == Kind.PRICE && value.equals("0") ? DIM : GOLD, false);
         }
+    }
+
+    // (client/PhotoShoot) an unsaved change
+    public static void photoChange(String key, String value) {
+        pending.put(key, value);
     }
 
     // (client/PhotoShoot) which Settings section shows

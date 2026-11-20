@@ -640,6 +640,8 @@ public final class PhotoShoot {
         }), 15));
         SHOTS.add(new Shot("admin_invest", c -> c.mc.execute(() -> {
             AdminPanelScreen.showSection("economy");
+            AdminPanelScreen.photoChange("economy.investmentDailyPercent", "8");
+            AdminPanelScreen.photoChange("economy.leaderboardEnabled", "false");
             if (c.mc.gui.screen() instanceof AdminPanelScreen s) s.showTab(0, "");
         }), 15));
         // the Blood Moon decorations (-Pphoto=blooddecor): all eleven in a row on their own square (bloodDecorScene), by

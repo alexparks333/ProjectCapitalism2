@@ -241,9 +241,15 @@ The sidebar shows everyone's **total gold**, updated every 10 seconds:
 ## The admin panel (`core/AdminPanel`, `client/AdminPanelScreen`)
 
 **`/admin panel`** (operators) opens the live admin panel. Three tabs, and a search box that filters each:
-- **Settings:** every setting in `capitalism-server.toml` (all of `CapitalismConfig` but the Banker's list), by section.
-  Click a value, type, Enter saves (Esc cancels); on/off settings flip with a click. Hover a row for what it does and
-  its range. Out-of-range or non-numbers are refused. A change saves to the file at once and most take effect at once.
+- **Changes wait for Save.** Edits are marked with a gold bar and counted at the top ("2 unsaved changes"); **Save**
+  sends them all at once (saved to the file, most take effect at once), **Undo** drops them. Esc with unsaved changes
+  warns first; a second Esc throws them away.
+- **Reset** (left of a value) shows on any setting or price that isn't the mod's default and puts the default back
+  (as an unsaved change). Hover a setting to see its default.
+- **Settings:** every setting in `capitalism-server.toml` (all of `CapitalismConfig` but the Banker's list), one
+  section at a time (the section tabs; a search looks through all of them). Click a value, type, Enter (Esc cancels);
+  on/off settings flip with a click. Hover a row for what it does and its range. Out-of-range or non-numbers are refused
+  when saved.
 - **Banker:** every item the Banker buys and its price (`54` = 54 nuggets each, `1/2` = a nugget for 2, `0` = not
   bought). Under each name, what it really pays: red when an NPC shop's price or a crafting cap makes it less.
   **+ Held item** adds what's in your hand (at 0 until you price it).

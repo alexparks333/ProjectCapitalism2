@@ -71,6 +71,9 @@ public final class AdminPanelTests {
         c.check(rows.stream().anyMatch(r -> r.contains(AdminPanel.SEP + "economy.investmentDailyPercent" + AdminPanel.SEP))
                 && rows.stream().noneMatch(r -> r.contains("bankPricesVersion") || r.contains("bankPricesV5")),
             "the Settings tab has every setting (" + rows.size() + ") but the Banker's list and its version");
+        c.check(rows.stream().anyMatch(r -> r.contains(AdminPanel.SEP + "economy.investmentDailyPercent" + AdminPanel.SEP) && r.endsWith(AdminPanel.SEP + "6"))
+                && AdminPanel.banker().stream().anyMatch(r -> r.startsWith("minecraft:diamond" + AdminPanel.SEP) && r.endsWith(AdminPanel.SEP + "54")),
+            "each row carries its default, for the reset button (investment rate 6, Diamond 54)");
         int rate = CapitalismConfig.INVESTMENT_DAILY_PERCENT.get();
         int other = rate == 7 ? 8 : 7;
         c.check(AdminPanel.apply(null, "economy.investmentDailyPercent", String.valueOf(other)) == null
